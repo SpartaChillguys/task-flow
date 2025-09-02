@@ -8,6 +8,21 @@ jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
+
+    services: # ✅ CI 러너 안에서 MySQL 컨테이너 실행
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testdb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -20,4 +35,4 @@ jobs:
         run: chmod +x gradlew   # ✅ 실행 권한 부여
 
       - name: Run tests with coverage check
-        run: ./gradlew clean check
+        run: ./gradlew clean check -Dspring.profiles.active=test
