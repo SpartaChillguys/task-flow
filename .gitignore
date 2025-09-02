@@ -36,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-### person setting ###
-.application.yml
+### personal setting ###
+.application-local.yml
