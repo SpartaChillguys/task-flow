@@ -1,8 +1,8 @@
 package min.taskflow.user.mapper;
 
 import lombok.RequiredArgsConstructor;
-import min.taskflow.auth.dto.SignupRequest;
-import min.taskflow.auth.dto.SignupResponse;
+import min.taskflow.auth.dto.request.SignupRequest;
+import min.taskflow.auth.dto.response.SignupResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
 import org.springframework.stereotype.Component;

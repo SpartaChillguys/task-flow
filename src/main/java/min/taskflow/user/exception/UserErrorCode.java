@@ -15,7 +15,7 @@ public enum UserErrorCode implements ErrorCode {
     //1XX 로그인/인증
     ALREADY_EXIST_EMAIL("USER-101", HttpStatus.CONFLICT, "이미 존재하는 이메일 입니다."),
     ALREADY_EXIST_USERNAME("USER-102", HttpStatus.CONFLICT, "이미 존재하는 유저 이름입니다."),
-
+    WRONG_PASSWORD("USER-103", HttpStatus.UNAUTHORIZED, "비밀번호가 틀렸습니다."),
     //2XX 검색 관련
     USER_NOT_FOUND("USER-201", HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
 

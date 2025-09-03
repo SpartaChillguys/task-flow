@@ -1,4 +1,4 @@
-package min.taskflow.auth.dto;
+package min.taskflow.auth.dto.response;
 
 import lombok.Builder;
 import min.taskflow.user.enums.UserRole;

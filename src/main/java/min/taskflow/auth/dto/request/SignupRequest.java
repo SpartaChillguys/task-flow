@@ -1,4 +1,4 @@
-package min.taskflow.auth.dto;
+package min.taskflow.auth.dto.request;
 
 
 import jakarta.validation.constraints.Email;
