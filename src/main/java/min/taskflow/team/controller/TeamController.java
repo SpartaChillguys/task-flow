@@ -35,7 +35,7 @@ public class TeamController {
     }
 
     // 팀 전체 조회
-    @GetMapping("/teams")
+    @GetMapping("/teams-names")
     public ResponseEntity<List<TeamResponse>> getAllTeam() {
         List<TeamResponse> responseList = teamService.getAllTeams();
         return ResponseEntity.ok(responseList);
