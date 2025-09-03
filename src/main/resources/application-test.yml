@@ -1,19 +1,12 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;MODE=MySQL
     driver-class-name: org.h2.Driver
     username: sa
     password:
-
   jpa:
     hibernate:
-      ddl-auto: create-drop   # 매번 테스트 실행 시 스키마 생성/삭제
+      ddl-auto: create-drop
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+        dialect: org.hibernate.dialect.H2Dialect
