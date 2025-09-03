@@ -27,6 +27,6 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<UserSaveResponse>> signup(@Valid @RequestBody UserSaveRequest request) {
         UserSaveResponse response = externalUserService.signup(request);
-        return ApiResponse.success(response); //만약 성공 메시지를 받겠다고 하면 여기에 추가하기.
+        return ApiResponse.success(response, "회원가입에 성공하셨습니다"); //만약 성공 메시지를 받겠다고 하면 여기에 추가하기.
     }
 }

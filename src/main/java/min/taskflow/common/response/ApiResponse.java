@@ -21,13 +21,11 @@ public record ApiResponse<T>(HttpStatus httpStatus,
      * @param data 요청 성공 시 반환할 데이터
      * @return HTTP 200 OK 응답과 함께 성공 데이터가 포함된 ApiResponseDto
      */
-    public static <T> ResponseEntity<ApiResponse<T>> success(T data,
-                                                             String message,
-                                                             HttpStatus httpStatus) {
+    public static <T> ResponseEntity<ApiResponse<T>> success(T data, String message) {
         return ResponseEntity.ok(
                 ApiResponse.<T>builder()
-                        .httpStatus(httpStatus)
-                        .statusValue(httpStatus.value())
+                        .httpStatus(HttpStatus.OK)
+                        .statusValue(HttpStatus.OK.value())
                         .success(true)
                         .message(message)
                         .data(data)
@@ -42,13 +40,11 @@ public record ApiResponse<T>(HttpStatus httpStatus,
      * @param data 요청 성공 시 반환할 데이터
      * @return HTTP 201 CREATED 응답과 함께 성공 데이터가 포함된 ApiResponseDto
      */
-    public static <T> ResponseEntity<ApiResponse<T>> created(T data,
-                                                             String message,
-                                                             HttpStatus httpStatus) {
+    public static <T> ResponseEntity<ApiResponse<T>> created(T data, String message) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<T>builder()
-                        .httpStatus(httpStatus)
-                        .statusValue(httpStatus.value())
+                        .httpStatus(HttpStatus.CREATED)
+                        .statusValue(HttpStatus.CREATED.value())
                         .success(true)
                         .message(message)
                         .data(data)
