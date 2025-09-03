@@ -7,8 +7,7 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDateTime;
 
 @Builder
-public record ApiResponse<T>(String code,
-                             HttpStatus httpStatus,
+public record ApiResponse<T>(HttpStatus httpStatus,
                              int statusValue,
                              boolean success,
                              String message,
@@ -26,6 +25,27 @@ public record ApiResponse<T>(String code,
                                                              String message,
                                                              HttpStatus httpStatus) {
         return ResponseEntity.ok(
+                ApiResponse.<T>builder()
+                        .httpStatus(httpStatus)
+                        .statusValue(httpStatus.value())
+                        .success(true)
+                        .message(message)
+                        .data(data)
+                        .timestamp(LocalDateTime.now())
+                        .build());
+    }
+
+    /**
+     * 성공적인 요청에 대한 응답을 반환하는 메서드
+     * 주어진 데이터를 포함하여 HTTP 201 CREATED 상태 코드와 함께 응답을 반환
+     *
+     * @param data 요청 성공 시 반환할 데이터
+     * @return HTTP 201 CREATED 응답과 함께 성공 데이터가 포함된 ApiResponseDto
+     */
+    public static <T> ResponseEntity<ApiResponse<T>> created(T data,
+                                                             String message,
+                                                             HttpStatus httpStatus) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<T>builder()
                         .httpStatus(httpStatus)
                         .statusValue(httpStatus.value())

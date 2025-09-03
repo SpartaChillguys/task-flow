@@ -7,19 +7,20 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record ApiPageResponse<T>(int page,
-                                 int size,
-                                 int totalPages,
+public record ApiPageResponse<T>(List<T> data,
                                  long totalElements,
-                                 List<T> data) {
+                                 int totalPages,
+                                 int size,
+                                 int number
+) {
 
     public static <T> ApiPageResponse<T> from(Page<T> pagedData) {
         return new ApiPageResponse<>(
-                pagedData.getNumber(),
-                pagedData.getSize(),
-                pagedData.getTotalPages(),
+                pagedData.getContent(),
                 pagedData.getTotalElements(),
-                pagedData.getContent()
+                pagedData.getTotalPages(),
+                pagedData.getSize(),
+                pagedData.getNumber()
         );
     }
 
