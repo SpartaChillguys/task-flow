@@ -24,6 +24,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(errorCode.getMessage(), errorCode.getHttpStatus()));
     }
 
+    // Validation Exception은 BAD_REQUEST로 통일
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         // 첫 번째 에러 메시지 가져오기
