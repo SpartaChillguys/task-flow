@@ -1,11 +1,11 @@
 package min.taskflow.user;
 
 import min.taskflow.auth.service.ExternalAuthService;
-import min.taskflow.task.exception.InvalidException;
 import min.taskflow.user.dto.UserSaveRequest;
 import min.taskflow.user.dto.UserSaveResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
+import min.taskflow.user.exception.UserException;
 import min.taskflow.user.mapper.UserMapper;
 import min.taskflow.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -90,7 +90,7 @@ public class UserServiceTest {
 
         //then
         Assertions.assertThatThrownBy(() -> externalUserService.signup(request))
-                .isInstanceOf(InvalidException.class)
+                .isInstanceOf(UserException.class)
                 .hasMessage("이미 존재하는 유저 이름입니다.");
     }
 
@@ -109,7 +109,7 @@ public class UserServiceTest {
 
         // then
         Assertions.assertThatThrownBy(() -> externalUserService.signup(request))
-                .isInstanceOf(InvalidException.class)
+                .isInstanceOf(UserException.class)
                 .hasMessage("이미 존재하는 이메일 입니다.");
     }
 }
