@@ -9,8 +9,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum TeamErrorCode implements ErrorCode {
 
-    TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "팀을 찾을 수 없습니다.");
+    TEAM_NOT_FOUND("TEAM-001",HttpStatus.NOT_FOUND, "팀을 찾을 수 없습니다.");
 
+    private final String code;
     private final HttpStatus httpStatus;
     private final String message;
 }
