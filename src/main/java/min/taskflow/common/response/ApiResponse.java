@@ -15,19 +15,21 @@ public record ApiResponse<T>(HttpStatus httpStatus,
                              LocalDateTime timestamp) {
 
     /**
-     * 생성된 리소스에 대한 응답을 반환하는 메서드
-     * 주어진 데이터를 포함하여 HTTP 201 Created 상태 코드와 함께 응답을 반환
+     * 성공적인 요청에 대한 응답을 반환하는 메서드
+     * 주어진 데이터를 포함하여 HTTP 200 OK 상태 코드와 함께 응답을 반환
      *
-     * @param data 생성된 리소스의 데이터
-     * @return HTTP 201 Created 응답과 함께 생성된 데이터가 포함된 ApiResponseDto
+     * @param data 요청 성공 시 반환할 데이터
+     * @return HTTP 200 OK 응답과 함께 성공 데이터가 포함된 ApiResponseDto
      */
-    public static <T> ResponseEntity<ApiResponse<T>> success(T data) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(
+    public static <T> ResponseEntity<ApiResponse<T>> success(T data,
+                                                             String message,
+                                                             HttpStatus httpStatus) {
+        return ResponseEntity.ok(
                 ApiResponse.<T>builder()
-                        .httpStatus(HttpStatus.CREATED)
-                        .statusValue(HttpStatus.CREATED.value())
+                        .httpStatus(httpStatus)
+                        .statusValue(httpStatus.value())
                         .success(true)
-                        .message("201 CREATED 응답 성공")
+                        .message(message)
                         .data(data)
                         .timestamp(LocalDateTime.now())
                         .build());
@@ -35,18 +37,20 @@ public record ApiResponse<T>(HttpStatus httpStatus,
 
     /**
      * 성공적인 요청에 대한 응답을 반환하는 메서드
-     * 주어진 데이터를 포함하여 HTTP 200 OK 상태 코드와 함께 응답을 반환
+     * 주어진 데이터를 포함하여 HTTP 201 CREATED 상태 코드와 함께 응답을 반환
      *
      * @param data 요청 성공 시 반환할 데이터
-     * @return HTTP 200 OK 응답과 함께 성공 데이터가 포함된 ApiResponseDto
+     * @return HTTP 201 CREATED 응답과 함께 성공 데이터가 포함된 ApiResponseDto
      */
-    public static <T> ResponseEntity<ApiResponse<T>> ok(T data) {
-        return ResponseEntity.ok(
+    public static <T> ResponseEntity<ApiResponse<T>> created(T data,
+                                                             String message,
+                                                             HttpStatus httpStatus) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<T>builder()
-                        .httpStatus(HttpStatus.OK)
-                        .statusValue(HttpStatus.OK.value())
+                        .httpStatus(httpStatus)
+                        .statusValue(httpStatus.value())
                         .success(true)
-                        .message("200 OK 응답 성공")
+                        .message(message)
                         .data(data)
                         .timestamp(LocalDateTime.now())
                         .build());
@@ -58,13 +62,13 @@ public record ApiResponse<T>(HttpStatus httpStatus,
      *
      * @return HTTP 204 No Content 응답과 함께 성공 데이터가 포함된 ApiResponseDto
      */
-    public static <T> ResponseEntity<ApiResponse<T>> noContent() {
+    public static <T> ResponseEntity<ApiResponse<T>> noContent(String message) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                 ApiResponse.<T>builder()
                         .httpStatus(HttpStatus.NO_CONTENT)
                         .statusValue(HttpStatus.NO_CONTENT.value())
                         .success(true)
-                        .message("204 NO_CONTENT 응답 성공")
+                        .message(message)
                         .timestamp(LocalDateTime.now())
                         .build());
     }
