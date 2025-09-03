@@ -1,6 +1,7 @@
 package min.taskflow.common.response;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
@@ -29,9 +30,13 @@ public record ApiPageResponse<T>(int page,
      * @param pagedData 요청 성공 시 반환할 페이징 데이터
      * @return HTTP 200 OK 응답과 함께 ApiResponse<ApiPageResponse<T>>
      */
-    public static <T> ResponseEntity<ApiResponse<ApiPageResponse<T>>> success(Page<T> pagedData, String message) {
+    public static <T> ResponseEntity<ApiResponse<ApiPageResponse<T>>> success(Page<T> pagedData,
+                                                                              String message,
+                                                                              HttpStatus httpStatus) {
         return ResponseEntity.ok(
                 ApiResponse.<ApiPageResponse<T>>builder()
+                        .httpStatus(httpStatus)
+                        .statusValue(httpStatus.value())
                         .success(true)
                         .message(message)
                         .data(ApiPageResponse.from(pagedData))
