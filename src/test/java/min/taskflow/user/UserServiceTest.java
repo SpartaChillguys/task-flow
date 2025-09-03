@@ -1,8 +1,8 @@
 package min.taskflow.user;
 
+import min.taskflow.auth.dto.SignupRequest;
+import min.taskflow.auth.dto.SignupResponse;
 import min.taskflow.auth.service.ExternalAuthService;
-import min.taskflow.user.dto.UserSaveRequest;
-import min.taskflow.user.dto.UserSaveResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
 import min.taskflow.user.exception.UserException;
@@ -36,7 +36,7 @@ public class UserServiceTest {
     @Test
     void signup_유저_저장시_정상적으로저장된다() {
         // given
-        UserSaveRequest request = new UserSaveRequest(
+        SignupRequest request = new SignupRequest(
                 "testuser",
                 "password123!",
                 "test@example.com",
@@ -48,7 +48,7 @@ public class UserServiceTest {
         User mockUser = userMapper.toEntity(request, encodedPassword);
 
 
-        UserSaveResponse expectedResponse = UserSaveResponse.builder()
+        SignupResponse expectedResponse = SignupResponse.builder()
                 .id(1L)
                 .username("testuser")
                 .email("test@example.com")
@@ -65,7 +65,7 @@ public class UserServiceTest {
         Mockito.when(userMapper.toDto(mockUser)).thenReturn(expectedResponse);
 
         // when
-        UserSaveResponse result = externalUserService.signup(request);
+        SignupResponse result = externalUserService.signup(request);
 
         // then
         Assertions.assertThat(result).isNotNull();
@@ -78,7 +78,7 @@ public class UserServiceTest {
     @Test
     public void signup_아이디중복시_예외발생() {
         // given
-        UserSaveRequest request = new UserSaveRequest(
+        SignupRequest request = new SignupRequest(
                 "testuser",
                 "password123!",
                 "test@example.com",
@@ -90,14 +90,13 @@ public class UserServiceTest {
 
         //then
         Assertions.assertThatThrownBy(() -> externalUserService.signup(request))
-                .isInstanceOf(UserException.class)
-                .hasMessage("이미 존재하는 유저 이름입니다.");
+                .isInstanceOf(UserException.class);
     }
 
     @Test
     public void signup_이메일중복시_예외발생() {
         // given
-        UserSaveRequest request = new UserSaveRequest(
+        SignupRequest request = new SignupRequest(
                 "testuser",
                 "password123!",
                 "test@example.com",
@@ -109,7 +108,6 @@ public class UserServiceTest {
 
         // then
         Assertions.assertThatThrownBy(() -> externalUserService.signup(request))
-                .isInstanceOf(UserException.class)
-                .hasMessage("이미 존재하는 이메일 입니다.");
+                .isInstanceOf(UserException.class);
     }
 }

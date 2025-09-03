@@ -3,10 +3,10 @@ package min.taskflow.auth.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import min.taskflow.auth.dto.SignupRequest;
+import min.taskflow.auth.dto.SignupResponse;
 import min.taskflow.auth.service.ExternalAuthService;
 import min.taskflow.common.response.ApiResponse;
-import min.taskflow.user.dto.UserSaveRequest;
-import min.taskflow.user.dto.UserSaveResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,8 +25,8 @@ public class AuthController {
 
     //회원가입 API
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<UserSaveResponse>> signup(@Valid @RequestBody UserSaveRequest request) {
-        UserSaveResponse response = externalUserService.signup(request);
-        return ApiResponse.success(response, "회원가입에 성공하셨습니다"); //만약 성공 메시지를 받겠다고 하면 여기에 추가하기.
+    public ResponseEntity<ApiResponse<SignupResponse>> signup(@Valid @RequestBody SignupRequest request) {
+        SignupResponse response = externalUserService.signup(request);
+        return ApiResponse.success(response, "회원가입에 성공하셨습니다");
     }
 }
