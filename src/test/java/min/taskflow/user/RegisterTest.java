@@ -63,7 +63,7 @@ public class RegisterTest {
         Mockito.when(userRepository.existsByUserName(request.username())).thenReturn(false);
         Mockito.when(userMapper.toEntity(request, encodedPassword)).thenReturn(mockUser);
         Mockito.when(userRepository.save(mockUser)).thenReturn(mockUser);
-        Mockito.when(userMapper.toDto(mockUser)).thenReturn(expectedResponse);
+        Mockito.when(userMapper.toRegistResponse(mockUser)).thenReturn(expectedResponse);
 
         // when
         RegisterResponse result = externalUserService.register(request);
