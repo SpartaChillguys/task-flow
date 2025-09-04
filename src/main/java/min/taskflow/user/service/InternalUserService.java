@@ -1,6 +1,7 @@
 package min.taskflow.user.service;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.user.entity.User;
 import min.taskflow.user.exception.UserException;
 import min.taskflow.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,10 @@ public class InternalUserService {
     private final UserRepository userRepository;
 
 
-    public void findByUserId(Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+    public User findByUserId(Long userId) {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        return user;
     }
 }
