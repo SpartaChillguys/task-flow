@@ -14,11 +14,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static min.taskflow.team.exception.TeamErrorCode.TEAM_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class TeamServiceTest {
 
@@ -32,7 +30,7 @@ class TeamServiceTest {
     }
 
     @Test
-    public void team을_성공적으로_생성했습니다() {
+    public void 팀을_성공적으로_생성했습니다() {
         TeamCreateRequest request = new TeamCreateRequest("개발팀", "백엔드/프론트");
         Team savedTeam = Team.builder()
                 .teamId(1L)
@@ -111,5 +109,34 @@ class TeamServiceTest {
                 () -> teamService.updateTeam(999L, request));
 
         assertEquals(TeamErrorCode.TEAM_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    public void 팀을_성공적으로_삭제합니다() {
+        Team team = Team.builder()
+                .teamId(1L)
+                .name("개발팀")
+                .description("백엔드/프론트")
+                .build();
+
+        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+        when(teamRepository.save(any(Team.class))).thenReturn(team);
+
+        teamService.deleteTeam(1L);
+
+        assertTrue(team.isDeleted());
+        assertNotNull(team.getDeletedAt());
+
+        verify(teamRepository, times(1)).save(team);
+    }
+
+    @Test
+    public void 존재하지_않는_팀은_삭제할_수_없습니다() {
+        when(teamRepository.findById(999L)).thenReturn(Optional.empty());
+
+        TeamException exception = assertThrows(TeamException.class,
+                () -> teamService.deleteTeam(999L));
+
+        assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }
 }

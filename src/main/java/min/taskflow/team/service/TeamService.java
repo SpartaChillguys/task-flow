@@ -69,6 +69,7 @@ public class TeamService {
         return TeamMapper.toResponse(team);
     }
 
+    // 팀 삭제
     @Transactional
     public void deleteTeam(Long teamId) {
         Team team = teamRepository.findById(teamId)
