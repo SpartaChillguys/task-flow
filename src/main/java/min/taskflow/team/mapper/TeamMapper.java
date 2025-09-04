@@ -13,24 +13,23 @@ public class TeamMapper {
     public static Team toEntity(TeamCreateRequest request) {
 
         return Team.builder()
-                .name(request.getName())
-                .description(request.getDescription())
+                .name(request.name())
+                .description(request.description())
                 .build();
     }
 
     public static void updateEntity(Team team, TeamUpdateRequest request) {
 
-        team.updateTeam(request.getName(), request.getDescription());
+        team.updateTeam(request.name(), request.description());
     }
 
     public static TeamResponse toResponse(Team team) {
-
-        return TeamResponse.builder()
-                .id(team.getTeamId())
-                .name(team.getName())
-                .description(team.getDescription())
-                .createdAt(team.getCreatedAt())
-                .members(team.getMembers() == null ? Collections.emptyList() :
+        return new TeamResponse(
+                team.getTeamId(),
+                team.getName(),
+                team.getDescription(),
+                team.getCreatedAt(),
+                team.getMembers() == null ? Collections.emptyList() :
                         team.getMembers().stream()
                                 .map(user -> new MemberResponse(
                                         user.getUserId(),
@@ -40,7 +39,7 @@ public class TeamMapper {
                                         user.getRole().name(),
                                         user.getCreatedAt()
                                 ))
-                                .toList())
-                .build();
+                                .toList()
+        );
     }
 }

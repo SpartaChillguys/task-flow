@@ -5,7 +5,6 @@ import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
 import min.taskflow.team.entity.Team;
-import min.taskflow.team.exception.TeamErrorCode;
 import min.taskflow.team.exception.TeamException;
 import min.taskflow.team.mapper.TeamMapper;
 import min.taskflow.team.repository.TeamRepository;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static min.taskflow.team.exception.TeamErrorCode.DUPLICATE_TEAM_NAME;
 import static min.taskflow.team.exception.TeamErrorCode.TEAM_NOT_FOUND;
 
 @Service
@@ -27,8 +27,8 @@ public class TeamService {
     @Transactional
     public TeamResponse createTeam(TeamCreateRequest request) {
 
-        if (teamRepository.existsByName(request.getName())) {
-            throw new TeamException(TeamErrorCode.DUPLICATE_TEAM_NAME);
+        if (teamRepository.existsByName(request.name())) {
+            throw new TeamException(DUPLICATE_TEAM_NAME);
         }
 
         Team team = TeamMapper.toEntity(request);
@@ -42,9 +42,7 @@ public class TeamService {
     public TeamResponse getTeamById(Long teamId) {
 
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(
-                        ()-> new TeamException(TEAM_NOT_FOUND)
-                );
+                .orElseThrow(() -> new TeamException(TEAM_NOT_FOUND));
         return TeamMapper.toResponse(team);
     }
 
@@ -62,12 +60,10 @@ public class TeamService {
     public TeamResponse updateTeam(Long teamId, TeamUpdateRequest request) {
 
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(
-                        () -> new TeamException(TEAM_NOT_FOUND)
-                );
+                .orElseThrow(() -> new TeamException(TEAM_NOT_FOUND));
 
-        if (!team.getName().equals(request.getName()) && teamRepository.existsByName(request.getName())) {
-            throw new TeamException(TeamErrorCode.DUPLICATE_TEAM_NAME);
+        if (!team.getName().equals(request.name()) && teamRepository.existsByName(request.name())) {
+            throw new TeamException(DUPLICATE_TEAM_NAME);
         }
 
         TeamMapper.updateEntity(team, request);
@@ -79,9 +75,7 @@ public class TeamService {
     public void deleteTeam(Long teamId) {
 
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(
-                        () -> new TeamException(TEAM_NOT_FOUND)
-                );
+                .orElseThrow(() -> new TeamException(TEAM_NOT_FOUND));
         team.delete();
     }
 }
