@@ -48,7 +48,7 @@ public class ExternalAuthService {
         User saveUser = userRepository.save(user);
 
         //디티오 변환
-        RegisterResponse userSaveResponse = userMapper.toDto(saveUser);
+        RegisterResponse userSaveResponse = userMapper.toRegistResponse(saveUser);
         return userSaveResponse;
 
     }

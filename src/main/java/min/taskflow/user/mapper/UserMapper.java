@@ -12,16 +12,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserMapper {
 
-    public static UserResponse userResponse(User user) {
+    public UserResponse userResponse(User user) {
 
         return UserResponse.builder()
                 .userId(user.getUserId())
                 .userName(user.getUserName())
-                .password(user.getPassword())
-                .email(user.getEmail())
                 .name(user.getName())
+                .email(user.getEmail())
                 .role(user.getRole())
-                .team(user.getTeam())
                 .build();
     }
 
@@ -38,7 +36,7 @@ public class UserMapper {
                 .build();
     }
 
-    public RegisterResponse toDto(User user) {
+    public RegisterResponse toRegistResponse(User user) {
 
         return RegisterResponse.builder()
                 .id(user.getUserId())
