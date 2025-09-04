@@ -10,6 +10,7 @@ import min.taskflow.team.repository.TeamRepository;
 import min.taskflow.team.service.TeamService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -27,9 +28,9 @@ class TeamServiceTest {
     @BeforeEach
     void setUp() {
 
-        teamRepository = mock(TeamRepository.class);// 레포지토리 모킹
+        teamRepository = mock(TeamRepository.class); // 레포지토리 모킹
         teamMapper = new TeamMapper();
-        teamService = new TeamService(teamRepository, teamMapper); // 서비스 모킹
+        teamService = new TeamService(teamRepository, teamMapper);
     }
 
     @Test
@@ -37,10 +38,12 @@ class TeamServiceTest {
 
         TeamCreateRequest request = new TeamCreateRequest("개발팀", "백엔드/프론트");
         Team savedTeam = Team.builder()
-                .teamId(1L)
                 .name(request.name())
                 .description(request.description())
                 .build();
+
+        // Reflection으로 teamId 세팅
+        ReflectionTestUtils.setField(savedTeam, "teamId", 1L);
 
         when(teamRepository.existsByName(request.name())).thenReturn(false);
         when(teamRepository.save(any(Team.class))).thenReturn(savedTeam);
@@ -66,10 +69,10 @@ class TeamServiceTest {
     void 팀을_성공적으로_조회합니다() {
 
         Team team = Team.builder()
-                .teamId(1L)
                 .name("개발팀")
                 .description("백엔드/프론트")
                 .build();
+        ReflectionTestUtils.setField(team, "teamId", 1L);
 
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 
@@ -83,10 +86,10 @@ class TeamServiceTest {
     void 팀을_성공적으로_수정합니다() {
 
         Team team = Team.builder()
-                .teamId(1L)
                 .name("개발팀")
                 .description("백엔드/프론트")
                 .build();
+        ReflectionTestUtils.setField(team, "teamId", 1L);
 
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
         when(teamRepository.existsByName("디자인팀")).thenReturn(false);
@@ -115,10 +118,10 @@ class TeamServiceTest {
     void 팀을_성공적으로_삭제합니다() {
 
         Team team = Team.builder()
-                .teamId(1L)
                 .name("개발팀")
                 .description("백엔드/프론트")
                 .build();
+        ReflectionTestUtils.setField(team, "teamId", 1L);
 
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 

@@ -7,8 +7,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update   # 개발 편의용 (운영에서는 금지)
+      ddl-auto: create   # 개발 편의용 (운영에서는 금지)
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+jwt:
+  secret:
+    key: MySuperSecretKeyForJwt1234567890x
