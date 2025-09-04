@@ -1,5 +1,6 @@
 package min.taskflow.team.mapper;
 
+import min.taskflow.team.dto.MemberResponse;
 import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
@@ -26,7 +27,17 @@ public class TeamMapper {
                 .name(team.getName())
                 .description(team.getDescription())
                 .createdAt(team.getCreatedAt())
-                .members(Collections.emptyList())
+                .members(team.getMembers() == null ? Collections.emptyList() :
+                        team.getMembers().stream()
+                                .map(user -> new MemberResponse(
+                                        user.getUserId(),
+                                        user.getUserName(),
+                                        user.getName(),
+                                        user.getEmail(),
+                                        user.getRole().name(),
+                                        user.getCreatedAt()
+                                ))
+                                .toList())
                 .build();
     }
 }

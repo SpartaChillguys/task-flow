@@ -3,8 +3,9 @@ package min.taskflow.team.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import min.taskflow.common.entity.BaseEntity;
-
-import java.awt.*;
+import min.taskflow.user.entity.User;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Getter
@@ -22,6 +23,11 @@ public class Team extends BaseEntity {
 
     @Column(length = 500)
     private String description;
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<User> members = new ArrayList<>();
+
+
 
     public void updateTeam(String name, String description) {
         this.name = name;
