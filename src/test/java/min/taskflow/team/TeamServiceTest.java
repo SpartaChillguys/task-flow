@@ -4,7 +4,6 @@ import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
 import min.taskflow.team.entity.Team;
-import min.taskflow.team.exception.TeamErrorCode;
 import min.taskflow.team.exception.TeamException;
 import min.taskflow.team.repository.TeamRepository;
 import min.taskflow.team.service.TeamService;
@@ -31,37 +30,37 @@ class TeamServiceTest {
     }
 
     @Test
-    public void 팀을_성공적으로_생성했습니다() {
+    void 팀을_성공적으로_생성했습니다() {
 
         TeamCreateRequest request = new TeamCreateRequest("개발팀", "백엔드/프론트");
         Team savedTeam = Team.builder()
                 .teamId(1L)
-                .name(request.getName())
-                .description(request.getDescription())
+                .name(request.name())
+                .description(request.description())
                 .build();
 
-        when(teamRepository.save(any(Team.class))).thenReturn(savedTeam); // save 동작 모킹입니다.
+        when(teamRepository.existsByName(request.name())).thenReturn(false);
+        when(teamRepository.save(any(Team.class))).thenReturn(savedTeam);
 
         TeamResponse response = teamService.createTeam(request);
 
-        assertEquals("개발팀", response.getName());
-        assertEquals("백엔드/프론트", response.getDescription());
+        assertEquals("개발팀", response.name());
+        assertEquals("백엔드/프론트", response.description());
     }
 
     @Test
-    public void 존재하지_않는_팀_조회() {
+    void 존재하지_않는_팀_조회() {
 
         when(teamRepository.findById(1L)).thenReturn(Optional.empty());
 
-        TeamException exception = assertThrows(TeamException.class, ()-> {
-            teamService.getTeamById(1L);
-        });
+        TeamException exception = assertThrows(TeamException.class,
+                () -> teamService.getTeamById(1L));
 
         assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
-    public void 팀을_성공적으로_조회합니다() {
+    void 팀을_성공적으로_조회합니다() {
 
         Team team = Team.builder()
                 .teamId(1L)
@@ -73,23 +72,12 @@ class TeamServiceTest {
 
         TeamResponse response = teamService.getTeamById(1L);
 
-        assertEquals("개발팀", response.getName());
-        assertEquals("백엔드/프론트", response.getDescription());
+        assertEquals("개발팀", response.name());
+        assertEquals("백엔드/프론트", response.description());
     }
 
     @Test
-    public void 존재하지_않는_팀을_조회하면_예외가_발생합니다() {
-
-        when(teamRepository.findById(999L)).thenReturn(Optional.empty());
-
-        TeamException exception = assertThrows(TeamException.class,
-                ()-> teamService.getTeamById(999L));
-
-        assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
-    }
-
-    @Test
-    public void 팀을_성공적으로_수정합니다() {
+    void 팀을_성공적으로_수정합니다() {
 
         Team team = Team.builder()
                 .teamId(1L)
@@ -97,16 +85,17 @@ class TeamServiceTest {
                 .description("백엔드/프론트")
                 .build();
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+        when(teamRepository.existsByName("디자인팀")).thenReturn(false);
 
         TeamUpdateRequest request = new TeamUpdateRequest("디자인팀", "UI/UX 담당");
         TeamResponse response = teamService.updateTeam(1L, request);
 
-        assertEquals("디자인팀", response.getName());
-        assertEquals("UI/UX 담당", response.getDescription());
+        assertEquals("디자인팀", response.name());
+        assertEquals("UI/UX 담당", response.description());
     }
 
     @Test
-    public void 존재하지_않는_팀은_수정할_수_없습니다() {
+    void 존재하지_않는_팀은_수정할_수_없습니다() {
 
         when(teamRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -115,11 +104,11 @@ class TeamServiceTest {
         TeamException exception = assertThrows(TeamException.class,
                 () -> teamService.updateTeam(999L, request));
 
-        assertEquals(TeamErrorCode.TEAM_NOT_FOUND, exception.getErrorCode());
+        assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
-    public void 팀을_성공적으로_삭제합니다() {
+    void 팀을_성공적으로_삭제합니다() {
 
         Team team = Team.builder()
                 .teamId(1L)
@@ -128,16 +117,16 @@ class TeamServiceTest {
                 .build();
 
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
-        when(teamRepository.save(any(Team.class))).thenReturn(team);
 
         teamService.deleteTeam(1L);
 
         assertTrue(team.isDeleted());
         assertNotNull(team.getDeletedAt());
+        verify(teamRepository, never()).save(any());
     }
 
     @Test
-    public void 존재하지_않는_팀은_삭제할_수_없습니다() {
+    void 존재하지_않는_팀은_삭제할_수_없습니다() {
 
         when(teamRepository.findById(999L)).thenReturn(Optional.empty());
 
