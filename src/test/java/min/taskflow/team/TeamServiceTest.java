@@ -1,10 +1,12 @@
-package min.taskflow.team.service;
+package min.taskflow.team;
 
 import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.entity.Team;
+import min.taskflow.team.exception.TeamErrorCode;
 import min.taskflow.team.exception.TeamException;
 import min.taskflow.team.repository.TeamRepository;
+import min.taskflow.team.service.TeamService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -52,6 +54,32 @@ class TeamServiceTest {
         TeamException exception = assertThrows(TeamException.class, ()-> {
             teamService.getTeamById(1L);
         });
+
+        assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    public void 팀을_성공적으로_조회합니다() {
+        Team team = Team.builder()
+                .teamId(1L)
+                .name("개발팀")
+                .description("백엔드/프론트")
+                .build();
+
+        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+
+        TeamResponse response = teamService.getTeamById(1L);
+
+        assertEquals("개발팀", response.getName());
+        assertEquals("백엔드/프론트", response.getDescription());
+    }
+
+    @Test
+    public void 존재하지_않는_팀을_조회하면_예외가_발생합니다() {
+        when(teamRepository.findById(999L)).thenReturn(Optional.empty());
+
+        TeamException exception = assertThrows(TeamException.class,
+                ()-> teamService.getTeamById(999L));
 
         assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }
