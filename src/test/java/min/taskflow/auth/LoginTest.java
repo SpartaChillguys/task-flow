@@ -78,7 +78,7 @@ public class LoginTest {
     }
 
     @Test
-    void login_실패_USER_NO_FOUND발생() {
+    void login_실패_WRONG_USERNAME발생() {
         // when
         when(userRepository.findByUserName(testUsername)).thenReturn(Optional.empty());
 
@@ -86,7 +86,7 @@ public class LoginTest {
         assertThatThrownBy(() -> authService.login(validLoginRequest))
                 .isInstanceOf(UserException.class)
                 .extracting("errorCode")
-                .isEqualTo(UserErrorCode.USER_NOT_FOUND);
+                .isEqualTo(UserErrorCode.WRONG_USERNAME);
 
         // 비밀번호 검증과 토큰 생성은 호출되지 않아야 함
         verify(userRepository, times(1)).findByUserName(testUsername);

@@ -58,7 +58,7 @@ public class ExternalAuthService {
     public LoginResponse login(@Valid LoginRequest request) {
 
         //유저네임 존재 검증
-        User user = userRepository.findByUserName(request.username()).orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByUserName(request.username()).orElseThrow(() -> new UserException(UserErrorCode.WRONG_USERNAME));
 
         //비번 일치 검증
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
