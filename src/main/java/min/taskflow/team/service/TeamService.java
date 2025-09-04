@@ -2,6 +2,7 @@ package min.taskflow.team.service;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.team.dto.TeamCreateRequest;
+import min.taskflow.team.dto.TeamMemberResponse;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
 import min.taskflow.team.entity.Team;
@@ -79,5 +80,14 @@ public class TeamService {
                 .orElseThrow(() -> new TeamException(TEAM_NOT_FOUND));
 
         team.delete();
+    }
+
+    // 팀 멤버 조회
+    @Transactional(readOnly = true)
+    public List<TeamMemberResponse> getTeamMembers(Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamException(TEAM_NOT_FOUND));
+
+        return teamMapper.toTeamMemberResponseList(team.getMembers());
     }
 }

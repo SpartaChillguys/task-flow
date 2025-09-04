@@ -1,13 +1,12 @@
 package min.taskflow.team.mapper;
 
-import min.taskflow.team.dto.MemberResponse;
-import min.taskflow.team.dto.TeamCreateRequest;
-import min.taskflow.team.dto.TeamResponse;
-import min.taskflow.team.dto.TeamUpdateRequest;
+import min.taskflow.team.dto.*;
 import min.taskflow.team.entity.Team;
+import min.taskflow.user.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 
 @Component
 public class TeamMapper {
@@ -41,6 +40,21 @@ public class TeamMapper {
                                 ))
                                 .toList()
         );
+    }
+
+    public TeamMemberResponse toTeamMemberResponse(User user) {
+        return new TeamMemberResponse(
+                user.getUserId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getName()
+        );
+    }
+
+    public List<TeamMemberResponse> toTeamMemberResponseList(List<User> users) {
+        return users.stream()
+                .map(this::toTeamMemberResponse)
+                .toList();
     }
 }
 

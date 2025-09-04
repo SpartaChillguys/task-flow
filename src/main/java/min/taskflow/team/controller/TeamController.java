@@ -3,6 +3,7 @@ package min.taskflow.team.controller;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.common.response.ApiResponse;
 import min.taskflow.team.dto.TeamCreateRequest;
+import min.taskflow.team.dto.TeamMemberResponse;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
 import min.taskflow.team.service.TeamService;
@@ -57,5 +58,12 @@ public class TeamController {
 
         teamService.deleteTeam(teamId);
         return ApiResponse.noContent("팀이 성공적으로 삭제되었습니다.");
+    }
+
+    // 팀 멤버 조회
+    @GetMapping("/teams/{teamId}/members")
+    public ResponseEntity<ApiResponse<List<TeamMemberResponse>>> getTeamMembers(@PathVariable Long teamId) {
+        List<TeamMemberResponse> members = teamService.getTeamMembers(teamId);
+        return ApiResponse.success(members, "팀 멤버 조회에 성공하셨습니다.");
     }
 }
