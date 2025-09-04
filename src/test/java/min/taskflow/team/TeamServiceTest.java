@@ -2,6 +2,7 @@ package min.taskflow.team;
 
 import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
+import min.taskflow.team.dto.TeamUpdateRequest;
 import min.taskflow.team.entity.Team;
 import min.taskflow.team.exception.TeamErrorCode;
 import min.taskflow.team.exception.TeamException;
@@ -82,5 +83,33 @@ class TeamServiceTest {
                 ()-> teamService.getTeamById(999L));
 
         assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    public void 팀을_성공적으로_수정합니다() {
+        Team team = Team.builder()
+                .teamId(1L)
+                .name("개발팀")
+                .description("백엔드/프론트")
+                .build();
+        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+
+        TeamUpdateRequest request = new TeamUpdateRequest("디자인팀", "UI/UX 담당");
+        TeamResponse response = teamService.updateTeam(1L, request);
+
+        assertEquals("디자인팀", response.getName());
+        assertEquals("UI/UX 담당", response.getDescription());
+    }
+
+    @Test
+    public void 존재하지_않는_팀은_수정할_수_없습니다() {
+        when(teamRepository.findById(999L)).thenReturn(Optional.empty());
+
+        TeamUpdateRequest request = new TeamUpdateRequest("디자인팀", "UI/UX 담당");
+
+        TeamException exception = assertThrows(TeamException.class,
+                () -> teamService.updateTeam(999L, request));
+
+        assertEquals(TeamErrorCode.TEAM_NOT_FOUND, exception.getErrorCode());
     }
 }
