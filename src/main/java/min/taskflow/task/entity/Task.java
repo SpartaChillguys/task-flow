@@ -20,6 +20,7 @@ public class Task extends BaseEntity {
     private Long taskId;
 
     private String title;
+
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -27,6 +28,7 @@ public class Task extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Priority priority;
+
     private LocalDateTime dueDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

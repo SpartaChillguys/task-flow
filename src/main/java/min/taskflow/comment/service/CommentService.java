@@ -25,7 +25,9 @@ public class CommentService {
     private final CommentMapper commentMapper;
 
     @Transactional
-    public CommentResponse createComment(Long taskId, @Valid CommentRequest request, Long userId) {
+    public CommentResponse createComment(Long taskId,
+                                         @Valid CommentRequest request,
+                                         Long userId) {
 
         Task task = internalTaskService.findByTaskId(taskId);
 
@@ -38,14 +40,9 @@ public class CommentService {
             }
         }
 
-        Comment comment = Comment.builder()
-                .content(request.content())
-                .task(task)
-                .user(internalUserService.findByUserId(userId))
-                .parentId(request.parentId())
-                .build();
+        Comment comment = commentMapper.toEntity(request, task, internalUserService.findByUserId(userId));
         Comment savedComment = commentRepository.save(comment);
 
-        return commentMapper.toResponse(savedComment);
+        return commentMapper.toCommentResponse(savedComment);
     }
 }

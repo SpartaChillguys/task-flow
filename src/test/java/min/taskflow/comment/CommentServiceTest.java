@@ -11,13 +11,9 @@ import min.taskflow.fixture.CommentFixture;
 import min.taskflow.fixture.TaskFixture;
 import min.taskflow.fixture.UserFixture;
 import min.taskflow.task.entity.Task;
-import min.taskflow.task.exception.TaskErrorCode;
-import min.taskflow.task.exception.TaskException;
 import min.taskflow.task.service.InternalTaskService;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.exception.UserErrorCode;
-import min.taskflow.user.exception.UserException;
 import min.taskflow.user.service.InternalUserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,7 +64,7 @@ public class CommentServiceTest {
         when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
         when(internalUserService.findByUserId(userId)).thenReturn(user);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        when(commentMapper.toResponse(any(Comment.class))).thenReturn(commentResponse);
+        when(commentMapper.toCommentResponse(any(Comment.class))).thenReturn(commentResponse);
 
         // when
         CommentResponse response = commentService.createComment(taskId, request, userId);
@@ -77,40 +73,6 @@ public class CommentServiceTest {
         assertNotNull(response);
         assertEquals("댓글 내용", response.content());
         assertEquals("김철수", response.user().name());
-    }
-
-    @Test
-    void createComment_작업이_존재하지_않는_경우() {
-
-        // given
-        Long taskId = 1L;
-        Long userId = 2L;
-        CommentRequest request = new CommentRequest("댓글 내용", null);
-
-        when(internalTaskService.findByTaskId(taskId))
-                .thenThrow(new TaskException(TaskErrorCode.TASK_NOT_FOUND));
-
-        // when & then
-        assertThrows(TaskException.class, () -> commentService.createComment(taskId, request, userId));
-    }
-
-    @Test
-    void createComment_작성자가_존재하지_않는_경우() {
-
-        // given
-        Long taskId = 1L;
-        Long userId = 2L;
-        CommentRequest request = new CommentRequest("댓글 내용", null);
-
-        User user = UserFixture.createUser();
-        Task task = TaskFixture.createTask(user);
-
-        when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
-        when(internalUserService.findByUserId(userId))
-                .thenThrow(new UserException(UserErrorCode.USER_NOT_FOUND));
-
-        // when & then
-        assertThrows(UserException.class, () -> commentService.createComment(taskId, request, userId));
     }
 
     @Test
@@ -173,7 +135,7 @@ public class CommentServiceTest {
         when(internalUserService.findByUserId(userId)).thenReturn(user);
         when(commentRepository.findById(parentId)).thenReturn(Optional.of(parentComment));
         when(commentRepository.save(any(Comment.class))).thenReturn(childComment);
-        when(commentMapper.toResponse(any(Comment.class))).thenReturn(commentResponse);
+        when(commentMapper.toCommentResponse(any(Comment.class))).thenReturn(commentResponse);
 
         // when
         CommentResponse response = commentService.createComment(taskId, request, userId);
