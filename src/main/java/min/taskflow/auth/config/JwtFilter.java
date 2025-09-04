@@ -8,10 +8,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import min.taskflow.user.enums.UserRole;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +37,16 @@ public class JwtFilter extends OncePerRequestFilter {
                 Claims claims = jwtUtil.validateToken(token);
                 Long userId = Long.valueOf(claims.getSubject());
                 UserRole userRole = UserRole.valueOf(claims.get("userRole", String.class));
+                // ✅ Authentication 객체 생성
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userId, // Principal (보통 User 객체, 여기선 userId)
+                                null,   // Credentials
+                                List.of(new SimpleGrantedAuthority("ROLE_" + userRole.name())) // 권한
+                        );
 
+                // ✅ SecurityContext에 저장
+                SecurityContextHolder.getContext().setAuthentication(authentication);
                 // HttpServletRequest의 attribute에 저장
                 request.setAttribute("userId", userId);
                 request.setAttribute("userRole", userRole);
