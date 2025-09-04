@@ -17,6 +17,5 @@ public class TeamResponse {
     private String name;
     private String description;
     private LocalDateTime createdAt;
-
     private List<MemberResponse> members;
 }

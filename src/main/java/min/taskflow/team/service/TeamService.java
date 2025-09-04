@@ -25,6 +25,7 @@ public class TeamService {
     // 팀 생성
     @Transactional
     public TeamResponse createTeam(TeamCreateRequest request) {
+
         if (teamRepository.existsByName(request.getName())) {
             throw new IllegalArgumentException("이미 존재하는 팀 이름입니다.");
         }
@@ -38,6 +39,7 @@ public class TeamService {
     // 팀 단건 조회
     @Transactional(readOnly = true)
     public TeamResponse getTeamById(Long teamId) {
+
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(
                         ()-> new TeamException(TEAM_NOT_FOUND)
@@ -48,6 +50,7 @@ public class TeamService {
     // 팀 전체 조회
     @Transactional(readOnly = true)
     public List<TeamResponse> getAllTeams() {
+
         return teamRepository.findAll().stream()
                 .map(TeamMapper::toResponse)
                 .collect(Collectors.toList());
@@ -56,6 +59,7 @@ public class TeamService {
     // 팀 수정
     @Transactional
     public TeamResponse updateTeam(Long teamId, TeamUpdateRequest request) {
+
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(
                         () -> new TeamException(TEAM_NOT_FOUND)
@@ -72,6 +76,7 @@ public class TeamService {
     // 팀 삭제
     @Transactional
     public void deleteTeam(Long teamId) {
+
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(
                         () -> new TeamException(TEAM_NOT_FOUND)

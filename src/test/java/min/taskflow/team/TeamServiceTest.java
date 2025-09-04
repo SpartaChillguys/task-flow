@@ -25,12 +25,14 @@ class TeamServiceTest {
 
     @BeforeEach
     void setUp() {
+
         teamRepository = mock(TeamRepository.class); // 레포지토리 모킹
         teamService = new TeamService(teamRepository); // 서비스 모킹
     }
 
     @Test
     public void 팀을_성공적으로_생성했습니다() {
+
         TeamCreateRequest request = new TeamCreateRequest("개발팀", "백엔드/프론트");
         Team savedTeam = Team.builder()
                 .teamId(1L)
@@ -48,6 +50,7 @@ class TeamServiceTest {
 
     @Test
     public void 존재하지_않는_팀_조회() {
+
         when(teamRepository.findById(1L)).thenReturn(Optional.empty());
 
         TeamException exception = assertThrows(TeamException.class, ()-> {
@@ -59,6 +62,7 @@ class TeamServiceTest {
 
     @Test
     public void 팀을_성공적으로_조회합니다() {
+
         Team team = Team.builder()
                 .teamId(1L)
                 .name("개발팀")
@@ -75,6 +79,7 @@ class TeamServiceTest {
 
     @Test
     public void 존재하지_않는_팀을_조회하면_예외가_발생합니다() {
+
         when(teamRepository.findById(999L)).thenReturn(Optional.empty());
 
         TeamException exception = assertThrows(TeamException.class,
@@ -85,6 +90,7 @@ class TeamServiceTest {
 
     @Test
     public void 팀을_성공적으로_수정합니다() {
+
         Team team = Team.builder()
                 .teamId(1L)
                 .name("개발팀")
@@ -101,6 +107,7 @@ class TeamServiceTest {
 
     @Test
     public void 존재하지_않는_팀은_수정할_수_없습니다() {
+
         when(teamRepository.findById(999L)).thenReturn(Optional.empty());
 
         TeamUpdateRequest request = new TeamUpdateRequest("디자인팀", "UI/UX 담당");
@@ -113,6 +120,7 @@ class TeamServiceTest {
 
     @Test
     public void 팀을_성공적으로_삭제합니다() {
+
         Team team = Team.builder()
                 .teamId(1L)
                 .name("개발팀")
@@ -132,6 +140,7 @@ class TeamServiceTest {
 
     @Test
     public void 존재하지_않는_팀은_삭제할_수_없습니다() {
+
         when(teamRepository.findById(999L)).thenReturn(Optional.empty());
 
         TeamException exception = assertThrows(TeamException.class,
