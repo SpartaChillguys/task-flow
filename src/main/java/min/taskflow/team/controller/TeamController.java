@@ -1,11 +1,11 @@
 package min.taskflow.team.controller;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.common.response.ApiResponse;
 import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
 import min.taskflow.team.service.TeamService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,41 +20,40 @@ public class TeamController {
 
     // 팀 생성
     @PostMapping("/teams")
-    public ResponseEntity<TeamResponse> createTeam(
+    public ResponseEntity<ApiResponse<TeamResponse>> createTeam(
             @RequestBody TeamCreateRequest request) {
         TeamResponse response = teamService.createTeam(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ApiResponse.created(response, "팀이 성공적으로 생성되었습니다.");
     }
 
     // 팀 단건 조회
     @GetMapping("/teams/{teamId}")
-    public ResponseEntity<TeamResponse> getTeam(
+    public ResponseEntity<ApiResponse<TeamResponse>> getTeam(
             @PathVariable Long teamId) {
         TeamResponse response = teamService.getTeamById(teamId);
-        return ResponseEntity.ok(response);
+        return ApiResponse.success(response, "팀 단건 조회 성공했습니다.");
     }
 
     // 팀 전체 조회
     @GetMapping("/teams-names")
-    public ResponseEntity<List<TeamResponse>> getAllTeam() {
+    public ResponseEntity<ApiResponse<List<TeamResponse>>> getAllTeam() {
         List<TeamResponse> responseList = teamService.getAllTeams();
-        return ResponseEntity.ok(responseList);
+        return ApiResponse.success(responseList, "팀 전체 조회 성공했습니다.");
     }
 
     // 팀 수정
     @PutMapping("/teams/{teamId}")
-    public ResponseEntity<TeamResponse> updateTeam(
+    public ResponseEntity<ApiResponse<TeamResponse>> updateTeam(
             @PathVariable Long teamId,
             @RequestBody TeamUpdateRequest request) {
         TeamResponse response = teamService.updateTeam(teamId, request);
-        return ResponseEntity.ok(response);
+        return ApiResponse.success(response, "팀 정보가 성공적으로 수정되었습니다.");
     }
 
     // 팀 삭제
     @DeleteMapping("/teams/{teamId}")
-    public ResponseEntity<Void> deleteTeam(
-            @PathVariable Long teamId) {
+    public ResponseEntity<ApiResponse<Void>> deleteTeam(@PathVariable Long teamId) {
         teamService.deleteTeam(teamId);
-        return ResponseEntity.noContent().build();
+        return ApiResponse.noContent("팀이 성공적으로 삭제되었습니다.");
     }
 }
