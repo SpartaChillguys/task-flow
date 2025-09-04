@@ -1,4 +1,4 @@
-package min.taskflow.auth.dto;
+package min.taskflow.auth.dto.request;
 
 
 import jakarta.validation.constraints.Email;
@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 /*
 회원가입시 request DTO
  */
-public record SignupRequest(
+public record RegisterRequest(
         @NotBlank(message = "유저이름은 공백일수 없습니다.")
         @Size(min = 6, max = 10, message = "유저이름의 길이는 6 ~ 10 입니다.")
         String username,

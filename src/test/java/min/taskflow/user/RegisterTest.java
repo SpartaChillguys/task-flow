@@ -1,10 +1,11 @@
 package min.taskflow.user;
 
-import min.taskflow.auth.dto.SignupRequest;
-import min.taskflow.auth.dto.SignupResponse;
+import min.taskflow.auth.dto.request.RegisterRequest;
+import min.taskflow.auth.dto.response.RegisterResponse;
 import min.taskflow.auth.service.ExternalAuthService;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
+import min.taskflow.user.exception.UserErrorCode;
 import min.taskflow.user.exception.UserException;
 import min.taskflow.user.mapper.UserMapper;
 import min.taskflow.user.repository.UserRepository;
@@ -19,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+public class RegisterTest {
 
     @InjectMocks
     private ExternalAuthService externalUserService;
@@ -36,7 +37,7 @@ public class UserServiceTest {
     @Test
     void signup_유저_저장시_정상적으로저장된다() {
         // given
-        SignupRequest request = new SignupRequest(
+        RegisterRequest request = new RegisterRequest(
                 "testuser",
                 "password123!",
                 "test@example.com",
@@ -48,7 +49,7 @@ public class UserServiceTest {
         User mockUser = userMapper.toEntity(request, encodedPassword);
 
 
-        SignupResponse expectedResponse = SignupResponse.builder()
+        RegisterResponse expectedResponse = RegisterResponse.builder()
                 .id(1L)
                 .username("testuser")
                 .email("test@example.com")
@@ -65,7 +66,7 @@ public class UserServiceTest {
         Mockito.when(userMapper.toDto(mockUser)).thenReturn(expectedResponse);
 
         // when
-        SignupResponse result = externalUserService.signup(request);
+        RegisterResponse result = externalUserService.register(request);
 
         // then
         Assertions.assertThat(result).isNotNull();
@@ -78,7 +79,7 @@ public class UserServiceTest {
     @Test
     public void signup_아이디중복시_예외발생() {
         // given
-        SignupRequest request = new SignupRequest(
+        RegisterRequest request = new RegisterRequest(
                 "testuser",
                 "password123!",
                 "test@example.com",
@@ -89,14 +90,16 @@ public class UserServiceTest {
         Mockito.when(userRepository.existsByUserName("testuser")).thenReturn(true); // 중복
 
         //then
-        Assertions.assertThatThrownBy(() -> externalUserService.signup(request))
-                .isInstanceOf(UserException.class);
+        Assertions.assertThatThrownBy(() -> externalUserService.register(request))
+                .isInstanceOf(UserException.class)
+                .extracting("errorCode")
+                .isEqualTo(UserErrorCode.ALREADY_EXIST_USERNAME);
     }
 
     @Test
     public void signup_이메일중복시_예외발생() {
         // given
-        SignupRequest request = new SignupRequest(
+        RegisterRequest request = new RegisterRequest(
                 "testuser",
                 "password123!",
                 "test@example.com",
@@ -107,7 +110,9 @@ public class UserServiceTest {
         Mockito.when(userRepository.existsByEmail("test@example.com")).thenReturn(true); // 중복
 
         // then
-        Assertions.assertThatThrownBy(() -> externalUserService.signup(request))
-                .isInstanceOf(UserException.class);
+        Assertions.assertThatThrownBy(() -> externalUserService.register(request))
+                .isInstanceOf(UserException.class)
+                .extracting("errorCode")
+                .isEqualTo(UserErrorCode.ALREADY_EXIST_EMAIL);
     }
 }
