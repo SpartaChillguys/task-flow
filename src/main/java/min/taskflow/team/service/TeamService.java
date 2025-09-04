@@ -82,6 +82,5 @@ public class TeamService {
                         () -> new TeamException(TEAM_NOT_FOUND)
                 );
         team.delete();
-        teamRepository.save(team);
     }
 }

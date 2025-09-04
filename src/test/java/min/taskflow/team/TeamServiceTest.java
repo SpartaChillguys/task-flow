@@ -134,8 +134,6 @@ class TeamServiceTest {
 
         assertTrue(team.isDeleted());
         assertNotNull(team.getDeletedAt());
-
-        verify(teamRepository, times(1)).save(team);
     }
 
     @Test
