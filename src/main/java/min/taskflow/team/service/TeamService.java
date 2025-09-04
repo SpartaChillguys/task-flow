@@ -5,6 +5,7 @@ import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
 import min.taskflow.team.entity.Team;
+import min.taskflow.team.exception.TeamErrorCode;
 import min.taskflow.team.exception.TeamException;
 import min.taskflow.team.mapper.TeamMapper;
 import min.taskflow.team.repository.TeamRepository;
@@ -27,7 +28,7 @@ public class TeamService {
     public TeamResponse createTeam(TeamCreateRequest request) {
 
         if (teamRepository.existsByName(request.getName())) {
-            throw new IllegalArgumentException("이미 존재하는 팀 이름입니다.");
+            throw new TeamException(TeamErrorCode.DUPLICATE_TEAM_NAME);
         }
 
         Team team = TeamMapper.toEntity(request);
@@ -66,7 +67,7 @@ public class TeamService {
                 );
 
         if (!team.getName().equals(request.getName()) && teamRepository.existsByName(request.getName())) {
-            throw new IllegalArgumentException("이미 존재하는 팀입니다.");
+            throw new TeamException(TeamErrorCode.DUPLICATE_TEAM_NAME);
         }
 
         TeamMapper.updateEntity(team, request);
