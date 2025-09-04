@@ -34,7 +34,7 @@ public class TeamService {
         Team team = teamMapper.toEntity(request);
         teamRepository.save(team);
 
-        return teamMapper.toResponse(team);
+        return teamMapper.toTeamResponse(team);
     }
 
     // 팀 단건 조회
@@ -44,7 +44,7 @@ public class TeamService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamException(TEAM_NOT_FOUND));
 
-        return teamMapper.toResponse(team);
+        return teamMapper.toTeamResponse(team);
     }
 
     // 팀 전체 조회
@@ -52,7 +52,7 @@ public class TeamService {
     public List<TeamResponse> getAllTeams() {
 
         return teamRepository.findAll().stream()
-                .map(teamMapper::toResponse)
+                .map(teamMapper::toTeamResponse)
                 .toList();
     }
 
@@ -68,7 +68,7 @@ public class TeamService {
         }
 
         teamMapper.updateEntity(team, request);
-        return teamMapper.toResponse(team);
+        return teamMapper.toTeamResponse(team);
     }
 
     // 팀 삭제

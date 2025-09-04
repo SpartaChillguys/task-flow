@@ -10,8 +10,6 @@ import java.util.ArrayList;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
 @Table(name = "team")
 public class Team extends BaseEntity {
 
@@ -24,11 +22,17 @@ public class Team extends BaseEntity {
     @Column(length = 500)
     private String description;
 
-    @Builder.Default
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> members = new ArrayList<>();
 
-
+    @Builder
+    private Team(String name, String description, List<User> members) {
+        this.name = name;
+        this.description = description;
+        if (members != null) {
+            this.members = members;
+        }
+    }
 
     public void updateTeam(String name, String description) {
         this.name = name;

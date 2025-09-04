@@ -23,7 +23,7 @@ public class TeamMapper {
         team.updateTeam(request.name(), request.description());
     }
 
-    public TeamResponse toResponse(Team team) {
+    public TeamResponse toTeamResponse(Team team) {
         return new TeamResponse(
                 team.getTeamId(),
                 team.getName(),
