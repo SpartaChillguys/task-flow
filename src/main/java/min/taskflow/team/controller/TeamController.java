@@ -36,7 +36,7 @@ public class TeamController {
 
     // 팀 전체 조회
     @GetMapping("/teams-names")
-    public ResponseEntity<ApiResponse<List<TeamResponse>>> getAllTeam() {
+    public ResponseEntity<ApiResponse<List<TeamResponse>>> getAllTeams() {
 
         List<TeamResponse> responseList = teamService.getAllTeams();
         return ApiResponse.success(responseList, "팀 전체 조회 성공했습니다.");
