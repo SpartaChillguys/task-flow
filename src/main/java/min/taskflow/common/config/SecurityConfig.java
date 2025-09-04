@@ -10,6 +10,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Spring Security 설정 클래스.
+ * - 세션을 사용하지 않고 JWT 기반 인증을 적용
+ * - 특정 경로는 인증 없이 접근 가능, 나머지는 인증 필요
+ * - JwtFilter 를 SecurityFilterChain 에 추가하여 토큰 검증 수행
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor

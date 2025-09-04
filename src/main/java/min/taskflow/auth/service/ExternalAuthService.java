@@ -3,10 +3,10 @@ package min.taskflow.auth.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.auth.config.JwtUtil;
-import min.taskflow.auth.dto.request.SignInRequest;
-import min.taskflow.auth.dto.request.SignupRequest;
-import min.taskflow.auth.dto.response.SignInResponse;
-import min.taskflow.auth.dto.response.SignupResponse;
+import min.taskflow.auth.dto.request.LoginRequest;
+import min.taskflow.auth.dto.request.RegisterRequest;
+import min.taskflow.auth.dto.response.LoginResponse;
+import min.taskflow.auth.dto.response.RegisterResponse;
 import min.taskflow.user.PasswordEncoder;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.exception.UserErrorCode;
@@ -28,8 +28,9 @@ public class ExternalAuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    //회원가입 로직
     @Transactional
-    public SignupResponse signup(SignupRequest request) { // 회원기입 서비스 로직
+    public RegisterResponse register(RegisterRequest request) {
 
         //이메일 중복 검증
         if (userRepository.existsByEmail((request.email()))) {
@@ -47,13 +48,14 @@ public class ExternalAuthService {
         User saveUser = userRepository.save(user);
 
         //디티오 변환
-        SignupResponse userSaveResponse = userMapper.toDto(saveUser);
+        RegisterResponse userSaveResponse = userMapper.toDto(saveUser);
         return userSaveResponse;
 
     }
 
+    //로그인 로직
     @Transactional
-    public SignInResponse signin(@Valid SignInRequest request) {
+    public LoginResponse login(@Valid LoginRequest request) {
 
         //유저네임 존재 검증
         User user = userRepository.findByUserName(request.username()).orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
@@ -62,8 +64,9 @@ public class ExternalAuthService {
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new UserException(UserErrorCode.WRONG_PASSWORD);
         }
+
         String token = jwtUtil.createToken(user.getUserId(), user.getRole());
 
-        return new SignInResponse(token);
+        return new LoginResponse(token);
     }
 }

@@ -3,10 +3,10 @@ package min.taskflow.auth.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import min.taskflow.auth.dto.request.SignInRequest;
-import min.taskflow.auth.dto.request.SignupRequest;
-import min.taskflow.auth.dto.response.SignInResponse;
-import min.taskflow.auth.dto.response.SignupResponse;
+import min.taskflow.auth.dto.request.LoginRequest;
+import min.taskflow.auth.dto.request.RegisterRequest;
+import min.taskflow.auth.dto.response.LoginResponse;
+import min.taskflow.auth.dto.response.RegisterResponse;
 import min.taskflow.auth.service.ExternalAuthService;
 import min.taskflow.common.annotation.Auth;
 import min.taskflow.common.dto.AuthUser;
@@ -28,20 +28,21 @@ public class AuthController {
 
 
     //회원가입 API
-    @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<SignupResponse>> signup(@Valid @RequestBody SignupRequest request) {
-        SignupResponse response = externalAuthService.signup(request);
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<RegisterResponse>> register(@Valid @RequestBody RegisterRequest request) {
+        RegisterResponse response = externalAuthService.register(request);
         return ApiResponse.success(response, "회원가입에 성공하셨습니다");
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<ApiResponse<SignInResponse>> signin(@Valid @RequestBody SignInRequest request) {
+    //로그인 API
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
 
-
-        SignInResponse response = externalAuthService.signin(request);
+        LoginResponse response = externalAuthService.login(request);
         return ApiResponse.success(response, "로그인에 성공하셨습니다.");
     }
 
+    //로그인중인 유저ID 잘 가져오는지
     @GetMapping("/test")
     public void test(@Auth AuthUser authUser) {
         System.out.println(authUser.getId());

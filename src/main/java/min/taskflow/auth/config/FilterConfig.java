@@ -5,6 +5,10 @@
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
 //
+
+/*
+JWT 인증 필터를 서블릿 필터로 등록하는 설정 클래스
+ */
 //@Configuration
 //@RequiredArgsConstructor
 //public class FilterConfig {

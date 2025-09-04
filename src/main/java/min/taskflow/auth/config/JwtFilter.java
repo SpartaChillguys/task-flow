@@ -28,6 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
 
         if (StringUtils.hasText(token)) {
+
             try {
                 Claims claims = jwtUtil.validateToken(token);
                 Long userId = Long.valueOf(claims.getSubject());
@@ -47,6 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
+
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7); // "Bearer " 제거
