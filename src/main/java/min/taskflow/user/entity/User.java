@@ -9,13 +9,16 @@ import min.taskflow.common.entity.BaseEntity;
 import min.taskflow.team.entity.Team;
 import min.taskflow.user.enums.UserRole;
 
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;  // 유저 PK
 
     @Column(unique = true)
@@ -48,4 +51,5 @@ public class User extends BaseEntity {
         this.role = role;
         this.team = team;
     }
+
 }
