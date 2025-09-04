@@ -1,6 +1,8 @@
-package min.taskflow.auth.config;
+package min.taskflow.common.config;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.auth.config.JwtFilter;
+import min.taskflow.auth.config.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,7 +41,7 @@ public class SecurityConfig {
                 // 요청별 인증 설정
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 경로 (순서 중요!)
-                        .requestMatchers("/auth/signup", "/auth/signin").permitAll()
+                        .requestMatchers("/auth/register", "/auth/login").permitAll()
                         .requestMatchers("/auth/**").permitAll() // 모든 auth 경로 허용 (테스트용)
                         // 나머지는 인증 필요
                         .anyRequest().authenticated()
