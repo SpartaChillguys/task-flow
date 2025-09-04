@@ -3,6 +3,7 @@ package min.taskflow.user.mapper;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.auth.dto.request.RegisterRequest;
 import min.taskflow.auth.dto.response.RegisterResponse;
+import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
 import org.springframework.stereotype.Component;
@@ -11,8 +12,22 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserMapper {
 
+    public static UserResponse userResponse(User user) {
+
+        return UserResponse.builder()
+                .userId(user.getUserId())
+                .userName(user.getUserName())
+                .password(user.getPassword())
+                .email(user.getEmail())
+                .name(user.getName())
+                .role(user.getRole())
+                .team(user.getTeam())
+                .build();
+    }
+
     //UserSaveRequest DTO를 User Entity로 변환
     public User toEntity(RegisterRequest request, String encodedPassword) {
+
         return User.builder()
                 .userName(request.username())
                 .password(encodedPassword)
@@ -24,6 +39,7 @@ public class UserMapper {
     }
 
     public RegisterResponse toDto(User user) {
+
         return RegisterResponse.builder()
                 .id(user.getUserId())
                 .username(user.getUserName())
