@@ -26,7 +26,7 @@ public class InternalUserService {
         return user;
     }
 
-    public UserResponse touserResponse(User user) {
+    public UserResponse toUserResponse(User user) {
 
         return UserResponse.builder()
                 .userId(user.getUserId())
