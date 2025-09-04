@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static min.taskflow.team.exception.TeamErrorCode.DUPLICATE_TEAM_NAME;
 import static min.taskflow.team.exception.TeamErrorCode.TEAM_NOT_FOUND;
@@ -22,6 +21,7 @@ import static min.taskflow.team.exception.TeamErrorCode.TEAM_NOT_FOUND;
 public class TeamService {
 
     private final TeamRepository teamRepository;
+    private final TeamMapper teamMapper;
 
     // 팀 생성
     @Transactional
@@ -31,10 +31,10 @@ public class TeamService {
             throw new TeamException(DUPLICATE_TEAM_NAME);
         }
 
-        Team team = TeamMapper.toEntity(request);
+        Team team = teamMapper.toEntity(request);
         teamRepository.save(team);
 
-        return TeamMapper.toResponse(team);
+        return teamMapper.toResponse(team);
     }
 
     // 팀 단건 조회
@@ -43,7 +43,8 @@ public class TeamService {
 
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamException(TEAM_NOT_FOUND));
-        return TeamMapper.toResponse(team);
+
+        return teamMapper.toResponse(team);
     }
 
     // 팀 전체 조회
@@ -51,8 +52,8 @@ public class TeamService {
     public List<TeamResponse> getAllTeams() {
 
         return teamRepository.findAll().stream()
-                .map(TeamMapper::toResponse)
-                .collect(Collectors.toList());
+                .map(teamMapper::toResponse)
+                .toList();
     }
 
     // 팀 수정
@@ -66,8 +67,8 @@ public class TeamService {
             throw new TeamException(DUPLICATE_TEAM_NAME);
         }
 
-        TeamMapper.updateEntity(team, request);
-        return TeamMapper.toResponse(team);
+        teamMapper.updateEntity(team, request);
+        return teamMapper.toResponse(team);
     }
 
     // 팀 삭제
@@ -76,6 +77,7 @@ public class TeamService {
 
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamException(TEAM_NOT_FOUND));
+
         team.delete();
     }
 }

@@ -5,6 +5,7 @@ import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
 import min.taskflow.team.entity.Team;
 import min.taskflow.team.exception.TeamException;
+import min.taskflow.team.mapper.TeamMapper;
 import min.taskflow.team.repository.TeamRepository;
 import min.taskflow.team.service.TeamService;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,13 +21,15 @@ import static org.mockito.Mockito.*;
 class TeamServiceTest {
 
     private TeamRepository teamRepository;
+    private TeamMapper teamMapper;
     private TeamService teamService;
 
     @BeforeEach
     void setUp() {
 
-        teamRepository = mock(TeamRepository.class); // 레포지토리 모킹
-        teamService = new TeamService(teamRepository); // 서비스 모킹
+        teamRepository = mock(TeamRepository.class);// 레포지토리 모킹
+        teamMapper = new TeamMapper();
+        teamService = new TeamService(teamRepository, teamMapper); // 서비스 모킹
     }
 
     @Test
@@ -84,6 +87,7 @@ class TeamServiceTest {
                 .name("개발팀")
                 .description("백엔드/프론트")
                 .build();
+
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
         when(teamRepository.existsByName("디자인팀")).thenReturn(false);
 

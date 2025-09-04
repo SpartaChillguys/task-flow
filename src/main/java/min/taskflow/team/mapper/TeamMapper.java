@@ -5,25 +5,25 @@ import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
 import min.taskflow.team.entity.Team;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
+@Component
 public class TeamMapper {
 
-    public static Team toEntity(TeamCreateRequest request) {
-
+    public Team toEntity(TeamCreateRequest request) {
         return Team.builder()
                 .name(request.name())
                 .description(request.description())
                 .build();
     }
 
-    public static void updateEntity(Team team, TeamUpdateRequest request) {
-
+    public void updateEntity(Team team, TeamUpdateRequest request) {
         team.updateTeam(request.name(), request.description());
     }
 
-    public static TeamResponse toResponse(Team team) {
+    public TeamResponse toResponse(Team team) {
         return new TeamResponse(
                 team.getTeamId(),
                 team.getName(),
@@ -43,3 +43,4 @@ public class TeamMapper {
         );
     }
 }
+
