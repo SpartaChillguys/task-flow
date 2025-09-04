@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### personal setting ###
-src/main/resources/application-local.yml
+application-*.yml
