@@ -9,6 +9,8 @@ import min.taskflow.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 /*
 다른 도메인에서 참조할 메서드들 모음집
@@ -39,5 +41,9 @@ public class InternalQueryUserService {
                 .build();
     }
 
+    public List<User> findByTeamIsNull() {
+        
+        return userRepository.findByTeamIsNull();
+    }
 
 }
