@@ -24,7 +24,8 @@ public class ExternalUserService {
     @Transactional(readOnly = true)
     public UserResponse getMe(Long id) {
 
-        User user = userRepository.findByUserId(id).orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByUserId(id)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
         UserResponse userResponse = userMapper.userResponse(user);
 
         return userResponse;
