@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum TaskErrorCode implements ErrorCode {
 
-    // TODO: 에러의 종류별로 묶어서 관리할 수 있음.
-    TASK_NOT_FOUND("TASK-101", HttpStatus.NOT_FOUND, "태스크를 찾을 수 없습니다.");
+    // 00X 조회 에러
+    TASK_NOT_FOUND("TASK-001", HttpStatus.NOT_FOUND, "태스크를 찾을 수 없습니다.");
 
     private final String code;
     private final HttpStatus httpStatus;

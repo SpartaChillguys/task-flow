@@ -1,10 +1,12 @@
 package min.taskflow.task.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import min.taskflow.common.entity.BaseEntity;
-import min.taskflow.user.entity.User;
+import min.taskflow.task.dto.request.StatusUpdateRequest;
+import min.taskflow.task.dto.request.TaskUpdateRequest;
 
 import java.time.LocalDateTime;
 
@@ -18,36 +20,46 @@ public class Task extends BaseEntity {
     private Long id;
 
     private String title;
+
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    private TaskStatus status;
-
-    @Enumerated(EnumType.STRING)
-    private Priority priority;  // ENUM: TODO, IN_PROGRESS, COMPLETED
     private LocalDateTime dueDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignee_user_id")
-    private User assignee;
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
 
-    public Task(User assignee,
-                String description,
-                LocalDateTime dueDate,
-                Priority priority,
-                TaskStatus status,
-                String title
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    private Long assigneeId;
+
+    @Builder
+    private Task(String title,
+                 String description,
+                 LocalDateTime dueDate,
+                 Priority priority,
+                 Status status,
+                 Long assigneeId
     ) {
-        this.assignee = assignee;
+        this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority;
         this.status = status;
-        this.title = title;
+        this.assigneeId = assigneeId;
     }
 
-    @Override
-    public void delete() {
-        super.delete();
+    public void updateDetail(TaskUpdateRequest taskUpdateRequest) {
+        this.title = taskUpdateRequest.title();
+        this.description = taskUpdateRequest.description();
+        this.dueDate = taskUpdateRequest.dueDate();
+        this.priority = taskUpdateRequest.priority();
+        // TODO: status의 순차적 변경 로직 작성 후 아래 코드에 반영하기
+        this.status = taskUpdateRequest.status();
+        this.assigneeId = taskUpdateRequest.assigneeId();
+    }
+
+    public void updateStatus(StatusUpdateRequest statusUpdateRequest) {
+        this.status = statusUpdateRequest.status();
     }
 }
