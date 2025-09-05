@@ -1,13 +1,12 @@
 package min.taskflow.comment.mapper;
 
-import lombok.RequiredArgsConstructor;
+
 import min.taskflow.comment.dto.request.CommentRequest;
 import min.taskflow.comment.dto.response.CommentResponse;
 import min.taskflow.comment.entity.Comment;
 import min.taskflow.task.entity.Task;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.service.InternalUserService;
 import org.springframework.stereotype.Component;
 
 @Component

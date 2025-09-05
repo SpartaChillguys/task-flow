@@ -1,4 +1,4 @@
-package min.taskflow.user.service;
+package min.taskflow.user.service.queryService;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.user.dto.response.UserResponse;
@@ -7,6 +7,7 @@ import min.taskflow.user.exception.UserErrorCode;
 import min.taskflow.user.exception.UserException;
 import min.taskflow.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /*
@@ -14,7 +15,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class InternalUserService {
+@Transactional(readOnly = true)
+public class InternalQueryUserService {
 
     private final UserRepository userRepository;
 

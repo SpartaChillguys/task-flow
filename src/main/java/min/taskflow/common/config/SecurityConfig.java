@@ -41,7 +41,7 @@ public class SecurityConfig {
                 // 요청별 인증 설정
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 경로 (순서 중요!)
-                        .requestMatchers("/auth/register", "/auth/login").permitAll()
+                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers("/auth/**").permitAll() // 모든 auth 경로 허용 (테스트용)
                         // 나머지는 인증 필요
                         .anyRequest().authenticated()
