@@ -129,4 +129,17 @@ public class TeamService {
 
         team.removeMember(member);
     }
+
+    // 소속 없는 팀 조회
+    @Transactional(readOnly = true)
+    public List<TeamMemberResponse> getAvailableMembers() {
+
+        List<User> allusers = userRepository.findAll();
+
+        List<User> availableUsers = allusers.stream()
+                .filter(user -> user.getTeam() == null && !user.isDeleted())
+                .toList();
+
+        return teamMapper.toTeamMemberResponseList(availableUsers);
+    }
 }

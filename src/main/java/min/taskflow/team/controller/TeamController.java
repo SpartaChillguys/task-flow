@@ -85,4 +85,13 @@ public class TeamController {
         teamService.removeMemberId(teamId, memberId);
         return ApiResponse.noContent("팀 멤버가 성공적으로 삭제되었습니다.");
     }
+
+    // 소속 없는 멤버 조회
+    @GetMapping("/users/unassigned")
+    public ResponseEntity<ApiResponse<List<TeamMemberResponse>>> getAvailableMembers() {
+
+        List<TeamMemberResponse> availableMembers = teamService.getAvailableMembers();
+
+        return ApiResponse.success(availableMembers, "팀에 속하지 않은 사용자 목록을 조회 성공했습니다.");
+    }
 }
