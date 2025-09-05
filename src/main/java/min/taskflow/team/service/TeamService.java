@@ -112,4 +112,21 @@ public class TeamService {
 
         return teamMapper.toTeamMemberResponse(member);
     }
+
+    // 팀 멤버 삭제
+    @Transactional
+    public void removeMemberId(Long teamId, Long memberId) {
+
+        Team team = teamRepository.findByIdWithMembers(teamId)
+                .orElseThrow(() -> new TeamException(TeamErrorCode.TEAM_NOT_FOUND));
+
+        User member = userRepository.findById(memberId)
+                .orElseThrow(() -> new TeamException(TeamErrorCode.MEMBER_NOT_FOUND));
+
+        if (!team.getMembers().contains(member)) {
+            throw new TeamException(TeamErrorCode.MEMBER_NOT_IN_TEAM);
+        }
+
+        team.removeMember(member);
+    }
 }

@@ -63,6 +63,7 @@ public class TeamController {
     // 팀 멤버 조회
     @GetMapping("/teams/{teamId}/members")
     public ResponseEntity<ApiResponse<List<TeamMemberResponse>>> getTeamMembers(@PathVariable Long teamId) {
+
         List<TeamMemberResponse> members = teamService.getTeamMembers(teamId);
         return ApiResponse.success(members, "팀 멤버 조회에 성공하셨습니다.");
     }
@@ -74,5 +75,14 @@ public class TeamController {
 
         TeamMemberResponse response = teamService.addMemberById(teamId, memberId);
         return ApiResponse.created(response, "팀 멤버가 성공적으로 추가되었습니다.");
+    }
+
+    // 팀 멤버 삭제
+    @DeleteMapping("/teams/{teamId}/members/{memberId}")
+    public ResponseEntity<ApiResponse<Void>> deleteMember(@PathVariable Long teamId,
+                                                          @PathVariable Long memberId) {
+
+        teamService.removeMemberId(teamId, memberId);
+        return ApiResponse.noContent("팀 멤버가 성공적으로 삭제되었습니다.");
     }
 }

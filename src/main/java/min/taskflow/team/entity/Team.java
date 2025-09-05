@@ -22,7 +22,7 @@ public class Team extends BaseEntity {
     @Column(length = 500)
     private String description;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "team", orphanRemoval = false)
     private List<User> members = new ArrayList<>();
 
     @Builder
