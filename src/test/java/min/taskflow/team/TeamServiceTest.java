@@ -8,6 +8,9 @@ import min.taskflow.team.exception.TeamException;
 import min.taskflow.team.mapper.TeamMapper;
 import min.taskflow.team.repository.TeamRepository;
 import min.taskflow.team.service.TeamService;
+import min.taskflow.user.entity.User;
+import min.taskflow.user.repository.UserRepository;
+import min.taskflow.user.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -24,13 +27,15 @@ class TeamServiceTest {
     private TeamRepository teamRepository;
     private TeamMapper teamMapper;
     private TeamService teamService;
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
 
         teamRepository = mock(TeamRepository.class); // 레포지토리 모킹
+        userRepository = mock(UserRepository.class);
         teamMapper = new TeamMapper();
-        teamService = new TeamService(teamRepository, teamMapper);
+        teamService = new TeamService(teamRepository, teamMapper, userRepository);
     }
 
     @Test
@@ -74,7 +79,7 @@ class TeamServiceTest {
                 .build();
         ReflectionTestUtils.setField(team, "teamId", 1L);
 
-        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+        when(teamRepository.findByIdWithMembers(1L)).thenReturn(Optional.of(team));
 
         TeamResponse response = teamService.getTeamById(1L);
 
@@ -139,6 +144,82 @@ class TeamServiceTest {
 
         TeamException exception = assertThrows(TeamException.class,
                 () -> teamService.deleteTeam(999L));
+
+        assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void 팀에_멤버를_성공적으로_추가합니다() {
+        Team team = Team.builder()
+                .name("개발팀")
+                .description("백엔드/프론트")
+                .build();
+        ReflectionTestUtils.setField(team, "teamId", 1L);
+
+        User user = User.builder()
+                .userName("chulsoo")
+                .email("chulsoo@example.com")
+                .password("1234")
+                .name("철수")
+                .role(UserRole.USER)
+                .build();
+        ReflectionTestUtils.setField(user, "userId", 1L);
+
+        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        teamService.addMemberById(1L, 1L);
+
+        assertEquals(team, user.getTeam());  // 유저가 팀에 속했는지 확인
+        assertTrue(team.getMembers().contains(user)); // 팀 멤버 목록에 포함됐는지 확인
+    }
+
+    @Test
+    void 존재하지_않는_팀에_멤버를_추가할_수_없습니다() {
+        when(teamRepository.findById(999L)).thenReturn(Optional.empty());
+
+        TeamException exception = assertThrows(TeamException.class,
+                () -> teamService.addMemberById(999L, 1L));
+
+        assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void 팀에서_멤버를_성공적으로_삭제합니다() {
+        Team team = Team.builder()
+                .name("개발팀")
+                .description("백엔드/프론트")
+                .build();
+        ReflectionTestUtils.setField(team, "teamId", 1L);
+
+        User user = User.builder()
+                .userName("younghee")
+                .email("younghee@example.com")
+                .password("1234")
+                .name("영희")
+                .role(UserRole.USER)
+                .build();
+        ReflectionTestUtils.setField(user, "userId", 2L);
+
+        // 팀과 유저 관계 미리 설정
+        user.assignTeam(team);
+        team.addMember(user);
+
+        when(teamRepository.findByIdWithMembers(1L)).thenReturn(Optional.of(team));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(user));
+
+        teamService.removeMemberId(1L, 2L);
+
+        assertNull(user.getTeam()); // 유저의 팀이 해제됐는지 확인
+        assertFalse(team.getMembers().contains(user)); // 팀 멤버 목록에서 제거됐는지 확인
+    }
+
+    @Test
+    void 존재하지_않는_팀에서_멤버를_삭제할_수_없습니다() {
+        when(teamRepository.findById(999L)).thenReturn(Optional.empty());
+
+        TeamException exception = assertThrows(TeamException.class,
+                () -> teamService.removeMemberId(999L, 1L));
 
         assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }

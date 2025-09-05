@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 import min.taskflow.common.entity.BaseEntity;
 import min.taskflow.team.entity.Team;
 import min.taskflow.user.enums.UserRole;
-import org.hibernate.annotations.SQLRestriction;
 
-@SQLRestriction("is_deleted = false")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -52,4 +50,12 @@ public class User extends BaseEntity {
         this.team = team;
     }
 
+    // 연관관계 편의 메서드 (수영 : team, user와의 양방향 연관관계 때문에 만들었습니다.)
+    public void assignTeam(Team team) {
+        this.team = team;
+    }
+
+    public void removeFromTeam() {
+        this.team = null;
+    }
 }
