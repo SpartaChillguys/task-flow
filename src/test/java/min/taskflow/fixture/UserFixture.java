@@ -26,6 +26,14 @@ public class UserFixture {
         return user;
     }
 
+    public static User createUserWithId(Team team, Long userId) {
+
+        User user = createUser(team);
+        ReflectionTestUtils.setField(user, "userId", userId);
+
+        return user;
+    }
+
     public static UserResponse createUserResponse(User user, Long userId) {
 
         return UserResponse.builder()
