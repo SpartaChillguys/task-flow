@@ -2,7 +2,7 @@ package min.taskflow.user.service.queryService;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.user.dto.response.UserResponse;
-import min.taskflow.user.dto.response.UserSearchResponse;
+import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.exception.UserErrorCode;
 import min.taskflow.user.exception.UserException;
@@ -44,6 +44,14 @@ public class InternalQueryUserService {
                 .build();
     }
 
+
+    public UserSearchAndAssigneeResponse getAssigneeByUserId(Long userId) {
+
+        User byUserId = findByUserId(userId);
+        UserSearchAndAssigneeResponse userSearchAndAssigneeResponse = userMapper.toSearchAndAssigneeResponse(byUserId);
+
+        return userSearchAndAssigneeResponse;
+    }
     // 팀이 없는 유저 조회
 
     public List<UserResponse> findByTeamIsNull() {
@@ -76,15 +84,15 @@ public class InternalQueryUserService {
 
 
     //이름 검색을 했을때 포함된 결과 반환
-    public List<UserSearchResponse> findUsersByName(String query) {
+    public List<UserSearchAndAssigneeResponse> findUsersByName(String query) {
 
         //검색어 포함결과 반환
         List<User> users = userRepository.findByNameContaining(query);
 
-        List<UserSearchResponse> responses = new ArrayList<>();
+        List<UserSearchAndAssigneeResponse> responses = new ArrayList<>();
 
         for (User user : users) {
-            responses.add(userMapper.toSearchResponse(user));
+            responses.add(userMapper.toSearchAndAssigneeResponse(user));
         }
 
         return responses;
