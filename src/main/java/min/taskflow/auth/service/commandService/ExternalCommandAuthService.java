@@ -79,9 +79,8 @@ public class ExternalCommandAuthService {
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-
             throw new UserException(UserErrorCode.WRONG_PASSWORD);
-            
+        
         }
         user.delete();
 

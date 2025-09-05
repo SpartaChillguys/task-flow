@@ -1,7 +1,7 @@
 package min.taskflow.user.service.queryService;
 
 import lombok.RequiredArgsConstructor;
-import min.taskflow.user.dto.response.UserResponse;
+import min.taskflow.user.dto.response.UserProfileResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.exception.UserErrorCode;
 import min.taskflow.user.exception.UserException;
@@ -23,12 +23,12 @@ public class ExternalQuueryUserService {
 
     //프로필 조회 로직
 
-    public UserResponse getMe(Long id) {
+    public UserProfileResponse getMe(Long id) {
 
         User user = userRepository.findByUserId(id)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
-        UserResponse userResponse = userMapper.userResponse(user);
+        UserProfileResponse userProfileResponse = userMapper.toProfileResponse(user);
 
-        return userResponse;
+        return userProfileResponse;
     }
 }
