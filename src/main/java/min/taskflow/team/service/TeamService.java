@@ -54,6 +54,7 @@ public class TeamService {
     public List<TeamResponse> getAllTeams() {
 
         List<Team> teams = teamRepository.findAllWithMembers();
+
         return teams.stream()
                 .map(teamMapper::toTeamResponse)
                 .toList();
@@ -71,6 +72,7 @@ public class TeamService {
         }
 
         teamMapper.updateEntity(team, request);
+
         return teamMapper.toTeamResponse(team);
     }
 
