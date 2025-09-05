@@ -1,14 +1,16 @@
 package min.taskflow.comment.mapper;
 
-import lombok.RequiredArgsConstructor;
 import min.taskflow.comment.dto.request.CommentRequest;
+import min.taskflow.comment.dto.response.CommentPageResponse;
 import min.taskflow.comment.dto.response.CommentResponse;
 import min.taskflow.comment.entity.Comment;
 import min.taskflow.task.entity.Task;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.service.InternalUserService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class CommentMapper {
@@ -34,6 +36,17 @@ public class CommentMapper {
                 .parentId(comment.getParentId())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
+                .build();
+    }
+
+    public CommentPageResponse toCommentPageResponse(List<CommentResponse> content, Page<Comment> pageInfo) {
+
+        return CommentPageResponse.builder()
+                .content(content)
+                .totalElements(pageInfo.getTotalElements())
+                .totalPages(pageInfo.getTotalPages())
+                .size(pageInfo.getSize())
+                .number(pageInfo.getNumber())
                 .build();
     }
 }
