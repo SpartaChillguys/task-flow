@@ -17,7 +17,7 @@ import min.taskflow.task.service.InternalTaskService;
 import min.taskflow.team.entity.Team;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.service.InternalUserService;
+import min.taskflow.user.service.InternalQueryUserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,10 +48,10 @@ public class CommentServiceTest {
     private CommentMapper commentMapper;
 
     @Mock
-    private InternalTaskService internalTaskService;
+    private InternalTaskService taskService;
 
     @Mock
-    private InternalUserService internalUserService;
+    private InternalQueryUserService userService;
 
     @Test
     void createComment_댓글_생성_성공() {
@@ -70,11 +70,11 @@ public class CommentServiceTest {
         CommentResponse commentResponse = CommentFixture
                 .createCommentResponse(100L, "댓글 내용", taskId, userId, userResponse);
 
-        when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
-        when(internalUserService.findByUserId(userId)).thenReturn(user);
+        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(userService.findByUserId(userId)).thenReturn(user);
         when(commentMapper.toEntity(request, task, user)).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        when(internalUserService.toUserResponse(user)).thenReturn(userResponse);
+        when(userService.toUserResponse(user)).thenReturn(userResponse);
         when(commentMapper.toCommentResponse(any(Comment.class), eq(userResponse))).thenReturn(commentResponse);
 
         // when
@@ -117,7 +117,7 @@ public class CommentServiceTest {
         ReflectionTestUtils.setField(otherTask, "taskId", 20L);
         Comment parentComment = CommentFixture.createComment(request.content(), otherTask, user);
 
-        when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.findByTaskId(taskId)).thenReturn(task);
         when(commentRepository.findById(parentId)).thenReturn(Optional.of(parentComment));
 
         // when & then
@@ -144,12 +144,12 @@ public class CommentServiceTest {
         CommentResponse commentResponse = CommentFixture
                 .createCommentResponse(200L, "대댓글 내용", taskId, userId, userResponse);
 
-        when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
-        when(internalUserService.findByUserId(userId)).thenReturn(user);
+        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(userService.findByUserId(userId)).thenReturn(user);
         when(commentRepository.findById(parentId)).thenReturn(Optional.of(parentComment));
         when(commentMapper.toEntity(request, task, user)).thenReturn(childComment);
         when(commentRepository.save(any(Comment.class))).thenReturn(childComment);
-        when(internalUserService.toUserResponse(user)).thenReturn(userResponse);
+        when(userService.toUserResponse(user)).thenReturn(userResponse);
         when(commentMapper.toCommentResponse(any(Comment.class), eq(userResponse))).thenReturn(commentResponse);
 
         // when
@@ -186,9 +186,9 @@ public class CommentServiceTest {
 
         Page<Comment> parentComments = new PageImpl<>(List.of(parentComment), pageable, 1);
 
-        when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.findByTaskId(taskId)).thenReturn(task);
         when(commentRepository.findByTask_TaskIdAndParentIdIsNull(taskId, pageable)).thenReturn(parentComments);
-        when(internalUserService.toUserResponse(user)).thenReturn(userResponse);
+        when(userService.toUserResponse(user)).thenReturn(userResponse);
         when(commentMapper.toCommentResponse(parentComment, userResponse)).thenReturn(parentResponse);
 
         when(commentRepository.findByParentId(parentComment.getCommentId(), sort)).thenReturn(List.of(childComment));
@@ -206,6 +206,4 @@ public class CommentServiceTest {
         assertThat(comments.content().get(0).content()).isEqualTo("부모 댓글");
         assertThat(comments.content().get(1).content()).isEqualTo("자식 댓글");
     }
-
-    
 }

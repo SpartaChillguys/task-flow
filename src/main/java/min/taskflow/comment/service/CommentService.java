@@ -13,7 +13,7 @@ import min.taskflow.comment.repository.CommentRepository;
 import min.taskflow.task.entity.Task;
 import min.taskflow.task.service.InternalTaskService;
 import min.taskflow.user.dto.response.UserResponse;
-import min.taskflow.user.service.InternalUserService;
+import min.taskflow.user.service.InternalQueryUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +29,8 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final InternalTaskService internalTaskService;
-    private final InternalUserService internalUserService;
+    private final InternalTaskService taskService;
+    private final InternalQueryUserService userService;
     private final CommentMapper commentMapper;
 
     @Transactional
@@ -38,7 +38,7 @@ public class CommentService {
                                          @Valid CommentRequest request,
                                          Long userId) {
 
-        Task task = internalTaskService.findByTaskId(taskId);
+        Task task = taskService.findByTaskId(taskId);
 
         if (request.parentId() != null) {
             Comment parentComment = commentRepository.findById(request.parentId())
@@ -49,9 +49,9 @@ public class CommentService {
             }
         }
 
-        Comment comment = commentMapper.toEntity(request, task, internalUserService.findByUserId(userId));
+        Comment comment = commentMapper.toEntity(request, task, userService.findByUserId(userId));
         Comment savedComment = commentRepository.save(comment);
-        UserResponse userResponse = internalUserService.toUserResponse(savedComment.getUser());
+        UserResponse userResponse = userService.toUserResponse(savedComment.getUser());
 
         return commentMapper.toCommentResponse(savedComment, userResponse);
     }
@@ -59,7 +59,7 @@ public class CommentService {
     @Transactional
     public CommentPageResponse getComments(Long taskId, Pageable pageable, String sort) {
 
-        internalTaskService.findByTaskId(taskId);
+        taskService.findByTaskId(taskId);
 
         Sort.Direction orderBy = sort.equals("oldest") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sortByCreatedAt = Sort.by(orderBy, "createdAt");
@@ -70,14 +70,14 @@ public class CommentService {
         List<CommentResponse> allComments = new ArrayList<>();
 
         for (Comment parentComment : parentComments.getContent()) {
-            UserResponse parentUserResponse = internalUserService.toUserResponse(parentComment.getUser());
+            UserResponse parentUserResponse = userService.toUserResponse(parentComment.getUser());
             CommentResponse parentResponse = commentMapper.toCommentResponse(parentComment, parentUserResponse);
 
             // 2. 대댓글 조회
             List<Comment> childComments = commentRepository.findByParentId(parentComment.getCommentId(), sortByCreatedAt);
             List<CommentResponse> replies = childComments.stream()
                     .map(childComment -> {
-                        UserResponse childUserResponse = internalUserService.toUserResponse(childComment.getUser());
+                        UserResponse childUserResponse = userService.toUserResponse(childComment.getUser());
                         return commentMapper.toCommentResponse(childComment, childUserResponse);
                     })
                     .toList();
