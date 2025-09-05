@@ -75,7 +75,8 @@ public class CommandExternalAuthService {
     @Transactional
     public void delete(AuthUser authUser, DeleteRequest request) {
 
-        User user = userRepository.findByUserId(authUser.getId()).orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByUserId(authUser.getId())
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new UserException(UserErrorCode.WRONG_PASSWORD);
         }
