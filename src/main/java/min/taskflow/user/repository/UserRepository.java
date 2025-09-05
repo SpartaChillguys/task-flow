@@ -19,4 +19,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByTeamIsNull();
 
+    List<User> findByNameContaining(String Name);
 }
