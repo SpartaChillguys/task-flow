@@ -1,7 +1,10 @@
 package min.taskflow.comment.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import min.taskflow.common.entity.BaseEntity;
 import min.taskflow.task.entity.Task;
 import min.taskflow.user.entity.User;
@@ -11,18 +14,19 @@ import min.taskflow.user.entity.User;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
     @Column(nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task_id",  nullable = false)
+    @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",  nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     private Long parentId;
@@ -33,5 +37,9 @@ public class Comment extends BaseEntity {
         this.task = task;
         this.user = user;
         this.parentId = parentId;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
     }
 }

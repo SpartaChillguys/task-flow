@@ -18,4 +18,12 @@ public class TeamFixture {
 
         return team;
     }
+
+    public static Team createTeamWithId(Long teamId) {
+
+        Team team = createTeam();
+        ReflectionTestUtils.setField(team, "teamId", teamId);
+
+        return team;
+    }
 }

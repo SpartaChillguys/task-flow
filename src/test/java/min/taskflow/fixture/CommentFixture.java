@@ -24,6 +24,14 @@ public class CommentFixture {
         return comment;
     }
 
+    public static Comment createCommentWithId(String content, Task task, User user, Long commentId) {
+
+        Comment comment = createComment(content, task, user);
+        ReflectionTestUtils.setField(comment, "commentId", commentId);
+
+        return comment;
+    }
+
     public static CommentResponse createCommentResponse(Long commentId, String content, Long taskId, Long userId, UserResponse userResponse) {
 
         return CommentResponse.builder()
