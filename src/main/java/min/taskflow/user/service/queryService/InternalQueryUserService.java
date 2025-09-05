@@ -43,7 +43,8 @@ public class InternalQueryUserService {
 
     public List<User> findByTeamIsNull() {
         
-        return userRepository.findByTeamIsNull();
+        List<User> TeamIsNull = findByTeamIsNull();
+        return TeamIsNull;
     }
 
 }
