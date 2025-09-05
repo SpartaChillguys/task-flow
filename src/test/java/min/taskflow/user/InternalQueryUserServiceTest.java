@@ -34,9 +34,9 @@ public class InternalQueryUserServiceTest {
         User user2 = new User("user2", "password2", "user2@email.com",
                 "김철수", UserRole.USER, null);
 
-        when(userRepository.findByTeamIsNull()).thenReturn(List.of(user1, user2));
 
         // when
+        when(userRepository.findByTeamIsNull()).thenReturn(List.of(user1, user2));
         List<User> result = internalQueryUserService.findByTeamIsNull();
 
         // then
