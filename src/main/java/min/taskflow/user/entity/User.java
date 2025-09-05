@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import min.taskflow.common.entity.BaseEntity;
 import min.taskflow.team.entity.Team;
 import min.taskflow.user.enums.UserRole;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter

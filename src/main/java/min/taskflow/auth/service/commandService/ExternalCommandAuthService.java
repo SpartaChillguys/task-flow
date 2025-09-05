@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class CommandExternalAuthService {
+public class ExternalCommandAuthService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -77,8 +77,11 @@ public class CommandExternalAuthService {
 
         User user = userRepository.findByUserId(authUser.getId())
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+
             throw new UserException(UserErrorCode.WRONG_PASSWORD);
+            
         }
         user.delete();
 
