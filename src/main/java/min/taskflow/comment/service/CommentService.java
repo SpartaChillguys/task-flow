@@ -3,6 +3,7 @@ package min.taskflow.comment.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.comment.dto.request.CommentRequest;
+import min.taskflow.comment.dto.request.CommentUpdateRequest;
 import min.taskflow.comment.dto.response.CommentResponse;
 import min.taskflow.comment.entity.Comment;
 import min.taskflow.comment.exception.CommentErrorCode;
@@ -85,5 +86,57 @@ public class CommentService {
         PageImpl<CommentResponse> comments = new PageImpl<>(allComments, pageable, parentComments.getTotalElements());
 
         return comments;
+    }
+
+    @Transactional
+    public CommentResponse updateComment(Long taskId, CommentUpdateRequest request, Long commentId, Long userId) {
+
+        Comment comment = validateCommentAccess(taskId, commentId, userId);
+
+        comment.updateContent(request.content());
+        UserResponse userResponse = userService.toUserResponse(comment.getUser());
+
+        return commentMapper.toCommentResponse(comment, userResponse);
+    }
+
+    @Transactional
+    public int deleteComment(Long taskId, Long commentId, Long userId) {
+
+        Comment comment = validateCommentAccess(taskId, commentId, userId);
+
+        comment.delete();
+        int deleteCount = 1;
+
+        List<Comment> childComments = commentRepository.findByParentId(comment.getCommentId(), Sort.unsorted());
+
+        for (Comment childComment : childComments) {
+            childComment.delete();
+            deleteCount++;
+        }
+
+        return deleteCount;
+    }
+
+    // 댓글이 해당 작업에 속하고 작성자가 요청한 사용자와 일치하는지 확인합니다.
+    private Comment validateCommentAccess(Long taskId, Long commentId, Long userId) {
+
+        taskService.findByTaskId(taskId);
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
+
+        if (comment.isDeleted()) {
+            throw new CommentException(CommentErrorCode.COMMENT_ALREADY_DELETED);
+        }
+
+        if (!comment.getTask().getTaskId().equals(taskId)) {
+            throw new CommentException(CommentErrorCode.COMMENT_TASK_MISMATCH);
+        }
+
+        if (!comment.getUser().getUserId().equals(userId)) {
+            throw new CommentException(CommentErrorCode.COMMENT_FORBIDDEN);
+        }
+
+        return comment;
     }
 }

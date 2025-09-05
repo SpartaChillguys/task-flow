@@ -1,6 +1,7 @@
 package min.taskflow.comment;
 
 import min.taskflow.comment.dto.request.CommentRequest;
+import min.taskflow.comment.dto.request.CommentUpdateRequest;
 import min.taskflow.comment.dto.response.CommentResponse;
 import min.taskflow.comment.entity.Comment;
 import min.taskflow.comment.exception.CommentException;
@@ -112,8 +113,7 @@ public class CommentServiceTest {
         Team team = TeamFixture.createTeam();
         User user = UserFixture.createUser(team);
         Task task = TaskFixture.createTask(user);
-        Task otherTask = TaskFixture.createTask(user);
-        ReflectionTestUtils.setField(otherTask, "taskId", 20L);
+        Task otherTask = TaskFixture.createTaskWithId(user, 20L);
         Comment parentComment = CommentFixture.createComment(request.content(), otherTask, user);
 
         when(taskService.findByTaskId(taskId)).thenReturn(task);
@@ -134,8 +134,7 @@ public class CommentServiceTest {
 
         Team team = TeamFixture.createTeam();
         User user = UserFixture.createUser(team);
-        Task task = TaskFixture.createTask(user);
-        ReflectionTestUtils.setField(task, "taskId", 20L);
+        Task task = TaskFixture.createTaskWithId(user, 20L);
         Comment parentComment = CommentFixture.createComment("부모 댓글", task, user);
         Comment childComment = CommentFixture.createComment(request.content(), task, user);
 
@@ -173,8 +172,7 @@ public class CommentServiceTest {
         Team team = TeamFixture.createTeam();
         User user = UserFixture.createUser(team);
         Task task = TaskFixture.createTask(user);
-        Comment parentComment = CommentFixture.createComment("부모 댓글", task, user);
-        ReflectionTestUtils.setField(parentComment, "commentId", parentId);
+        Comment parentComment = CommentFixture.createCommentWithId("부모 댓글", task, user, parentId);
         Comment childComment = CommentFixture.createComment("자식 댓글", task, user);
 
         UserResponse userResponse = UserFixture.createUserResponse(user, userId);
@@ -201,5 +199,150 @@ public class CommentServiceTest {
         assertThat(comments.getContent()).hasSize(2);
         assertThat(comments.getContent().get(0).content()).isEqualTo("부모 댓글");
         assertThat(comments.getContent().get(1).content()).isEqualTo("자식 댓글");
+    }
+
+    @Test
+    void updateComment_댓글_수정_성공() {
+
+        // given
+        Long taskId = 1L;
+        Long userId = 2L;
+        Long commentId = 3L;
+        CommentUpdateRequest request = new CommentUpdateRequest("수정된 내용");
+
+        Team team = TeamFixture.createTeam();
+        User user = UserFixture.createUserWithId(team, userId);
+        Task task = TaskFixture.createTaskWithId(user, taskId);
+        Comment comment = CommentFixture.createComment("원래 내용", task, user);
+
+        UserResponse userResponse = UserFixture.createUserResponse(user, userId);
+        CommentResponse expectedResponse = CommentFixture.createCommentResponse(commentId, "수정된 내용", taskId, userId, userResponse);
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(userService.toUserResponse(user)).thenReturn(userResponse);
+        when(commentMapper.toCommentResponse(comment, userResponse)).thenReturn(expectedResponse);
+
+        // when
+        CommentResponse response = commentService.updateComment(taskId, request, commentId, userId);
+
+        // then
+        assertNotNull(response);
+        assertEquals("수정된 내용", response.content());
+    }
+
+    @Test
+    void updateComment_댓글이_존재하지_않는_경우() {
+
+        // given
+        Long taskId = 1L;
+        Long userId = 2L;
+        Long commentId = 3L;
+        CommentUpdateRequest request = new CommentUpdateRequest("수정된 내용");
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(CommentException.class, () -> commentService.updateComment(taskId, request, commentId, userId));
+    }
+
+    @Test
+    void updateComment_이미_삭제된_댓글인_경우() {
+
+        // given
+        Long taskId = 1L;
+        Long userId = 2L;
+        Long commentId = 3L;
+        CommentUpdateRequest request = new CommentUpdateRequest("수정된 내용");
+
+        Team team = TeamFixture.createTeam();
+        User user = UserFixture.createUser(team);
+        Task task = TaskFixture.createTask(user);
+        Comment comment = CommentFixture.createComment("삭제된 댓글", task, user);
+        comment.delete(); // 삭제 처리
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+        when(taskService.findByTaskId(taskId)).thenReturn(task);
+
+        // when & then
+        assertThrows(CommentException.class, () -> commentService.updateComment(taskId, request, commentId, userId));
+    }
+
+    @Test
+    void updateComment_작성자가_아닌_경우() {
+
+        // given
+        Long taskId = 1L;
+        Long userId = 2L;
+        Long commentId = 3L;
+        CommentUpdateRequest request = new CommentUpdateRequest("수정된 내용");
+
+        Team team = TeamFixture.createTeam();
+        User user = UserFixture.createUserWithId(team, 100L);
+        Task task = TaskFixture.createTaskWithId(user, taskId);
+        Comment comment = CommentFixture.createComment("원래 내용", task, user);
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+        when(taskService.findByTaskId(taskId)).thenReturn(task);
+
+        // when & then
+        assertThrows(CommentException.class, () -> commentService.updateComment(taskId, request, commentId, userId));
+    }
+
+    @Test
+    void deleteComment_댓글_삭제_성공_자식댓글_없음() {
+
+        // given
+        Long taskId = 1L;
+        Long userId = 2L;
+        Long commentId = 3L;
+
+        Team team = TeamFixture.createTeam();
+        User user = UserFixture.createUserWithId(team, userId);
+        Task task = TaskFixture.createTaskWithId(user, taskId);
+        Comment comment = CommentFixture.createCommentWithId("댓글 내용", task, user, commentId);
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(commentRepository.findByParentId(commentId, Sort.unsorted())).thenReturn(List.of());
+
+        // when
+        int deletedCount = commentService.deleteComment(taskId, commentId, userId);
+
+        // then
+        assertEquals(1, deletedCount);
+        assertTrue(comment.isDeleted());
+    }
+
+    @Test
+    void deleteComment_댓글_삭제_성공_자식댓글_포함() {
+
+        // given
+        Long taskId = 1L;
+        Long userId = 2L;
+        Long commentId = 3L;
+
+        Team team = TeamFixture.createTeam();
+        User user = UserFixture.createUserWithId(team, userId);
+        Task task = TaskFixture.createTaskWithId(user, taskId);
+        Comment parentComment = CommentFixture.createCommentWithId("부모 댓글", task, user, commentId);
+        Comment childComment1 = CommentFixture.createComment("대댓글1", task, user);
+        Comment childComment2 = CommentFixture.createComment("대댓글2", task, user);
+        ReflectionTestUtils.setField(childComment1, "parentId", commentId);
+        ReflectionTestUtils.setField(childComment2, "parentId", commentId);
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(parentComment));
+        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(commentRepository.findByParentId(commentId, Sort.unsorted()))
+                .thenReturn(List.of(childComment1, childComment2));
+
+        // when
+        int deletedCount = commentService.deleteComment(taskId, commentId, userId);
+
+        // then
+        assertEquals(3, deletedCount);
+        assertTrue(parentComment.isDeleted());
+        assertTrue(childComment1.isDeleted());
+        assertTrue(childComment2.isDeleted());
     }
 }
