@@ -46,16 +46,7 @@ public class UserController {
         User user = internalQueryUserService.findByUserId(id);
         return ResponseEntity.ok(internalQueryUserService.toUserResponse(user));
     }
-
-    /**
-     * 팀이 없는 유저들 조회
-     * GET /api/users/no-team
-     */
-    @GetMapping("/no-team")
-    public ResponseEntity<List<UserResponse>> getUsersWithoutTeam() {
-        return ResponseEntity.ok(internalQueryUserService.findByTeamIsNull());
-    }
-
+    
     /**
      * 전체 유저 조회
      * GET /api/users

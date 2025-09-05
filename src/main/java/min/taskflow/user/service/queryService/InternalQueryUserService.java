@@ -42,7 +42,7 @@ public class InternalQueryUserService {
     }
 
     // 팀이 없는 유저 조회
-    @Transactional(readOnly = true)
+
     public List<UserResponse> findByTeamIsNull() {
         List<User> users = userRepository.findByTeamIsNull();
         return users.stream()
@@ -51,7 +51,7 @@ public class InternalQueryUserService {
     }
 
     // 전체 유저 조회
-    @Transactional(readOnly = true)
+
     public List<UserResponse> findAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
@@ -60,7 +60,7 @@ public class InternalQueryUserService {
     }
 
     //유저 이름 다 조회
-    @Transactional(readOnly = true)
+
     public List<String> findAllUserNames() {
         return userRepository.findAll()
                 .stream()
