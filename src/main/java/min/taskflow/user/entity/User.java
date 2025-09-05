@@ -48,4 +48,13 @@ public class User extends BaseEntity {
         this.role = role;
         this.team = team;
     }
+
+    // 연관관계 편의 메서드 (수영 : team, user와의 양방향 연관관계 때문에 만들었습니다.)
+    public void assignTeam(Team team) {
+        this.team = team;
+    }
+
+    public void removeFromTeam() {
+        this.team = null;
+    }
 }

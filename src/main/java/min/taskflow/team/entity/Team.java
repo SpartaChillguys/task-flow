@@ -44,16 +44,22 @@ public class Team extends BaseEntity {
     public void addMember(User member) {
         if (!members.contains(member)) {
             members.add(member);
+            member.assignTeam(this); // setter 대신 편의 메서드 사용
         }
     }
 
     // 팀 멤버 삭제
     public void removeMember(User member) {
-        members.remove(member);
+        if (members.remove(member)) {
+            member.removeFromTeam();
+        }
     }
 
     // 팀 삭제 시 멤버와 관계 끊기
     public void delete() {
-        members.clear();
+        super.delete();
+        for (User member : new ArrayList<>(members)) {
+            removeMember(member);
+        }
     }
 }

@@ -66,4 +66,13 @@ public class TeamController {
         List<TeamMemberResponse> members = teamService.getTeamMembers(teamId);
         return ApiResponse.success(members, "팀 멤버 조회에 성공하셨습니다.");
     }
+
+    // 팀 멤버 추가
+    @PostMapping("/teams/{teamId}/members/{memberId}")
+    public ResponseEntity<ApiResponse<TeamMemberResponse>> addMember(@PathVariable Long teamId,
+                                                                     @PathVariable Long memberId) {
+
+        TeamMemberResponse response = teamService.addMemberById(teamId, memberId);
+        return ApiResponse.created(response, "팀 멤버가 성공적으로 추가되었습니다.");
+    }
 }

@@ -10,6 +10,8 @@ import min.taskflow.team.exception.TeamErrorCode;
 import min.taskflow.team.exception.TeamException;
 import min.taskflow.team.mapper.TeamMapper;
 import min.taskflow.team.repository.TeamRepository;
+import min.taskflow.user.entity.User;
+import min.taskflow.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
+    private final UserRepository userRepository;
 
     // 팀 생성
     @Transactional
@@ -40,7 +43,7 @@ public class TeamService {
     @Transactional(readOnly = true)
     public TeamResponse getTeamById(Long teamId) {
 
-        Team team = teamRepository.findById(teamId)
+        Team team = teamRepository.findByIdWithMembers(teamId)
                 .orElseThrow(() -> new TeamException(TeamErrorCode.TEAM_NOT_FOUND));
 
         return teamMapper.toTeamResponse(team);
@@ -50,7 +53,8 @@ public class TeamService {
     @Transactional(readOnly = true)
     public List<TeamResponse> getAllTeams() {
 
-        return teamRepository.findAll().stream()
+        List<Team> teams = teamRepository.findAllWithMembers();
+        return teams.stream()
                 .map(teamMapper::toTeamResponse)
                 .toList();
     }
@@ -83,9 +87,29 @@ public class TeamService {
     // 팀 멤버 조회
     @Transactional(readOnly = true)
     public List<TeamMemberResponse> getTeamMembers(Long teamId) {
-        Team team = teamRepository.findById(teamId)
+
+        Team team = teamRepository.findByIdWithMembers(teamId)
                 .orElseThrow(() -> new TeamException(TeamErrorCode.TEAM_NOT_FOUND));
 
         return teamMapper.toTeamMemberResponseList(team.getMembers());
+    }
+
+    // 팀 멤버 추가
+    @Transactional
+    public TeamMemberResponse addMemberById(Long teamId, Long memberId) {
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamException(TeamErrorCode.TEAM_NOT_FOUND));
+        User member = userRepository.findById(memberId)
+                .orElseThrow(() -> new TeamException(TeamErrorCode.MEMBER_NOT_FOUND));
+
+        if (team.getMembers().contains(member)) {
+            throw new TeamException(TeamErrorCode.MEMBER_ALREADY_IN_TEAM);
+        }
+
+        team.addMember(member);
+        userRepository.save(member);
+
+        return teamMapper.toTeamMemberResponse(member);
     }
 }
