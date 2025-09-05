@@ -8,7 +8,6 @@ import min.taskflow.auth.dto.request.LoginRequest;
 import min.taskflow.auth.dto.request.RegisterRequest;
 import min.taskflow.auth.dto.response.LoginResponse;
 import min.taskflow.auth.dto.response.RegisterResponse;
-import min.taskflow.common.dto.AuthUser;
 import min.taskflow.user.PasswordEncoder;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.exception.UserErrorCode;
@@ -73,14 +72,14 @@ public class ExternalCommandAuthService {
     }
 
     @Transactional
-    public void delete(AuthUser authUser, DeleteRequest request) {
+    public void delete(Long userId, DeleteRequest request) {
 
-        User user = userRepository.findByUserId(authUser.getId())
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new UserException(UserErrorCode.WRONG_PASSWORD);
-        
+
         }
         user.delete();
 
