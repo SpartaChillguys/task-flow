@@ -37,11 +37,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 Claims claims = jwtUtil.validateToken(token);
                 Long userId = Long.valueOf(claims.getSubject());
                 UserRole userRole = UserRole.valueOf(claims.get("userRole", String.class));
-                // ✅ Authentication 객체 생성
+
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                userId, // Principal (보통 User 객체, 여기선 userId)
-                                null,   // Credentials
+                                userId,
+                                null,
                                 List.of(new SimpleGrantedAuthority("ROLE_" + userRole.name())) // 권한
                         );
 

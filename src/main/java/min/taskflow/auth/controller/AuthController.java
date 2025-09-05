@@ -9,11 +9,10 @@ import min.taskflow.auth.dto.request.RegisterRequest;
 import min.taskflow.auth.dto.response.LoginResponse;
 import min.taskflow.auth.dto.response.RegisterResponse;
 import min.taskflow.auth.service.commandService.ExternalCommandAuthService;
-import min.taskflow.common.annotation.Auth;
-import min.taskflow.common.dto.AuthUser;
 import min.taskflow.common.response.ApiResponse;
 import min.taskflow.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,9 +47,9 @@ public class AuthController {
 
     //계정 삭제(회원 탈퇴)
     @PostMapping("/withdraw")
-    public ResponseEntity<ApiResponse<Void>> delete(@Auth AuthUser authUser, @Valid @RequestBody DeleteRequest request) {
+    public ResponseEntity<ApiResponse<Void>> delete(@AuthenticationPrincipal Long userId, @Valid @RequestBody DeleteRequest request) {
 
-        externalCommandAuthService.delete(authUser, request);
+        externalCommandAuthService.delete(userId, request);
         return ApiResponse.noContent("회원탈퇴가 완료되었습니다.");
     }
 }
