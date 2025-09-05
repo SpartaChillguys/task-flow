@@ -78,4 +78,6 @@ public class InternalQueryUserServiceTest {
         assertThat(result).hasSize(2);
         assertThat(result).containsExactlyInAnyOrder("홍길동", "김철수");
     }
+
+
 }

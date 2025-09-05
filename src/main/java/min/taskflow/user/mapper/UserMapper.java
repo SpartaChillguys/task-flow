@@ -5,6 +5,7 @@ import min.taskflow.auth.dto.request.RegisterRequest;
 import min.taskflow.auth.dto.response.RegisterResponse;
 import min.taskflow.user.dto.response.UserProfileResponse;
 import min.taskflow.user.dto.response.UserResponse;
+import min.taskflow.user.dto.response.UserSearchResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
 import org.springframework.stereotype.Component;
@@ -60,6 +61,16 @@ public class UserMapper {
                 .name(user.getName())
                 .role(user.getRole())
                 .createdAt(user.getCreatedAt())
+                .build();
+    }
+
+    public UserSearchResponse toSearchResponse(User user) {
+
+        return UserSearchResponse.builder()
+                .userid(user.getUserId())
+                .userName(user.getUserName())
+                .name(user.getName())
+                .email((user.getEmail()))
                 .build();
     }
 }
