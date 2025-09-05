@@ -43,7 +43,7 @@ public class InternalQueryUserService {
 
     public List<User> findByTeamIsNull() {
 
-        return findByTeamIsNull(); //테스트에서 stackoverflow 나서 바로 반환해줘야할것 같습니다.
+        return userRepository.findByTeamIsNull(); //테스트에서 stackoverflow 나서 바로 반환해줘야할것 같습니다.
     }
 
 }
