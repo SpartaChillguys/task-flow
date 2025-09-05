@@ -3,6 +3,7 @@ package min.taskflow.user.repository;
 import min.taskflow.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -13,4 +14,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //Optional<User> findByEmail(String mail);
 
     Optional<User> findByUserName(String userName);
+
+    Optional<User> findByUserId(Long userId);
+
+    List<User> findByTeamIsNull();
 }
