@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ExternalUserService {
+public class ExternalQuueryUserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;

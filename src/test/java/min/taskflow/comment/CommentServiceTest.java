@@ -14,7 +14,7 @@ import min.taskflow.task.entity.Task;
 import min.taskflow.task.service.InternalTaskService;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.service.queryService.InternalUserService;
+import min.taskflow.user.service.queryService.InternalQueryUserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,7 +45,7 @@ public class CommentServiceTest {
     private InternalTaskService internalTaskService;
 
     @Mock
-    private InternalUserService internalUserService;
+    private InternalQueryUserService internalQueryUserService;
 
     @Test
     void createComment_댓글_생성_성공() {
@@ -63,10 +63,10 @@ public class CommentServiceTest {
                 .createCommentResponse(100L, "댓글 내용", taskId, userId, userResponse);
 
         when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
-        when(internalUserService.findByUserId(userId)).thenReturn(user);
+        when(internalQueryUserService.findByUserId(userId)).thenReturn(user);
         when(commentMapper.toEntity(request, task, user)).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        when(internalUserService.toUserResponse(user)).thenReturn(userResponse);
+        when(internalQueryUserService.toUserResponse(user)).thenReturn(userResponse);
         when(commentMapper.toCommentResponse(any(Comment.class), eq(userResponse))).thenReturn(commentResponse);
 
         // when
@@ -135,11 +135,11 @@ public class CommentServiceTest {
                 .createCommentResponse(200L, "대댓글 내용", taskId, userId, userResponse);
 
         when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
-        when(internalUserService.findByUserId(userId)).thenReturn(user);
+        when(internalQueryUserService.findByUserId(userId)).thenReturn(user);
         when(commentRepository.findById(parentId)).thenReturn(Optional.of(parentComment));
         when(commentMapper.toEntity(request, task, user)).thenReturn(childComment);
         when(commentRepository.save(any(Comment.class))).thenReturn(childComment);
-        when(internalUserService.toUserResponse(user)).thenReturn(userResponse);
+        when(internalQueryUserService.toUserResponse(user)).thenReturn(userResponse);
         when(commentMapper.toCommentResponse(any(Comment.class), eq(userResponse))).thenReturn(commentResponse);
 
         // when
