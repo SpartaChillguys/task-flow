@@ -1,6 +1,6 @@
 package min.taskflow.user;
 
-import min.taskflow.user.dto.response.UserResponse;
+import min.taskflow.user.dto.response.UserProfileResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
 import min.taskflow.user.exception.UserErrorCode;
@@ -38,12 +38,13 @@ public class UserProfileTest {
         Long userId = 1L;
         User user = new User("test", "123456q!@", "test@test", "test", UserRole.USER, null);
 
-        UserResponse response = new UserResponse(userId, user.getUserName(), user.getEmail(), user.getName(), user.getRole(), user.getTeam(), user.getCreatedAt());
+        UserProfileResponse response = userMapper.toProfileResponse(user);
+
         // when
         when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
-        when(userMapper.userResponse(user)).thenReturn(response);
+        when(userMapper.toProfileResponse(user)).thenReturn(response);
 
-        UserResponse result = externalQuueryUserService.getMe(userId);
+        UserProfileResponse result = externalQuueryUserService.getMe(userId);
 
         // then
         Assertions.assertThat(result).isEqualTo(response); //결과와 예상한 응답이 같은지
