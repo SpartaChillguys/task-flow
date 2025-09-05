@@ -31,7 +31,6 @@ public class JwtUtilTest {
 
         // then
         assertThat(token).isNotNull();
-        assertThat(token).startsWith("Bearer ");
     }
 
     @Test
@@ -40,10 +39,10 @@ public class JwtUtilTest {
         Long userId = 1L;
         UserRole userRole = UserRole.USER;
         String token = jwtUtil.createToken(userId, userRole);
-        String jwtToken = token.substring(7); // "Bearer " 제거
+//        String jwtToken = token.substring(7); // "Bearer " 제거
 
         // when
-        Claims claims = jwtUtil.validateToken(jwtToken);
+        Claims claims = jwtUtil.validateToken(token);
 
         // then
         assertThat(claims.getSubject()).isEqualTo(String.valueOf(userId));

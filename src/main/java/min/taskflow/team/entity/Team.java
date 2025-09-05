@@ -22,7 +22,7 @@ public class Team extends BaseEntity {
     @Column(length = 500)
     private String description;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "team", orphanRemoval = false)
     private List<User> members = new ArrayList<>();
 
     @Builder
@@ -34,8 +34,32 @@ public class Team extends BaseEntity {
         }
     }
 
+    // 팀 정보 수정
     public void updateTeam(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    // 팀 멤버 추가
+    public void addMember(User member) {
+        if (!members.contains(member)) {
+            members.add(member);
+            member.assignTeam(this); // setter 대신 편의 메서드 사용
+        }
+    }
+
+    // 팀 멤버 삭제
+    public void removeMember(User member) {
+        if (members.remove(member)) {
+            member.removeFromTeam();
+        }
+    }
+
+    // 팀 삭제 시 멤버와 관계 끊기
+    public void delete() {
+        super.delete();
+        for (User member : new ArrayList<>(members)) {
+            removeMember(member);
+        }
     }
 }
