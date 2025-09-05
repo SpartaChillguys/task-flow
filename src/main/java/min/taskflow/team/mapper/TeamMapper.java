@@ -12,6 +12,7 @@ import java.util.List;
 public class TeamMapper {
 
     public Team toEntity(TeamCreateRequest request) {
+
         return Team.builder()
                 .name(request.name())
                 .description(request.description())
@@ -19,10 +20,12 @@ public class TeamMapper {
     }
 
     public void updateEntity(Team team, TeamUpdateRequest request) {
+
         team.updateTeam(request.name(), request.description());
     }
 
     public TeamResponse toTeamResponse(Team team) {
+
         return new TeamResponse(
                 team.getTeamId(),
                 team.getName(),
@@ -30,30 +33,28 @@ public class TeamMapper {
                 team.getCreatedAt(),
                 team.getMembers() == null ? Collections.emptyList() :
                         team.getMembers().stream()
-                                .map(user -> new MemberResponse(
-                                        user.getUserId(),
-                                        user.getUserName(),
-                                        user.getName(),
-                                        user.getEmail(),
-                                        user.getRole().name(),
-                                        user.getCreatedAt()
-                                ))
+                                .map(this::toMemberResponse)
                                 .toList()
         );
     }
 
-    public TeamMemberResponse toTeamMemberResponse(User user) {
-        return new TeamMemberResponse(
+    public MemberResponse toMemberResponse(User user) {
+
+        return new MemberResponse(
                 user.getUserId(),
                 user.getUserName(),
+                user.getName(),
                 user.getEmail(),
-                user.getName()
+                user.getRole().name(),
+                user.getCreatedAt()
         );
     }
 
-    public List<TeamMemberResponse> toTeamMemberResponseList(List<User> users) {
+
+    public List<MemberResponse> toMemberResponseList(List<User> users) {
+
         return users.stream()
-                .map(this::toTeamMemberResponse)
+                .map(this::toMemberResponse)
                 .toList();
     }
 }

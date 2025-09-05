@@ -1,10 +1,7 @@
 package min.taskflow.team.service;
 
 import lombok.RequiredArgsConstructor;
-import min.taskflow.team.dto.TeamCreateRequest;
-import min.taskflow.team.dto.TeamMemberResponse;
-import min.taskflow.team.dto.TeamResponse;
-import min.taskflow.team.dto.TeamUpdateRequest;
+import min.taskflow.team.dto.*;
 import min.taskflow.team.entity.Team;
 import min.taskflow.team.exception.TeamErrorCode;
 import min.taskflow.team.exception.TeamException;
@@ -88,17 +85,16 @@ public class TeamService {
 
     // 팀 멤버 조회
     @Transactional(readOnly = true)
-    public List<TeamMemberResponse> getTeamMembers(Long teamId) {
+    public List<MemberResponse> getTeamMembers(Long teamId) {
 
         Team team = teamRepository.findByIdWithMembers(teamId)
                 .orElseThrow(() -> new TeamException(TeamErrorCode.TEAM_NOT_FOUND));
-
-        return teamMapper.toTeamMemberResponseList(team.getMembers());
+        return teamMapper.toMemberResponseList(team.getMembers());
     }
 
     // 팀 멤버 추가
     @Transactional
-    public TeamMemberResponse addMemberById(Long teamId, Long memberId) {
+    public MemberResponse addMemberById(Long teamId, Long memberId) {
 
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamException(TeamErrorCode.TEAM_NOT_FOUND));
@@ -112,7 +108,7 @@ public class TeamService {
         team.addMember(member);
         userRepository.save(member);
 
-        return teamMapper.toTeamMemberResponse(member);
+        return teamMapper.toMemberResponse(member);
     }
 
     // 팀 멤버 삭제
@@ -134,14 +130,14 @@ public class TeamService {
 
     // 소속 없는 팀 조회
     @Transactional(readOnly = true)
-    public List<TeamMemberResponse> getAvailableMembers() {
+    public List<MemberResponse> getAvailableMembers() {
 
-        List<User> allusers = userRepository.findAll();
+        List<User> allUsers = userRepository.findAll();
 
-        List<User> availableUsers = allusers.stream()
+        List<User> availableUsers = allUsers.stream()
                 .filter(user -> user.getTeam() == null && !user.isDeleted())
                 .toList();
 
-        return teamMapper.toTeamMemberResponseList(availableUsers);
+        return teamMapper.toMemberResponseList(availableUsers);
     }
 }
