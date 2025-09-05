@@ -12,7 +12,7 @@ import min.taskflow.comment.repository.CommentRepository;
 import min.taskflow.task.entity.Task;
 import min.taskflow.task.service.InternalTaskService;
 import min.taskflow.user.dto.response.UserResponse;
-import min.taskflow.user.service.InternalUserService;
+import min.taskflow.user.service.queryService.InternalUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
