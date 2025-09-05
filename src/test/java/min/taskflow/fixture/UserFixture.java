@@ -1,22 +1,29 @@
 package min.taskflow.fixture;
 
+import min.taskflow.team.entity.Team;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
-import min.taskflow.team.entity.Team;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.time.LocalDateTime;
 
 public class UserFixture {
 
-    public static User createUser() {
+    public static User createUser(Team team) {
 
-        return User.builder()
+        User user = User.builder()
                 .userName("chulsoo")
                 .password("abcd1234!@#$")
                 .email("john@example.com")
                 .name("김철수")
                 .role(UserRole.USER)
-                .team(Team.builder().name("개발팀").description("프론트엔드 및 백엔드 개발자들").build())
+                .team(team)
                 .build();
+        ReflectionTestUtils.setField(user, "createdAt", LocalDateTime.of(2025, 9, 5, 15, 30));
+        ReflectionTestUtils.setField(user, "updatedAt", LocalDateTime.of(2025, 9, 5, 15, 30));
+
+        return user;
     }
 
     public static UserResponse createUserResponse(User user, Long userId) {

@@ -14,6 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Id
