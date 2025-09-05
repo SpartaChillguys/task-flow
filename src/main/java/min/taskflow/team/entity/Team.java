@@ -34,8 +34,26 @@ public class Team extends BaseEntity {
         }
     }
 
+    // 팀 정보 수정
     public void updateTeam(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    // 팀 멤버 추가
+    public void addMember(User member) {
+        if (!members.contains(member)) {
+            members.add(member);
+        }
+    }
+
+    // 팀 멤버 삭제
+    public void removeMember(User member) {
+        members.remove(member);
+    }
+
+    // 팀 삭제 시 멤버와 관계 끊기
+    public void delete() {
+        members.clear();
     }
 }
