@@ -14,13 +14,12 @@ import min.taskflow.task.entity.Task;
 import min.taskflow.task.service.InternalTaskService;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.service.InternalUserService;
+import min.taskflow.user.service.queryService.InternalUserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
