@@ -19,8 +19,8 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<CommentResponse>> createComment(@PathVariable Long taskId,
-                                                                     @Valid @RequestBody CommentRequest request,
-                                                                     @Auth Long userId) {
+                                                                      @Valid @RequestBody CommentRequest request,
+                                                                      @Auth Long userId) {
 
         CommentResponse comment = commentService.createComment(taskId, request, userId);
 

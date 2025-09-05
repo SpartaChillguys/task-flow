@@ -20,12 +20,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,8 +65,10 @@ public class CommentServiceTest {
 
         when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
         when(internalUserService.findByUserId(userId)).thenReturn(user);
+        when(commentMapper.toEntity(request, task, user)).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        when(commentMapper.toCommentResponse(any(Comment.class))).thenReturn(commentResponse);
+        when(internalUserService.toUserResponse(user)).thenReturn(userResponse);
+        when(commentMapper.toCommentResponse(any(Comment.class), eq(userResponse))).thenReturn(commentResponse);
 
         // when
         CommentResponse response = commentService.createComment(taskId, request, userId);
@@ -134,8 +138,10 @@ public class CommentServiceTest {
         when(internalTaskService.findByTaskId(taskId)).thenReturn(task);
         when(internalUserService.findByUserId(userId)).thenReturn(user);
         when(commentRepository.findById(parentId)).thenReturn(Optional.of(parentComment));
+        when(commentMapper.toEntity(request, task, user)).thenReturn(childComment);
         when(commentRepository.save(any(Comment.class))).thenReturn(childComment);
-        when(commentMapper.toCommentResponse(any(Comment.class))).thenReturn(commentResponse);
+        when(internalUserService.toUserResponse(user)).thenReturn(userResponse);
+        when(commentMapper.toCommentResponse(any(Comment.class), eq(userResponse))).thenReturn(commentResponse);
 
         // when
         CommentResponse response = commentService.createComment(taskId, request, userId);
