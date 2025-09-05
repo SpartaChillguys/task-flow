@@ -2,7 +2,7 @@ package min.taskflow.auth;
 
 import min.taskflow.auth.dto.request.RegisterRequest;
 import min.taskflow.auth.dto.response.RegisterResponse;
-import min.taskflow.auth.service.ExternalAuthService;
+import min.taskflow.auth.service.commandService.ExternalCommandAuthService;
 import min.taskflow.user.PasswordEncoder;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 public class RegisterTest {
 
     @InjectMocks
-    private ExternalAuthService externalUserService;
+    private ExternalCommandAuthService externalUserService;
 
     @Mock
     private UserRepository userRepository;
