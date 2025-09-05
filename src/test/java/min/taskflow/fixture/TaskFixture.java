@@ -25,4 +25,12 @@ public class TaskFixture {
 
         return task;
     }
+
+    public static Task createTaskWithId(User user, Long taskId) {
+
+        Task task = createTask(user);
+        ReflectionTestUtils.setField(task, "taskId", taskId);
+
+        return task;
+    }
 }
