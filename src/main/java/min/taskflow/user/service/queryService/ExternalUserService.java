@@ -1,4 +1,4 @@
-package min.taskflow.user.service;
+package min.taskflow.user.service.queryService;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.user.dto.response.UserResponse;
@@ -15,13 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ExternalUserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     //프로필 조회 로직
-    @Transactional(readOnly = true)
+
     public UserResponse getMe(Long id) {
 
         User user = userRepository.findByUserId(id)

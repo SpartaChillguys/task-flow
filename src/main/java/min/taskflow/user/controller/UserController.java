@@ -6,7 +6,7 @@ import min.taskflow.common.annotation.Auth;
 import min.taskflow.common.dto.AuthUser;
 import min.taskflow.common.response.ApiResponse;
 import min.taskflow.user.dto.response.UserResponse;
-import min.taskflow.user.service.ExternalUserService;
+import min.taskflow.user.service.queryService.ExternalUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
