@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -45,6 +45,7 @@ public class AuthController {
     //로그인중인 유저ID 잘 가져오는지
     @GetMapping("/test")
     public void test(@Auth AuthUser authUser) {
+
         System.out.println(authUser.getId());
     }
 }

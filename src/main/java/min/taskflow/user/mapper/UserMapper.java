@@ -20,6 +20,7 @@ public class UserMapper {
                 .name(user.getName())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .createdAt(user.getCreatedAt())
                 .build();
     }
 
