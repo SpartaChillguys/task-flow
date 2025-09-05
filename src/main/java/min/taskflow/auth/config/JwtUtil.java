@@ -38,7 +38,7 @@ public class JwtUtil {
 
         Date date = new Date();
 
-        return BEARER_PREFIX +
+        return
                 Jwts.builder()
                         .setSubject(String.valueOf(userId))
                         .claim("userRole", userRole)

@@ -3,7 +3,7 @@ package min.taskflow.auth;
 import min.taskflow.auth.config.JwtUtil;
 import min.taskflow.auth.dto.request.LoginRequest;
 import min.taskflow.auth.dto.response.LoginResponse;
-import min.taskflow.auth.service.ExternalAuthService;
+import min.taskflow.auth.service.commandService.ExternalCommandAuthService;
 import min.taskflow.user.PasswordEncoder;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
@@ -36,7 +36,7 @@ public class LoginTest {
     private JwtUtil jwtUtil;
 
     @InjectMocks
-    private ExternalAuthService authService;
+    private ExternalCommandAuthService authService;
 
     //테스트용
     private User testUser;

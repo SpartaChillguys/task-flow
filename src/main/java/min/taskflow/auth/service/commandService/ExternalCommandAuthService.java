@@ -1,12 +1,14 @@
-package min.taskflow.auth.service;
+package min.taskflow.auth.service.commandService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.auth.config.JwtUtil;
+import min.taskflow.auth.dto.request.DeleteRequest;
 import min.taskflow.auth.dto.request.LoginRequest;
 import min.taskflow.auth.dto.request.RegisterRequest;
 import min.taskflow.auth.dto.response.LoginResponse;
 import min.taskflow.auth.dto.response.RegisterResponse;
+import min.taskflow.common.dto.AuthUser;
 import min.taskflow.user.PasswordEncoder;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.exception.UserErrorCode;
@@ -21,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class ExternalAuthService {
+public class ExternalCommandAuthService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -68,5 +70,19 @@ public class ExternalAuthService {
         String token = jwtUtil.createToken(user.getUserId(), user.getRole());
 
         return new LoginResponse(token);
+    }
+
+    @Transactional
+    public void delete(AuthUser authUser, DeleteRequest request) {
+
+        User user = userRepository.findByUserId(authUser.getId())
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new UserException(UserErrorCode.WRONG_PASSWORD);
+        
+        }
+        user.delete();
+
     }
 }
