@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -35,16 +36,16 @@ public class UserProfileTest {
     @Test
     void getMe_요청시_성공적() {
         // given
-        Long userId = 1L;
-        User user = new User("test", "123456q!@", "test@test", "test", UserRole.USER, null);
 
+        User user = new User("test", "123456q!@", "test@test", "test", UserRole.USER, null);
+        ReflectionTestUtils.setField(user, "userId", 1L);
         UserProfileResponse response = userMapper.toProfileResponse(user);
 
         // when
-        when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findByUserId(user.getUserId())).thenReturn(Optional.of(user));
         when(userMapper.toProfileResponse(user)).thenReturn(response);
 
-        UserProfileResponse result = externalQuueryUserService.getMe(userId);
+        UserProfileResponse result = externalQuueryUserService.getMe(user.getUserId());
 
         // then
         Assertions.assertThat(result).isEqualTo(response); //결과와 예상한 응답이 같은지
