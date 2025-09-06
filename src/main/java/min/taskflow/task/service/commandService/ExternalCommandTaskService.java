@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import min.taskflow.task.dto.request.StatusUpdateRequest;
 import min.taskflow.task.dto.request.TaskCreateRequest;
 import min.taskflow.task.dto.request.TaskUpdateRequest;
-import min.taskflow.task.dto.response.TaskResponse;
+import min.taskflow.task.dto.response.task.TaskResponse;
 import min.taskflow.task.entity.Task;
 import min.taskflow.task.exception.TaskErrorCode;
 import min.taskflow.task.exception.TaskException;

@@ -1,7 +1,8 @@
 package min.taskflow.task.mapper;
 
 import min.taskflow.task.dto.request.TaskCreateRequest;
-import min.taskflow.task.dto.response.TaskResponse;
+import min.taskflow.task.dto.response.dashboard.TaskSummaryResponse;
+import min.taskflow.task.dto.response.task.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
 import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;

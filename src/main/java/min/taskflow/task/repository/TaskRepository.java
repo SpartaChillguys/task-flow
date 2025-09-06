@@ -1,6 +1,6 @@
 package min.taskflow.task.repository;
 
-import min.taskflow.task.dto.response.TaskResponse;
+import min.taskflow.task.dto.response.task.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
 import org.springframework.data.domain.Page;

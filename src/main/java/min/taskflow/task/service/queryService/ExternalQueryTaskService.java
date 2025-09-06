@@ -2,7 +2,7 @@ package min.taskflow.task.service.queryService;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.task.dto.condition.TaskSearchCondition;
-import min.taskflow.task.dto.response.TaskResponse;
+import min.taskflow.task.dto.response.task.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
 import min.taskflow.task.exception.TaskErrorCode;
