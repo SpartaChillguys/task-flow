@@ -8,6 +8,8 @@ import min.taskflow.task.entity.Task;
 import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class TaskMapper {
 
@@ -37,5 +39,27 @@ public class TaskMapper {
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())
                 .build();
+    }
+
+    public TaskSummaryResponse toTaskSummaryResponse(List<Task> todayTasks,
+                                                     List<Task> upcomingTasks,
+                                                     List<Task> overdueTasks) {
+
+        return TaskSummaryResponse.builder()
+                .todayTasks(toTaskSummaryDtos(todayTasks))
+                .upcomingTasks(toTaskSummaryDtos(upcomingTasks))
+                .overdueTasks(toTaskSummaryDtos(overdueTasks))
+                .build();
+    }
+
+    private List<TaskSummaryResponse.TaskSummaryDto> toTaskSummaryDtos(List<Task> tasks) {
+        return tasks.stream()
+                .map(task -> new TaskSummaryResponse.TaskSummaryDto(
+                        task.getTaskId(),
+                        task.getTitle(),
+                        task.getStatus(),
+                        task.getDueDate()
+                ))
+                .toList();
     }
 }

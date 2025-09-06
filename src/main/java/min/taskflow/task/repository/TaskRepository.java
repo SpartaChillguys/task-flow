@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +29,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     Page<TaskResponse> findByTitleContaining(String query, Pageable pageable);
 
     Page<TaskResponse> findByAssigneeId(Long aLong, Pageable pageable);
+
+    List<Task> findByAssigneeIdAndDueDateBetween(Long assigneeId, LocalDateTime dueDateAfter, LocalDateTime dueDateBefore);
+
+    List<Task> findByAssigneeIdAndDueDateAfter(Long assigneeId, LocalDateTime dueDateAfter);
+
+    List<Task> findByAssigneeIdAndDueDateBefore(Long assigneeId, LocalDateTime dueDateBefore);
 }
