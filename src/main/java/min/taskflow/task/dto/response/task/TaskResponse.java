@@ -1,4 +1,4 @@
-package min.taskflow.task.dto.response;
+package min.taskflow.task.dto.response.task;
 
 import lombok.Builder;
 import min.taskflow.task.entity.Priority;
