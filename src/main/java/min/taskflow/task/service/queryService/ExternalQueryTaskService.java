@@ -25,18 +25,14 @@ public class ExternalQueryTaskService {
     private final InternalQueryUserService internalQueryUserService;
     private final TaskRepository taskRepository;
 
-    //TODO: 리팩토링 필요
-    public List<TaskResponse> getTasksByTaskId(String keyWord,
-                                               Pageable pageable
-    ) {
+    //TODO: 리팩토링 필요 ( 동작 안됨 )
+    public Page<TaskResponse> getTasksByTaskId(Pageable pageable, TaskSearchCondition condition) {
 
-        List<Task> taskList = taskRepository.findByKeyword(keyWord);
+        // 2개 이상 또는 0개의 조건일 시 에러 발생
+        isOnlyOne(condition);
 
-        List<TaskResponse> result = taskList.stream()
-                .map(TaskResponse::from)
-                .toList();
-
-        return result;
+        // 요청으로 들어온 1개의 조건으로 검색 수행 후 반환
+        return searchLogic(pageable, condition);
     }
 
     public TaskResponse getTaskByTaskId(Long taskId) {
@@ -52,5 +48,48 @@ public class ExternalQueryTaskService {
         TaskResponse taskResponse = taskMapper.toTaskResponse(task, assigneeResponse);
 
         return taskResponse;
+    }
+
+    // TODO: 헬퍼메서드 분리
+    // 2개 이상 또는 0개의 조건일 시 에러 발생 ( 리팩토링 필요 )
+    private void isOnlyOne(TaskSearchCondition condition) {
+
+        int count = 0;
+        if (condition.status() != null) {
+            count++;
+            Status status = condition.status();
+        }
+        if (condition.query() != null && !condition.query().isBlank()) {
+            count++;
+            String query = condition.query();
+        }
+        if (condition.assigneeId() != null) {
+            count++;
+            Long assigneeId = condition.assigneeId();
+        }
+
+        if (count == 0) {
+            throw new TaskException(TaskErrorCode.AT_LEAST_ONE_REQUIRED);
+        }
+
+        if (count > 1) {
+            throw new TaskException(TaskErrorCode.ONLY_ONE_ALLOWED);
+        }
+    }
+
+    // TODO: 리팩토링 단계에서 로직 간략화하기
+    public Page<TaskResponse> searchLogic(Pageable pageable, TaskSearchCondition condition) {
+        if (condition.status() != null) {
+            return taskRepository.findByStatus(condition.status(), pageable);
+        }
+        if (condition.query() != null) {
+            return taskRepository.findByTitleContaining(condition.query(), pageable);
+        }
+        if (condition.assigneeId() != null) {
+            return taskRepository.findByAssigneeId(condition.assigneeId(), pageable);
+        }
+
+        // 그 외 경우 빈 객체 반환
+        return Page.empty(pageable);
     }
 }

@@ -61,6 +61,6 @@ public class Task extends BaseEntity {
     }
 
     public void updateStatus(StatusUpdateRequest statusUpdateRequest) {
-        this.status = statusUpdateRequest.status();
+        this.status = status.next();
     }
 }

@@ -33,14 +33,16 @@ public class TaskController {
         return ApiResponse.created(taskResponse, "Task를 생성하였습니다.");
     }
 
-    //TODO: 리팩토링 필요
+    // 검색 조건에 따라 태스크 조회
     @GetMapping
-    public ResponseEntity<ApiPageResponse<List<TaskResponse>>> getTasksByStatusOrQueryOrAssigneeId(@RequestParam String keyWord,
-                                                                                                   Pageable pageable) {
+    public ResponseEntity<ApiPageResponse<TaskResponse>> getTasksByStatusOrQueryOrAssigneeId(@RequestParam(required = false, defaultValue = "0") int page,
+                                                                                             @RequestParam(required = false, defaultValue = "10") int size,
+                                                                                             @ModelAttribute TaskSearchCondition condition) {
 
-        Page<TaskResponse> tasks = externalQueryTaskService.getTasksByTaskId(keyWord, pageable);
+        Pageable pageable = PageRequest.of(page, size);
 
-        // ApiPageResponse는 Bug가 발생해서 정상 동작하지 않으니 에러 신경쓰지 않으셔도 됩니다.
+        Page<TaskResponse> tasks = externalQueryTaskService.getTasksByTaskId(pageable, condition);
+
         return ApiPageResponse.success(tasks, "Task 목록을 조회했습니다.");
     }
 

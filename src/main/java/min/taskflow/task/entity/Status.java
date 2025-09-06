@@ -1,6 +1,8 @@
 package min.taskflow.task.entity;
 
-// TODO: 순차적 변경에 대한 논의 후 로직 작성하기.
+import min.taskflow.task.exception.TaskErrorCode;
+import min.taskflow.task.exception.TaskException;
+
 public enum Status {
     TODO,
     IN_PROGRESS,
@@ -10,7 +12,7 @@ public enum Status {
         return switch (this) {
             case TODO -> IN_PROGRESS;
             case IN_PROGRESS -> DONE;
-            case DONE -> TODO;
+            case DONE -> throw new TaskException(TaskErrorCode.INVALID_STATUS_UPDATE);
         };
     }
 }
