@@ -9,9 +9,9 @@ import min.taskflow.task.entity.Task;
 import min.taskflow.task.exception.TaskErrorCode;
 import min.taskflow.task.exception.TaskException;
 import min.taskflow.task.mapper.TaskMapper;
-import min.taskflow.task.taskRepository.TaskRepository;
-import min.taskflow.user.dto.response.AssigneeResponse;
-import min.taskflow.user.service.InternalUserService;
+import min.taskflow.task.repository.TaskRepository;
+import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
+import min.taskflow.user.service.queryService.InternalQueryUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class ExternalCommandTaskService {
 
     private final TaskMapper taskMapper;
-    private final InternalUserService internalUserService;
+    private final InternalQueryUserService internalQueryUserService;
     private final TaskRepository taskRepository;
 
     public TaskResponse createTask(TaskCreateRequest request) {
 
         Task task = taskMapper.toEntity(request);
 
-        AssigneeResponse assigneeResponse = internalUserService.getAssigneeByUserId(request.getAssigneeId());
+        // User Data 불러오기
+        UserSearchAndAssigneeResponse assigneeResponse = internalQueryUserService.getAssigneeByUserId(request.assigneeId());
 
+        // Task 저장 및 DTO 변환
         TaskResponse taskResponse = taskMapper.toTaskResponse(taskRepository.save(task), assigneeResponse);
 
         return taskResponse;
@@ -37,13 +39,17 @@ public class ExternalCommandTaskService {
 
     public TaskResponse updateTaskDetailByTaskId(Long taskId, TaskUpdateRequest taskUpdateRequest) {
 
+        // taskId에 해당하는 task가 존재하는지 검증
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskException(TaskErrorCode.TASK_NOT_FOUND));
 
+        // Task 상세 업데이트
         task.updateDetail(taskUpdateRequest);
 
-        AssigneeResponse assigneeResponse = internalUserService.getAssigneeByUserId(task.getAssigneeId());
+        // User Data 불러오기
+        UserSearchAndAssigneeResponse assigneeResponse = internalQueryUserService.getAssigneeByUserId(task.getAssigneeId());
 
+        // DTO 변환
         TaskResponse taskResponse = taskMapper.toTaskResponse(task, assigneeResponse);
 
         return taskResponse;
@@ -51,14 +57,17 @@ public class ExternalCommandTaskService {
 
     public TaskResponse updateStatusByTaskId(Long taskId, StatusUpdateRequest statusUpdateRequest) {
 
+        // taskId에 해당하는 task가 존재하는지 검증
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskException(TaskErrorCode.TASK_NOT_FOUND));
 
-        //TODO: 순차적 변경 논의 후 로직 작성 후 적용하기
-        task.getStatus().next();
+        // TODO: 순차적 변경이 아닌 경우에 대한 에러 추가
+        task.updateStatus(statusUpdateRequest);
 
-        AssigneeResponse assigneeResponse = internalUserService.getAssigneeByUserId(task.getAssigneeId());
+        // User Data 불러오기
+        UserSearchAndAssigneeResponse assigneeResponse = internalQueryUserService.getAssigneeByUserId(task.getAssigneeId());
 
+        // DTO 변환
         TaskResponse taskResponse = taskMapper.toTaskResponse(task, assigneeResponse);
 
         return taskResponse;
@@ -66,6 +75,7 @@ public class ExternalCommandTaskService {
 
     public void deleteTaskByTaskId(Long taskId) {
 
+        // Task soft delete
         taskRepository.deleteById(taskId);
     }
 

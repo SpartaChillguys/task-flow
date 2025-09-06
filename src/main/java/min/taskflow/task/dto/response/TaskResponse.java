@@ -3,7 +3,7 @@ package min.taskflow.task.dto.response;
 import lombok.Builder;
 import min.taskflow.task.entity.Priority;
 import min.taskflow.task.entity.Status;
-import min.taskflow.user.dto.response.AssigneeResponse;
+import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ public record TaskResponse(Long id,
                            Priority priority,
                            Status status,
                            Long assigneeId,
-                           AssigneeResponse assigneeResponse,
+                           UserSearchAndAssigneeResponse assigneeResponse,
                            LocalDateTime createdAt,
                            LocalDateTime updatedAt) {
 }

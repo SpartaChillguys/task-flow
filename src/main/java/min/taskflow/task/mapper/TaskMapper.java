@@ -4,7 +4,7 @@ import min.taskflow.task.dto.request.TaskCreateRequest;
 import min.taskflow.task.dto.response.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
-import min.taskflow.user.dto.response.AssigneeResponse;
+import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,16 +22,16 @@ public class TaskMapper {
                 .build();
     }
 
-    public TaskResponse toTaskResponse(Task task, AssigneeResponse assigneeResponse) {
+    public TaskResponse toTaskResponse(Task task, UserSearchAndAssigneeResponse assigneeResponse) {
 
         return TaskResponse.builder()
-                .id(task.getId())
+                .id(task.getTaskId())
                 .title(task.getTitle())
                 .description(task.getDescription())
                 .dueDate(task.getDueDate())
                 .priority(task.getPriority())
                 .status(task.getStatus())
-                .assigneeId(assigneeResponse.id())
+                .assigneeId(assigneeResponse.userid())
                 .assigneeResponse(assigneeResponse)
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())

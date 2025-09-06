@@ -1,19 +1,20 @@
 package min.taskflow.task.service.queryService;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.task.dto.condition.TaskSearchCondition;
 import min.taskflow.task.dto.response.TaskResponse;
+import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
 import min.taskflow.task.exception.TaskErrorCode;
 import min.taskflow.task.exception.TaskException;
 import min.taskflow.task.mapper.TaskMapper;
-import min.taskflow.task.taskRepository.TaskRepository;
-import min.taskflow.user.dto.response.AssigneeResponse;
-import min.taskflow.user.service.InternalUserService;
+import min.taskflow.task.repository.TaskRepository;
+import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
+import min.taskflow.user.service.queryService.InternalQueryUserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.awt.print.Pageable;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ import java.util.List;
 public class ExternalQueryTaskService {
 
     private final TaskMapper taskMapper;
-    private final InternalUserService internalUserService;
+    private final InternalQueryUserService internalQueryUserService;
     private final TaskRepository taskRepository;
 
     //TODO: 리팩토링 필요
@@ -40,11 +41,14 @@ public class ExternalQueryTaskService {
 
     public TaskResponse getTaskByTaskId(Long taskId) {
 
+        // taskId에 해당하는 task가 존재하는지 검증
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskException(TaskErrorCode.TASK_NOT_FOUND));
 
-        AssigneeResponse assigneeResponse = internalUserService.getAssigneeByUserId(task.getAssigneeId());
+        // User Data 불러오기
+        UserSearchAndAssigneeResponse assigneeResponse = internalQueryUserService.getAssigneeByUserId(task.getAssigneeId());
 
+        // DTO 변환
         TaskResponse taskResponse = taskMapper.toTaskResponse(task, assigneeResponse);
 
         return taskResponse;
