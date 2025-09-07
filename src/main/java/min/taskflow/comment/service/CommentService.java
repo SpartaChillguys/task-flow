@@ -11,9 +11,9 @@ import min.taskflow.comment.exception.CommentException;
 import min.taskflow.comment.mapper.CommentMapper;
 import min.taskflow.comment.repository.CommentRepository;
 import min.taskflow.task.entity.Task;
-import min.taskflow.task.service.queryService.InternalQueryTaskService;
+import min.taskflow.task.service.query.InternalQueryTaskService;
 import min.taskflow.user.dto.response.UserResponse;
-import min.taskflow.user.service.queryService.InternalQueryUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +46,7 @@ public class CommentService {
             }
         }
 
-        Comment comment = commentMapper.toEntity(request, task, userService.findByUserId(userId));
+        Comment comment = commentMapper.toEntity(request, task, userService.getUserByUserId(userId));
         Comment savedComment = commentRepository.save(comment);
         UserResponse userResponse = userService.toUserResponse(savedComment.getUser());
 

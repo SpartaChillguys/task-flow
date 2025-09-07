@@ -1,6 +1,7 @@
 package min.taskflow.task.mapper;
 
 import min.taskflow.task.dto.request.TaskCreateRequest;
+import min.taskflow.task.dto.response.dashboard.TaskDashboardStatsResponse;
 import min.taskflow.task.dto.response.dashboard.TaskSummaryResponse;
 import min.taskflow.task.dto.response.task.TaskResponse;
 import min.taskflow.task.entity.Status;
@@ -53,6 +54,7 @@ public class TaskMapper {
     }
 
     private List<TaskSummaryResponse.TaskSummaryDto> toTaskSummaryDtos(List<Task> tasks) {
+
         return tasks.stream()
                 .map(task -> new TaskSummaryResponse.TaskSummaryDto(
                         task.getTaskId(),
@@ -61,5 +63,26 @@ public class TaskMapper {
                         task.getDueDate()
                 ))
                 .toList();
+    }
+
+    public TaskDashboardStatsResponse toTaskDashboardStatsResponse(Long totalTasks,
+                                                                   Long completedTasks,
+                                                                   Long inProgressTasks,
+                                                                   Long todoTasks,
+                                                                   Long overdueTasks,
+                                                                   Long teamProgress,
+                                                                   Long myTasksToday,
+                                                                   Long completionRate) {
+
+        return TaskDashboardStatsResponse.builder()
+                .totalTasks(totalTasks)
+                .completedTasks(completedTasks)
+                .inProgressTasks(inProgressTasks)
+                .todoTasks(todoTasks)
+                .overdueTasks(overdueTasks)
+                .teamProgress(teamProgress)
+                .myTasksToday(myTasksToday)
+                .completionRate(completionRate)
+                .build();
     }
 }
