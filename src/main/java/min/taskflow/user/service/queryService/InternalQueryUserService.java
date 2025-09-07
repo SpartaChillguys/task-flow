@@ -1,6 +1,7 @@
 package min.taskflow.user.service.queryService;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.user.dto.response.UserProfileResponse;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
 import min.taskflow.user.entity.User;
@@ -104,6 +105,15 @@ public class InternalQueryUserService {
         }
 
         return responses;
+
+    }
+
+    public UserProfileResponse findByName(String userName) {
+        User user = userRepository.findByName((userName)).orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+        UserProfileResponse userProfileResponse = userMapper.toProfileResponse(user);
+
+        return userProfileResponse;
+
 
     }
 }
