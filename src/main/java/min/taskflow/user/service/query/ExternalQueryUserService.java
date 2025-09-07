@@ -1,6 +1,7 @@
 package min.taskflow.user.service.query;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.search.mapper.SearchMapper;
 import min.taskflow.user.dto.response.UserProfileResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.exception.UserErrorCode;
@@ -16,10 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ExternalQuueryUserService {
+public class ExternalQueryUserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final SearchMapper searchMapper;
 
     //프로필 조회 로직
 

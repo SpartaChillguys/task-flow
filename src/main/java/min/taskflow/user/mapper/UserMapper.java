@@ -3,6 +3,7 @@ package min.taskflow.user.mapper;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.auth.dto.request.RegisterRequest;
 import min.taskflow.auth.dto.response.RegisterResponse;
+import min.taskflow.user.dto.response.AssigneeSummaryResponse;
 import min.taskflow.user.dto.response.UserProfileResponse;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
@@ -71,6 +72,14 @@ public class UserMapper {
                 .userName(user.getUserName())
                 .name(user.getName())
                 .email((user.getEmail()))
+                .build();
+    }
+
+    public AssigneeSummaryResponse toAssigneeSummaryResponse(User user) {
+
+        return AssigneeSummaryResponse.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
                 .build();
     }
 }

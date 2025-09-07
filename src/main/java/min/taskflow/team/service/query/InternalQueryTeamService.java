@@ -1,7 +1,7 @@
 package min.taskflow.team.service.query;
 
 import lombok.RequiredArgsConstructor;
-import min.taskflow.team.dto.TeamResponse;
+import min.taskflow.team.dto.TeamSearchResponse;
 import min.taskflow.team.entity.Team;
 import min.taskflow.team.exception.TeamErrorCode;
 import min.taskflow.team.exception.TeamException;
@@ -24,11 +24,17 @@ public class InternalQueryTeamService {
     private final InternalQueryUserService internalQueryUserService;
 
     // 검색 시 팀 정보 가져오기
-    public List<TeamResponse> searchTeamByQuery(String query) {
+    public List<TeamSearchResponse> searchTeamByQuery(String query) {
 
-        List<Team> teams = teamRepository.findByNameContainingIgnoreCase(query);
+        List<Team> found = teamRepository.findByNameContainingIgnoreCase(query);
 
-        return teamMapper.toTeamResponseList(teams);
+        List<TeamSearchResponse> teams = found.stream()
+                .map(team -> {
+                    return teamMapper.toTeamSearchResponse(team);
+                })
+                .toList();
+
+        return teams;
     }
 
     // 멤버 id

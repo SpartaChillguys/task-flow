@@ -3,6 +3,7 @@ package min.taskflow.task.service.query;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.task.dto.response.dashboard.TaskDashboardStatsResponse;
 import min.taskflow.task.dto.response.dashboard.TaskSummaryResponse;
+import min.taskflow.task.dto.response.task.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
 import min.taskflow.task.exception.TaskErrorCode;
@@ -10,6 +11,8 @@ import min.taskflow.task.exception.TaskException;
 import min.taskflow.task.mapper.TaskMapper;
 import min.taskflow.task.repository.TaskRepository;
 import min.taskflow.team.service.query.InternalQueryTeamService;
+import min.taskflow.user.dto.response.AssigneeSummaryResponse;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,6 +27,7 @@ public class InternalQueryTaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
     private final InternalQueryTeamService internalQueryTeamService;
+    private final InternalQueryUserService internalQueryUserService;
 
     // TASK Id를 통해 TASK를 조회
     public Task getTaskByTaskId(Long taskId) {
@@ -85,5 +89,20 @@ public class InternalQueryTaskService {
                 completionRate);
 
         return taskDashboardStatsResponse;
+    }
+
+    public List<TaskResponse<AssigneeSummaryResponse>> searchTasksByQuery(String query) {
+        List<Task> found = taskRepository.findByTitleContainingIgnoreCase(query);
+
+        List<TaskResponse<AssigneeSummaryResponse>> tasks = found.stream()
+                .map(task -> {
+                    AssigneeSummaryResponse assigneeResponse =
+                            internalQueryUserService.getAssigneeSummaryByUserId(task.getAssigneeId());
+
+                    return taskMapper.toTaskResponse(task, assigneeResponse);
+                })
+                .toList();
+
+        return tasks;
     }
 }

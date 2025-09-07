@@ -6,7 +6,6 @@ import min.taskflow.task.dto.response.dashboard.TaskSummaryResponse;
 import min.taskflow.task.dto.response.task.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
-import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,17 +25,17 @@ public class TaskMapper {
                 .build();
     }
 
-    public TaskResponse toTaskResponse(Task task, UserSearchAndAssigneeResponse assigneeResponse) {
+    public <T> TaskResponse<T> toTaskResponse(Task task, T assigneeInfoResponse) {
 
-        return TaskResponse.builder()
+        return TaskResponse.<T>builder()
                 .id(task.getTaskId())
                 .title(task.getTitle())
                 .description(task.getDescription())
                 .dueDate(task.getDueDate())
                 .priority(task.getPriority())
                 .status(task.getStatus())
-                .assigneeId(assigneeResponse.userid())
-                .assigneeResponse(assigneeResponse)
+                .assigneeId(task.getAssigneeId())
+                .assigneeInfoResponse(assigneeInfoResponse)
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())
                 .build();

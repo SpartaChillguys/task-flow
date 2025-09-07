@@ -7,7 +7,7 @@ import min.taskflow.user.exception.UserErrorCode;
 import min.taskflow.user.exception.UserException;
 import min.taskflow.user.mapper.UserMapper;
 import min.taskflow.user.repository.UserRepository;
-import min.taskflow.user.service.query.ExternalQuueryUserService;
+import min.taskflow.user.service.query.ExternalQueryUserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +31,7 @@ public class UserProfileTest {
     UserMapper userMapper;
 
     @InjectMocks
-    ExternalQuueryUserService externalQuueryUserService;
+    ExternalQueryUserService externalQueryUserService;
 
     @Test
     void getMe_요청시_성공적() {
@@ -45,7 +45,7 @@ public class UserProfileTest {
         when(userRepository.findByUserId(user.getUserId())).thenReturn(Optional.of(user));
         when(userMapper.toProfileResponse(user)).thenReturn(response);
 
-        UserProfileResponse result = externalQuueryUserService.getMe(user.getUserId());
+        UserProfileResponse result = externalQueryUserService.getMe(user.getUserId());
 
         // then
         Assertions.assertThat(result).isEqualTo(response); //결과와 예상한 응답이 같은지
@@ -58,7 +58,7 @@ public class UserProfileTest {
         when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> externalQuueryUserService.getMe(userId))
+        assertThatThrownBy(() -> externalQueryUserService.getMe(userId))
                 .isInstanceOf(UserException.class)
                 .extracting("errorCode")
                 .isEqualTo(UserErrorCode.USER_NOT_FOUND);

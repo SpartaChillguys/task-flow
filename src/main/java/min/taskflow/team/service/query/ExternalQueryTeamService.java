@@ -37,7 +37,14 @@ public class ExternalQueryTeamService {
     public List<TeamResponse> getAllTeams() {
 
         List<Team> teams = teamRepository.findAllWithMembers();
-        return teamMapper.toTeamResponseList(teams);
+
+        List<TeamResponse> response = teams.stream()
+                .map(team -> {
+                    return teamMapper.toTeamResponse(team);
+                })
+                .toList();
+
+        return response;
     }
 
     // 팀 멤버 조회
@@ -49,12 +56,24 @@ public class ExternalQueryTeamService {
     }
 
     // 소속 없는 팀 조회
-    public List<MemberResponse> getAvailableMembers() {
+    public List<MemberResponse> getAvailableMembers(Long teamId) {
 
         List<User> allUsers = internalQueryUserService.findAllUsers();
 
+        // TODO: 지피티 썼으니 리펙토링하여 설계에 맞게 수정해야합니다.
         List<User> availableUsers = allUsers.stream()
-                .filter(user -> user.getTeam() == null && !user.isDeleted())
+                .filter(user -> {
+                    // 삭제된 유저 제외
+                    if (user.isDeleted()) return false;
+
+                    if (teamId == null) {
+                        // teamId 없으면 팀이 아예 없는 유저만
+                        return user.getTeam() == null;
+                    } else {
+                        // teamId 있으면, 해당 팀이 아닌 유저만
+                        return user.getTeam() == null || !user.getTeam().getTeamId().equals(teamId);
+                    }
+                })
                 .toList();
 
         return teamMapper.toMemberResponseList(availableUsers);

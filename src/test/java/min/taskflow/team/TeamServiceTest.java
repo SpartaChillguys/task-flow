@@ -1,5 +1,6 @@
 package min.taskflow.team;
 
+import min.taskflow.search.mapper.SearchMapper;
 import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
@@ -16,8 +17,11 @@ import min.taskflow.user.service.command.InternalCommandUserService;
 import min.taskflow.user.service.query.InternalQueryUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 
 import static min.taskflow.team.exception.TeamErrorCode.TEAM_NOT_FOUND;
@@ -30,6 +34,18 @@ class TeamServiceTest {
     private TeamRepository teamRepository;
     private UserRepository userRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private TeamMapper teamMapper;
+
+    @Mock
+    private SearchMapper searchMapper;
+
+    private Team team;
+    private User user;
+
     private TeamMapper teamMapper;
 
     private InternalCommandUserService internalCommandUserService;
@@ -39,6 +55,11 @@ class TeamServiceTest {
 
     @BeforeEach
     void setUp() {
+        team = Team.builder()
+                .name("개발팀")
+                .description("백엔드/프론트")
+                .build();
+        ReflectionTestUtils.setField(team, "teamId", 1L);
 
         teamRepository = mock(TeamRepository.class); // 레포지토리 모킹
         userRepository = mock(UserRepository.class);
@@ -47,22 +68,32 @@ class TeamServiceTest {
         teamMapper = new TeamMapper();
         externalCommandTeamService = new ExternalCommandTeamService(teamRepository, teamMapper, internalQueryUserService, internalCommandUserService);
         externalQueryTeamService = new ExternalQueryTeamService(teamRepository, teamMapper, internalQueryUserService);
+        user = User.builder()
+                .userName("chulsoo")
+                .email("chulsoo@example.com")
+                .password("1234")
+                .name("철수")
+                .role(UserRole.USER)
+                .build();
+        ReflectionTestUtils.setField(user, "userId", 1L);
     }
 
     @Test
     void 팀을_성공적으로_생성했습니다() {
-
         TeamCreateRequest request = new TeamCreateRequest("개발팀", "백엔드/프론트");
-        Team savedTeam = Team.builder()
-                .name(request.name())
-                .description(request.description())
-                .build();
-
-        // Reflection으로 teamId 세팅
-        ReflectionTestUtils.setField(savedTeam, "teamId", 1L);
 
         when(teamRepository.existsByName(request.name())).thenReturn(false);
-        when(teamRepository.save(any(Team.class))).thenReturn(savedTeam);
+        when(teamMapper.toEntity(request)).thenReturn(team);
+        when(teamRepository.save(team)).thenReturn(team);
+        when(teamMapper.toTeamResponse(team)).thenReturn(
+                new TeamResponse(
+                        1L,
+                        "개발팀",
+                        "백엔드/프론트",
+                        LocalDateTime.now(),
+                        Collections.emptyList()
+                )
+        );
 
         TeamResponse response = externalCommandTeamService.createTeam(request);
 
@@ -72,8 +103,7 @@ class TeamServiceTest {
 
     @Test
     void 존재하지_않는_팀_조회() {
-
-        when(teamRepository.findById(1L)).thenReturn(Optional.empty());
+        when(teamRepository.findByIdWithMembers(1L)).thenReturn(Optional.empty());
 
         TeamException exception = assertThrows(TeamException.class,
                 () -> externalQueryTeamService.getTeamById(1L));
@@ -83,7 +113,6 @@ class TeamServiceTest {
 
     @Test
     void 팀을_성공적으로_조회합니다() {
-
         Team team = Team.builder()
                 .name("개발팀")
                 .description("백엔드/프론트")
@@ -91,6 +120,15 @@ class TeamServiceTest {
         ReflectionTestUtils.setField(team, "teamId", 1L);
 
         when(teamRepository.findByIdWithMembers(1L)).thenReturn(Optional.of(team));
+        when(teamMapper.toTeamResponse(team)).thenReturn(
+                new TeamResponse(
+                        team.getTeamId(),
+                        team.getName(),
+                        team.getDescription(),
+                        LocalDateTime.now(),
+                        Collections.emptyList()
+                )
+        );
 
         TeamResponse response = externalQueryTeamService.getTeamById(1L);
 
@@ -100,7 +138,6 @@ class TeamServiceTest {
 
     @Test
     void 팀을_성공적으로_수정합니다() {
-
         Team team = Team.builder()
                 .name("개발팀")
                 .description("백엔드/프론트")
@@ -109,6 +146,16 @@ class TeamServiceTest {
 
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
         when(teamRepository.existsByName("디자인팀")).thenReturn(false);
+        doNothing().when(teamMapper).updateEntity(team, new TeamUpdateRequest("디자인팀", "UI/UX 담당"));
+        when(teamMapper.toTeamResponse(team)).thenReturn(
+                new TeamResponse(
+                        team.getTeamId(),
+                        "디자인팀",
+                        "UI/UX 담당",
+                        LocalDateTime.now(),
+                        Collections.emptyList()
+                )
+        );
 
         TeamUpdateRequest request = new TeamUpdateRequest("디자인팀", "UI/UX 담당");
         TeamResponse response = externalCommandTeamService.updateTeam(1L, request);
@@ -227,7 +274,8 @@ class TeamServiceTest {
 
     @Test
     void 존재하지_않는_팀에서_멤버를_삭제할_수_없습니다() {
-        when(teamRepository.findById(999L)).thenReturn(Optional.empty());
+
+        when(teamRepository.findByIdWithMembers(999L)).thenReturn(Optional.empty());
 
         TeamException exception = assertThrows(TeamException.class,
                 () -> externalCommandTeamService.removeMemberId(999L, 1L));

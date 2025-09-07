@@ -82,12 +82,12 @@ public class ExternalCommandTeamService {
     }
 
     // 팀 멤버 삭제
-    public void removeMemberId(Long teamId, Long memberId) {
+    public void removeMemberId(Long teamId, Long userId) {
 
         Team team = teamRepository.findByIdWithMembers(teamId)
                 .orElseThrow(() -> new TeamException(TeamErrorCode.TEAM_NOT_FOUND));
 
-        User member = internalQueryUserService.getUserByUserId(memberId);
+        User member = internalQueryUserService.getUserByUserId(userId);
 
         if (!team.getMembers().contains(member)) {
             throw new TeamException(TeamErrorCode.MEMBER_NOT_IN_TEAM);

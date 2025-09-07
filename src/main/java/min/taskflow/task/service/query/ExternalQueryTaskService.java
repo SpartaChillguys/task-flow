@@ -1,6 +1,7 @@
 package min.taskflow.task.service.query;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.search.mapper.SearchMapper;
 import min.taskflow.task.dto.condition.TaskSearchCondition;
 import min.taskflow.task.dto.response.task.TaskResponse;
 import min.taskflow.task.entity.Status;
@@ -24,6 +25,7 @@ public class ExternalQueryTaskService {
     private final TaskMapper taskMapper;
     private final InternalQueryUserService internalQueryUserService;
     private final TaskRepository taskRepository;
+    private final SearchMapper searchMapper;
 
     //TODO: 리팩토링 필요 ( 동작 안됨 )
     public Page<TaskResponse> getTasksByTaskId(Pageable pageable, TaskSearchCondition condition) {
