@@ -43,7 +43,7 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        User user = internalQueryUserService.findByUserId(id);
+        User user = internalQueryUserService.getUserByUserId(id);
         return ResponseEntity.ok(internalQueryUserService.toUserResponse(user));
     }
 
@@ -53,7 +53,7 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(internalQueryUserService.findAllUsers());
+        return ResponseEntity.ok(internalQueryUserService.findAllUsersAsResponse());
     }
 
     /**

@@ -46,7 +46,7 @@ public class CommentService {
             }
         }
 
-        Comment comment = commentMapper.toEntity(request, task, userService.findByUserId(userId));
+        Comment comment = commentMapper.toEntity(request, task, userService.getUserByUserId(userId));
         Comment savedComment = commentRepository.save(comment);
         UserResponse userResponse = userService.toUserResponse(savedComment.getUser());
 

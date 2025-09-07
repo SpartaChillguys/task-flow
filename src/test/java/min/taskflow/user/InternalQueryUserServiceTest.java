@@ -55,7 +55,7 @@ public class InternalQueryUserServiceTest {
         when(userRepository.findAll()).thenReturn(List.of(user1, user2));
 
         // when
-        List<UserResponse> result = internalQueryUserService.findAllUsers();
+        List<UserResponse> result = internalQueryUserService.findAllUsersAsResponse();
 
         // then
         assertThat(result).hasSize(2);

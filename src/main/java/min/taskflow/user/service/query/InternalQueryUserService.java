@@ -26,7 +26,7 @@ public class InternalQueryUserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public User findByUserId(Long userId) {
+    public User getUserByUserId(Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
@@ -47,7 +47,7 @@ public class InternalQueryUserService {
 
     public UserSearchAndAssigneeResponse getAssigneeByUserId(Long userId) {
 
-        User byUserId = findByUserId(userId);
+        User byUserId = getUserByUserId(userId);
         UserSearchAndAssigneeResponse userSearchAndAssigneeResponse = userMapper.toSearchAndAssigneeResponse(byUserId);
 
         return userSearchAndAssigneeResponse;
@@ -64,7 +64,7 @@ public class InternalQueryUserService {
 
     // 전체 유저 조회
 
-    public List<UserResponse> findAllUsers() {
+    public List<UserResponse> findAllUsersAsResponse() {
 
         List<User> users = userRepository.findAll();
         return users.stream()

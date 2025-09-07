@@ -71,7 +71,7 @@ public class CommentServiceTest {
                 .createCommentResponse(100L, "댓글 내용", taskId, userId, userResponse);
 
         when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
-        when(userService.findByUserId(userId)).thenReturn(user);
+        when(userService.getUserByUserId(userId)).thenReturn(user);
         when(commentMapper.toEntity(request, task, user)).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
         when(userService.toUserResponse(user)).thenReturn(userResponse);
@@ -143,7 +143,7 @@ public class CommentServiceTest {
                 .createCommentResponse(200L, "대댓글 내용", taskId, userId, userResponse);
 
         when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
-        when(userService.findByUserId(userId)).thenReturn(user);
+        when(userService.getUserByUserId(userId)).thenReturn(user);
         when(commentRepository.findById(parentId)).thenReturn(Optional.of(parentComment));
         when(commentMapper.toEntity(request, task, user)).thenReturn(childComment);
         when(commentRepository.save(any(Comment.class))).thenReturn(childComment);

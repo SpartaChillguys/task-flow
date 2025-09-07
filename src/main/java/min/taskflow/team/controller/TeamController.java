@@ -2,8 +2,6 @@ package min.taskflow.team.controller;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.common.response.ApiResponse;
-import min.taskflow.team.dto.*;
-import min.taskflow.team.service.TeamService;
 import min.taskflow.team.dto.MemberResponse;
 import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
