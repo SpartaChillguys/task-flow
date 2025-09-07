@@ -1,4 +1,4 @@
-package min.taskflow.user.service.queryService;
+package min.taskflow.user.service.query;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.user.dto.response.UserProfileResponse;

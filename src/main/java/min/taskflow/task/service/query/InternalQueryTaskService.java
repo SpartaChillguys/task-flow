@@ -1,4 +1,4 @@
-package min.taskflow.task.service.queryService;
+package min.taskflow.task.service.query;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.task.dto.response.dashboard.TaskDashboardStatsResponse;
@@ -9,6 +9,7 @@ import min.taskflow.task.exception.TaskErrorCode;
 import min.taskflow.task.exception.TaskException;
 import min.taskflow.task.mapper.TaskMapper;
 import min.taskflow.task.repository.TaskRepository;
+import min.taskflow.team.service.query.InternalQueryTeamService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

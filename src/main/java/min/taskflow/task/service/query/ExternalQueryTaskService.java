@@ -1,4 +1,4 @@
-package min.taskflow.task.service.queryService;
+package min.taskflow.task.service.query;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.task.dto.condition.TaskSearchCondition;
@@ -10,7 +10,7 @@ import min.taskflow.task.exception.TaskException;
 import min.taskflow.task.mapper.TaskMapper;
 import min.taskflow.task.repository.TaskRepository;
 import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
-import min.taskflow.user.service.queryService.InternalQueryUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
