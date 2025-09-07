@@ -72,6 +72,12 @@ public class InternalQueryUserService {
                 .toList();
     }
 
+    // 전체 유저 조회
+    public List<User> findAllUsers() {
+
+        List<User> users = userRepository.findAll();
+        return users;
+    }
     //유저 이름 다 조회
 
     public List<String> findAllUserNames() {
