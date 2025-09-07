@@ -13,11 +13,11 @@ import min.taskflow.fixture.TaskFixture;
 import min.taskflow.fixture.TeamFixture;
 import min.taskflow.fixture.UserFixture;
 import min.taskflow.task.entity.Task;
-import min.taskflow.task.service.queryService.InternalQueryTaskService;
+import min.taskflow.task.service.query.InternalQueryTaskService;
 import min.taskflow.team.entity.Team;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.service.queryService.InternalQueryUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -69,7 +69,7 @@ public class CommentServiceTest {
                 .createCommentResponse(100L, "댓글 내용", taskId, userId, userResponse);
 
         when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
-        when(userService.findByUserId(userId)).thenReturn(user);
+        when(userService.getUserByUserId(userId)).thenReturn(user);
         when(commentMapper.toEntity(request, task, user)).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
         when(userService.toUserResponse(user)).thenReturn(userResponse);
@@ -139,7 +139,7 @@ public class CommentServiceTest {
                 .createCommentResponse(200L, "대댓글 내용", taskId, userId, userResponse);
 
         when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
-        when(userService.findByUserId(userId)).thenReturn(user);
+        when(userService.getUserByUserId(userId)).thenReturn(user);
         when(commentRepository.findById(anyLong())).thenReturn(Optional.of(parentComment));
         when(commentMapper.toEntity(request, task, user)).thenReturn(childComment);
         when(commentRepository.save(any(Comment.class))).thenReturn(childComment);
