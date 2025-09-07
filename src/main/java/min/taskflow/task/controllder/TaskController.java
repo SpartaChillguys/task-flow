@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -77,9 +78,9 @@ public class TaskController {
 
     // 태스크 삭제(soft delete)
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<ApiResponse<Object>> deleteTaskByTaskId(@PathVariable Long taskId) {
+    public ResponseEntity<ApiResponse<Object>> deleteTaskByTaskId(@PathVariable Long taskId, @AuthenticationPrincipal long userId) {
 
-        externalCommandTaskService.deleteTaskByTaskId(taskId);
+        externalCommandTaskService.deleteTaskByTaskId(taskId, userId);
 
         return ApiResponse.noContent("Task가 삭제되었습니다.");
     }

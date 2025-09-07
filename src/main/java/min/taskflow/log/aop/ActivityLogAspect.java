@@ -49,7 +49,19 @@ public class ActivityLogAspect {
                 userName = internalQueryUserService.getUserNameByUserId(userId);
             }
         }
+        // 반환값(TaskResponse)이 없는 경우 (void)
+        if (result == null) {
+            Object[] args = joinPoint.getArgs();
 
+            // deleteTaskByTaskId(Long taskId, Long userId)
+            if (args.length > 0 && args[0] instanceof Long) {
+                taskId = (Long) args[0];
+            }
+            if (args.length > 1 && args[1] instanceof Long) {
+                userId = (Long) args[1];
+                userName = internalQueryUserService.getUserNameByUserId(userId);
+            }
+        }
         logService.saveLog(taskId, userName, type, type.name() + " 발생");
         log.info("✅ 로그 저장됨: type={}, taskId={}, userId={}", type, taskId, userId);
     }

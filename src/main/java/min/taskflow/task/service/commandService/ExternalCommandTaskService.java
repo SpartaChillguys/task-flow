@@ -79,10 +79,12 @@ public class ExternalCommandTaskService {
         return taskResponse;
     }
 
-    public void deleteTaskByTaskId(Long taskId) {
+    @ActivityLogger(type = ActivityType.TASK_DELETED)
+    public void deleteTaskByTaskId(Long taskId, Long userId) {
 
         // Task soft delete
         taskRepository.deleteById(taskId);
     }
+
 
 }
