@@ -33,6 +33,14 @@ public class InternalQueryUserService {
         return user;
     }
 
+    public String getUserNameByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        String userName = user.getName();
+
+        return userName;
+    }
+
     public UserResponse toUserResponse(User user) {
 
         return UserResponse.builder()

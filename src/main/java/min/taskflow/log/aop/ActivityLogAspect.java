@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import min.taskflow.common.annotation.ActivityLogger;
 import min.taskflow.log.ActivityType;
 import min.taskflow.log.Service.ActivityLogService;
+import min.taskflow.task.dto.response.task.TaskResponse;
+import min.taskflow.user.service.queryService.InternalQueryUserService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,9 +22,13 @@ import java.lang.reflect.Method;
 public class ActivityLogAspect {
 
     private final ActivityLogService logService;
+    private final InternalQueryUserService internalQueryUserService;
 
-    @AfterReturning("@annotation(min.taskflow.common.annotation.ActivityLogger)")
-    public void logActivity(JoinPoint joinPoint) {
+    @AfterReturning(value =
+            "@annotation(min.taskflow.common.annotation.ActivityLogger)",
+            returning = "result" //TaskResponse를 통해서 값을 받아오기 위함
+    )
+    public void logActivity(JoinPoint joinPoint, Object result) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
 
@@ -30,19 +36,19 @@ public class ActivityLogAspect {
         ActivityLogger loggable = method.getAnnotation(ActivityLogger.class);
         ActivityType type = loggable.type();
 
-        // 인자 꺼내기
-        Object[] args = joinPoint.getArgs();
         Long taskId = null;
         Long userId = null;
         String userName = "unknown";
 
-//        if (args.length > 0 && args[0] instanceof Long) {
-//            taskId = (Long) args[0];
-//        }
-//        if (args.length > 2 && args[2] instanceof Long) {
-//            userId = (Long) args[2];
-//            // TODO: userService 통해 userName 조회 가능
-//        }
+        // 반환값에서 taskId, assigneeId 꺼내기
+        if (result instanceof TaskResponse taskResponse) {
+            taskId = taskResponse.id();
+            userId = taskResponse.assigneeId();
+
+            if (userId != null) {
+                userName = internalQueryUserService.getUserNameByUserId(userId);
+            }
+        }
 
         logService.saveLog(taskId, userName, type, type.name() + " 발생");
         log.info("✅ 로그 저장됨: type={}, taskId={}, userId={}", type, taskId, userId);

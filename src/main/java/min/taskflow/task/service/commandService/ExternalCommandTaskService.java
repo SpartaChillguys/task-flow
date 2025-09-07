@@ -1,6 +1,8 @@
 package min.taskflow.task.service.commandService;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.common.annotation.ActivityLogger;
+import min.taskflow.log.ActivityType;
 import min.taskflow.task.dto.request.StatusUpdateRequest;
 import min.taskflow.task.dto.request.TaskCreateRequest;
 import min.taskflow.task.dto.request.TaskUpdateRequest;
@@ -24,6 +26,7 @@ public class ExternalCommandTaskService {
     private final InternalQueryUserService internalQueryUserService;
     private final TaskRepository taskRepository;
 
+    @ActivityLogger(type = ActivityType.TASK_CREATED)
     public TaskResponse createTask(TaskCreateRequest request) {
 
         Task task = taskMapper.toEntity(request);
@@ -37,6 +40,8 @@ public class ExternalCommandTaskService {
         return taskResponse;
     }
 
+
+    @ActivityLogger(type = ActivityType.TASK_UPDATED)
     public TaskResponse updateTaskDetailByTaskId(Long taskId, TaskUpdateRequest taskUpdateRequest) {
 
         // taskId에 해당하는 task가 존재하는지 검증
@@ -55,6 +60,7 @@ public class ExternalCommandTaskService {
         return taskResponse;
     }
 
+    @ActivityLogger(type = ActivityType.TASK_STATUS_CHANGED)
     public TaskResponse updateStatusByTaskId(Long taskId, StatusUpdateRequest statusUpdateRequest) {
 
         // taskId에 해당하는 task가 존재하는지 검증
