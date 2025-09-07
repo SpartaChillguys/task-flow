@@ -4,7 +4,7 @@ import min.taskflow.task.entity.Status;
 
 public record TaskSearchCondition(
         Status status,
-        String query,
+        String search,
         Long assigneeId
 ) {
 }
