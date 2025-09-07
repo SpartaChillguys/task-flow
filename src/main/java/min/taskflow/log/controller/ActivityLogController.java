@@ -23,7 +23,6 @@ public class ActivityLogController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        System.out.println("ddadfdasfdasfsa");
         Page<ActivityLogResponse> data = activityLogService.getLogs(page, size);
 
         return
