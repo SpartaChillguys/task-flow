@@ -6,7 +6,7 @@ import min.taskflow.common.annotation.ActivityLogger;
 import min.taskflow.log.ActivityType;
 import min.taskflow.log.Service.ActivityLogService;
 import min.taskflow.task.dto.response.task.TaskResponse;
-import min.taskflow.user.service.queryService.InternalQueryUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;

@@ -7,7 +7,7 @@ import min.taskflow.log.entity.Log;
 import min.taskflow.log.mapper.LogMapper;
 import min.taskflow.log.response.ActivityLogResponse;
 import min.taskflow.user.dto.response.UserProfileResponse;
-import min.taskflow.user.service.queryService.InternalQueryUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
