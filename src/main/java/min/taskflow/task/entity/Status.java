@@ -8,11 +8,18 @@ public enum Status {
     IN_PROGRESS,
     DONE;
 
-    public Status next() {
+    public Status next(Status target) {
         return switch (this) {
-            case TODO -> IN_PROGRESS;
-            case IN_PROGRESS -> DONE;
+            case TODO -> {
+                if (target == IN_PROGRESS) yield IN_PROGRESS;
+                throw new TaskException(TaskErrorCode.INVALID_STATUS_UPDATE);
+            }
+            case IN_PROGRESS -> {
+                if (target == DONE) yield DONE;
+                throw new TaskException(TaskErrorCode.INVALID_STATUS_UPDATE);
+            }
             case DONE -> throw new TaskException(TaskErrorCode.INVALID_STATUS_UPDATE);
         };
     }
 }
+

@@ -61,6 +61,11 @@ public class Task extends BaseEntity {
     }
 
     public void updateStatus(StatusUpdateRequest statusUpdateRequest) {
-        this.status = status.next();
+
+        // 요청에서 목표 상태 꺼내기
+        Status target = statusUpdateRequest.status();
+
+        this.status = status.next(target);
+
     }
 }

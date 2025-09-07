@@ -10,6 +10,8 @@ import min.taskflow.comment.exception.CommentErrorCode;
 import min.taskflow.comment.exception.CommentException;
 import min.taskflow.comment.mapper.CommentMapper;
 import min.taskflow.comment.repository.CommentRepository;
+import min.taskflow.common.annotation.ActivityLogger;
+import min.taskflow.log.ActivityType;
 import min.taskflow.task.entity.Task;
 import min.taskflow.task.service.query.InternalQueryTaskService;
 import min.taskflow.user.dto.response.UserResponse;
@@ -30,6 +32,8 @@ public class CommentService {
     private final InternalQueryUserService userService;
     private final CommentMapper commentMapper;
 
+
+    @ActivityLogger(type = ActivityType.COMMENT_CREATED)
     @Transactional
     public CommentResponse createComment(Long taskId,
                                          @Valid CommentRequest request,
@@ -88,6 +92,7 @@ public class CommentService {
         return comments;
     }
 
+    @ActivityLogger(type = ActivityType.COMMENT_UPDATED)
     @Transactional
     public CommentResponse updateComment(Long taskId, CommentUpdateRequest request, Long commentId, Long userId) {
 
@@ -99,8 +104,9 @@ public class CommentService {
         return commentMapper.toCommentResponse(comment, userResponse);
     }
 
+    @ActivityLogger(type = ActivityType.COMMENT_DELETED)
     @Transactional
-    public int deleteComment(Long taskId, Long commentId, Long userId) {
+    public int deleteComment(Long taskId, Long userId, Long commentId) {
 
         Comment comment = validateCommentAccess(taskId, commentId, userId);
 
