@@ -32,7 +32,11 @@ public class CommentFixture {
         return comment;
     }
 
-    public static CommentResponse createCommentResponse(Long commentId, String content, Long taskId, Long userId, UserResponse userResponse) {
+    public static CommentResponse createCommentResponse(Long commentId,
+                                                        String content,
+                                                        Long taskId,
+                                                        Long userId,
+                                                        UserResponse userResponse) {
 
         return CommentResponse.builder()
                 .commentId(commentId)

@@ -34,6 +34,14 @@ public class InternalQueryTaskService {
         return task;
     }
 
+    // TASK ID를 통해 존재 유무 확인
+    public void validateTaskExists(Long taskId) {
+
+        if (!taskRepository.existsById(taskId)) {
+            throw new TaskException(TaskErrorCode.TASK_NOT_FOUND);
+        }
+    }
+
     // DASHBOARD todayTasks, upcomingTasks, overdueTasks에 대한 리스트를 반환
     public TaskSummaryResponse getTaskSummaryByUserId(Long LoginUserId) {
 
