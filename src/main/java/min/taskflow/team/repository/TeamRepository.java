@@ -14,6 +14,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     boolean existsByName(String name);
 
+    List<Team> findByNameContainingIgnoreCase(String query);
+
     // 팀 단건 조회 + 멤버 포함
     @Query("SELECT t FROM Team t LEFT JOIN FETCH t.members WHERE t.teamId = :teamId AND t.deleted = false")
     Optional<Team> findByIdWithMembers(@Param("teamId") Long teamId);
