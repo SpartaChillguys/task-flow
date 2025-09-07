@@ -30,7 +30,7 @@ public class ExternalQueryTaskService {
     //TODO: 리팩토링 필요 ( 동작 안됨 )
     public Page<TaskResponse> getTasksByTaskId(Pageable pageable, TaskSearchCondition condition) {
 
-        // 2개 이상 또는 0개의 조건일 시 에러 발생
+        // 2개 이상의 조건일 시 에러 발생
         isOnlyOne(condition);
 
         // 요청으로 들어온 1개의 조건으로 검색 수행 후 반환
@@ -53,7 +53,7 @@ public class ExternalQueryTaskService {
     }
 
     // TODO: 헬퍼메서드 분리
-    // 2개 이상 또는 0개의 조건일 시 에러 발생 ( 리팩토링 필요 )
+    // 2개 이상의 조건일 시 에러 발생 ( 리팩토링 필요 )
     private void isOnlyOne(TaskSearchCondition condition) {
 
         int count = 0;
@@ -68,10 +68,6 @@ public class ExternalQueryTaskService {
         if (condition.assigneeId() != null) {
             count++;
             Long assigneeId = condition.assigneeId();
-        }
-
-        if (count == 0) {
-            throw new TaskException(TaskErrorCode.AT_LEAST_ONE_REQUIRED);
         }
 
         if (count > 1) {
@@ -91,7 +87,11 @@ public class ExternalQueryTaskService {
             return taskRepository.findByAssigneeId(condition.assigneeId(), pageable);
         }
 
-        // 그 외 경우 빈 객체 반환
-        return Page.empty(pageable);
+        // condition이 없으면 전체 조회
+        return taskRepository.findAll(pageable)
+                .map(task -> {
+                    var userResponse = internalQueryUserService.getAssigneeByUserId(task.getAssigneeId());
+                    return taskMapper.toTaskResponse(task, userResponse);
+                });
     }
 }
