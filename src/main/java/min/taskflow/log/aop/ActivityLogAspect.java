@@ -2,6 +2,7 @@ package min.taskflow.log.aop;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import min.taskflow.comment.dto.response.CommentResponse;
 import min.taskflow.common.annotation.ActivityLogger;
 import min.taskflow.log.ActivityType;
 import min.taskflow.log.Service.ActivityLogService;
@@ -44,6 +45,15 @@ public class ActivityLogAspect {
         if (result instanceof TaskResponse taskResponse) {
             taskId = taskResponse.id();
             userId = taskResponse.assigneeId();
+
+            if (userId != null) {
+                userName = internalQueryUserService.getUserNameByUserId(userId);
+            }
+        }
+        // 반환값에서 taskId, assigneeId 꺼내기
+        if (result instanceof CommentResponse commentResponse) {
+            taskId = commentResponse.taskId();
+            userId = commentResponse.userId();
 
             if (userId != null) {
                 userName = internalQueryUserService.getUserNameByUserId(userId);

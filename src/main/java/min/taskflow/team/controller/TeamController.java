@@ -2,10 +2,7 @@ package min.taskflow.team.controller;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.common.response.ApiResponse;
-import min.taskflow.team.dto.MemberResponse;
-import min.taskflow.team.dto.TeamCreateRequest;
-import min.taskflow.team.dto.TeamResponse;
-import min.taskflow.team.dto.TeamUpdateRequest;
+import min.taskflow.team.dto.*;
 import min.taskflow.team.service.command.ExternalCommandTeamService;
 import min.taskflow.team.service.query.ExternalQueryTeamService;
 import org.springframework.http.ResponseEntity;
@@ -79,9 +76,9 @@ public class TeamController {
     // 팀 멤버 추가
     @PostMapping("/teams/{teamId}/members")
     public ResponseEntity<ApiResponse<MemberResponse>> addMember(@PathVariable Long teamId,
-                                                                 @RequestBody Long memberId) {
+                                                                 @RequestBody MemberAddRequest memberAddRequest) {
 
-        MemberResponse response = externalCommandTeamService.addMemberById(teamId, memberId);
+        MemberResponse response = externalCommandTeamService.addMemberById(teamId, memberAddRequest.userId());
 
         return ApiResponse.created(response, "팀 멤버가 성공적으로 추가되었습니다.");
     }
@@ -97,7 +94,7 @@ public class TeamController {
     }
 
     // 소속 없는 멤버 조회
-    @GetMapping("/users/available?teamId={teamId}")
+    @GetMapping("/users/available")
     public ResponseEntity<ApiResponse<List<MemberResponse>>> getAvailableMembers(@PathVariable(required = false) Long teamId) {
 
         List<MemberResponse> availableMembers = externalQueryTeamService.getAvailableMembers(teamId);

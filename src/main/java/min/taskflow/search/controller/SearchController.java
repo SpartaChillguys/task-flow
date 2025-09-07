@@ -18,7 +18,7 @@ public class SearchController {
     private final ExternalQuerySearchService externalQuerySearchService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<SearchResponse>> searchAll(@RequestParam("q") String query) {
+    public ResponseEntity<ApiResponse<SearchResponse>> searchAll(@RequestParam String query) {
 
         SearchResponse response = externalQuerySearchService.searchAll(query);
 
