@@ -56,14 +56,14 @@ public class CommentService {
     @Transactional
     public Page<CommentResponse> getComments(Long taskId, Pageable pageable, String sort) {
 
-        taskService.getTaskByTaskId(taskId);
+        taskService.validateTaskExists(taskId);
 
         Sort.Direction orderBy = sort.equals("oldest") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sortByCreatedAt = Sort.by(orderBy, "createdAt");
         Pageable parentPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortByCreatedAt);
 
         // 1. 부모 댓글 페이징 조회
-        Page<Comment> parentComments = commentRepository.findByTask_TaskIdAndParentIdIsNull(taskId, parentPageable);
+        Page<Comment> parentComments = commentRepository.findParentComments(taskId, parentPageable);
         List<CommentResponse> allComments = new ArrayList<>();
 
         for (Comment parentComment : parentComments.getContent()) {
@@ -71,7 +71,7 @@ public class CommentService {
             CommentResponse parentResponse = commentMapper.toCommentResponse(parentComment, parentUserResponse);
 
             // 2. 대댓글 조회
-            List<Comment> childComments = commentRepository.findByParentId(parentComment.getCommentId(), sortByCreatedAt);
+            List<Comment> childComments = commentRepository.findChildComments(parentComment.getCommentId(), sortByCreatedAt);
             List<CommentResponse> replies = childComments.stream()
                     .map(childComment -> {
                         UserResponse childUserResponse = userService.toUserResponse(childComment.getUser());
@@ -104,15 +104,7 @@ public class CommentService {
 
         Comment comment = validateCommentAccess(taskId, commentId, userId);
 
-        comment.delete();
-        int deleteCount = 1;
-
-        List<Comment> childComments = commentRepository.findByParentId(comment.getCommentId(), Sort.unsorted());
-
-        for (Comment childComment : childComments) {
-            childComment.delete();
-            deleteCount++;
-        }
+        int deleteCount = commentRepository.softDeleteCommentAndReplies(comment.getCommentId());
 
         return deleteCount;
     }
@@ -120,7 +112,7 @@ public class CommentService {
     // 댓글이 해당 작업에 속하고 작성자가 요청한 사용자와 일치하는지 확인합니다.
     private Comment validateCommentAccess(Long taskId, Long commentId, Long userId) {
 
-        taskService.getTaskByTaskId(taskId);
+        taskService.validateTaskExists(taskId);
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));

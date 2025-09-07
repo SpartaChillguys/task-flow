@@ -21,13 +21,21 @@ public class InternalQueryTaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
 
-    // TASK Id를 통해 TASK를 조회
+    // TASK ID를 통해 TASK를 조회
     public Task getTaskByTaskId(Long taskId) {
 
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskException(TaskErrorCode.TASK_NOT_FOUND));
 
         return task;
+    }
+
+    // TASK ID를 통해 존재 유무 확인
+    public void validateTaskExists(Long taskId) {
+
+        if (!taskRepository.existsById(taskId)) {
+            throw new TaskException(TaskErrorCode.TASK_NOT_FOUND);
+        }
     }
 
     // DashBoard로 todayTasks, upcomingTasks, overdueTasks에 대한 리스트를 반환
