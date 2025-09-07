@@ -1,14 +1,14 @@
 package min.taskflow.auth;
 
-import min.taskflow.auth.config.JwtUtil;
+import min.taskflow.auth.config.PasswordEncoder;
+import min.taskflow.auth.dto.info.TokenInfo;
 import min.taskflow.auth.dto.request.LoginRequest;
-import min.taskflow.auth.dto.response.LoginResponse;
+import min.taskflow.auth.exception.AuthErrorCode;
+import min.taskflow.auth.exception.AuthException;
+import min.taskflow.auth.jwt.JwtUtil;
 import min.taskflow.auth.service.commandService.ExternalCommandAuthService;
-import min.taskflow.user.PasswordEncoder;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
-import min.taskflow.user.exception.UserErrorCode;
-import min.taskflow.user.exception.UserException;
 import min.taskflow.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,19 +62,19 @@ public class LoginTest {
         // given
         when(userRepository.findByUserName(testUsername)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(testPassword, encodedPassword)).thenReturn(true);
-        when(jwtUtil.createToken(testUser.getUserId(), testUser.getRole())).thenReturn(jwtToken);
+        when(jwtUtil.createAccessToken(testUser.getUserId(), testUser.getRole())).thenReturn(jwtToken);
 
         // when
-        LoginResponse response = authService.login(validLoginRequest);
+        TokenInfo tokenInfo = authService.login(validLoginRequest);
 
         // then
-        assertThat(response).isNotNull();
-        assertThat(response.token()).isEqualTo(jwtToken);
+        assertThat(tokenInfo).isNotNull();
+        assertThat(tokenInfo.accessToken()).isEqualTo(jwtToken);
 
         // 메서드 호출 검증
         verify(userRepository, times(1)).findByUserName(testUsername);
         verify(passwordEncoder, times(1)).matches(testPassword, encodedPassword);
-        verify(jwtUtil, times(1)).createToken(testUser.getUserId(), testUser.getRole());
+        verify(jwtUtil, times(1)).createAccessToken(testUser.getUserId(), testUser.getRole());
     }
 
     @Test
@@ -84,14 +84,14 @@ public class LoginTest {
 
         //then
         assertThatThrownBy(() -> authService.login(validLoginRequest))
-                .isInstanceOf(UserException.class)
+                .isInstanceOf(AuthException.class)
                 .extracting("errorCode")
-                .isEqualTo(UserErrorCode.WRONG_USERNAME);
+                .isEqualTo(AuthErrorCode.WRONG_USERNAME);
 
         // 비밀번호 검증과 토큰 생성은 호출되지 않아야 함
         verify(userRepository, times(1)).findByUserName(testUsername);
         verify(passwordEncoder, times(0)).matches(anyString(), anyString());
-        verify(jwtUtil, times(0)).createToken(any(), any());
+        verify(jwtUtil, times(0)).createAccessToken(any(), any());
     }
 
 
@@ -103,13 +103,13 @@ public class LoginTest {
 
         // then
         assertThatThrownBy(() -> authService.login(validLoginRequest))
-                .isInstanceOf(UserException.class)
+                .isInstanceOf(AuthException.class)
                 .extracting("errorCode")
-                .isEqualTo(UserErrorCode.WRONG_PASSWORD);
+                .isEqualTo(AuthErrorCode.WRONG_PASSWORD);
 
         // 토큰 생성은 호출되지 않아야 함
         verify(userRepository, times(1)).findByUserName(testUsername);
         verify(passwordEncoder, times(1)).matches(testPassword, encodedPassword);
-        verify(jwtUtil, times(0)).createToken(any(), any());
+        verify(jwtUtil, times(0)).createAccessToken(any(), any());
     }
 }

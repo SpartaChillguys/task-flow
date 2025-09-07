@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record CommentResponse(
 
-        Long id,
+        Long commentId,
         String content,
         Long taskId,
         Long userId,

@@ -1,13 +1,14 @@
-package min.taskflow.auth.config;
+package min.taskflow.auth.jwt;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import min.taskflow.user.enums.UserRole;
+import min.taskflow.auth.dto.info.UserInfo;
+import min.taskflow.auth.exception.AuthErrorCode;
+import min.taskflow.auth.exception.AuthException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,35 +25,41 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
+        String uri = request.getRequestURI();
+
+        if (uri.equals("/api/auth/register") || uri.equals("/api/auth/login")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String token = getTokenFromRequest(request);
 
         if (StringUtils.hasText(token)) {
 
             try {
-                Claims claims = jwtUtil.validateToken(token);
-                Long userId = Long.valueOf(claims.getSubject());
-                UserRole userRole = UserRole.valueOf(claims.get("userRole", String.class));
+                UserInfo userInfo = jwtUtil.parseUserInfo(token);
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                userId,
+                                userInfo.userId(),
                                 null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + userRole.name())) // 권한
+                                List.of(new SimpleGrantedAuthority("ROLE_" + userInfo.userRole().name())) // 권한
                         );
 
-                // ✅ SecurityContext에 저장
+                // SecurityContext에 저장
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 // HttpServletRequest의 attribute에 저장
-                request.setAttribute("userId", userId);
-                request.setAttribute("userRole", userRole);
+                request.setAttribute("userId", userInfo.userId());
+                request.setAttribute("userRole", userInfo.userRole());
 
             } catch (Exception e) {
                 log.error("JWT 토큰 검증 실패: ", e);
+                throw new AuthException(AuthErrorCode.INVALID_ACCESS_TOKEN);
                 // 토큰이 유효하지 않으면 attribute를 설정하지 않음
             }
         }

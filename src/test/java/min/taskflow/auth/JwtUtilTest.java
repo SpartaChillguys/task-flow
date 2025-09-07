@@ -1,7 +1,7 @@
 package min.taskflow.auth;
 
 import io.jsonwebtoken.Claims;
-import min.taskflow.auth.config.JwtUtil;
+import min.taskflow.auth.jwt.JwtUtil;
 import min.taskflow.user.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,13 +21,13 @@ public class JwtUtilTest {
     }
 
     @Test
-    void createToken_토큰생성시_생성성공() {
+    void createAccessToken_토큰생성시_생성성공() {
         // given
         Long userId = 1L;
         UserRole userRole = UserRole.USER;
 
         // when
-        String token = jwtUtil.createToken(userId, userRole);
+        String token = jwtUtil.createAccessToken(userId, userRole);
 
         // then
         assertThat(token).isNotNull();
@@ -38,7 +38,7 @@ public class JwtUtilTest {
         // given
         Long userId = 1L;
         UserRole userRole = UserRole.USER;
-        String token = jwtUtil.createToken(userId, userRole);
+        String token = jwtUtil.createAccessToken(userId, userRole);
 //        String jwtToken = token.substring(7); // "Bearer " 제거
 
         // when

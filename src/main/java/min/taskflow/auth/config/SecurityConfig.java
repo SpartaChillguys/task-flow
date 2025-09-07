@@ -1,8 +1,8 @@
-package min.taskflow.common.config;
+package min.taskflow.auth.config;
 
 import lombok.RequiredArgsConstructor;
-import min.taskflow.auth.config.JwtFilter;
-import min.taskflow.auth.config.JwtUtil;
+import min.taskflow.auth.jwt.JwtFilter;
+import min.taskflow.auth.jwt.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,7 +30,7 @@ public class SecurityConfig {
                 // CSRF 비활성화 (JWT 사용시 불필요)
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // ✅ CORS 설정 적용
+                // CORS 설정 적용
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // 세션 사용 안함 (JWT 사용)
@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .build();
     }
 
-    // ✅ CorsConfigurationSource Bean 등록
+    // CorsConfigurationSource Bean 등록
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
