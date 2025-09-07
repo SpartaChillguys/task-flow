@@ -1,9 +1,8 @@
-package min.taskflow.user.service.queryService;
+package min.taskflow.user.service.query;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.search.mapper.SearchMapper;
 import min.taskflow.user.dto.response.UserProfileResponse;
-import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.exception.UserErrorCode;
 import min.taskflow.user.exception.UserException;
@@ -11,8 +10,6 @@ import min.taskflow.user.mapper.UserMapper;
 import min.taskflow.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /*
 유저 관련 서비스(프로필 조회)
@@ -35,12 +32,5 @@ public class ExternalQueryUserService {
         UserProfileResponse userProfileResponse = userMapper.toProfileResponse(user);
 
         return userProfileResponse;
-    }
-
-    public List<UserSearchAndAssigneeResponse> searchUsersByQuery(String query) {
-
-        List<User> users = userRepository.findByNameContainingIgnoreCaseOrUserNameContainingIgnoreCase(query, query);
-
-        return searchMapper.toUserResponseList(users);
     }
 }

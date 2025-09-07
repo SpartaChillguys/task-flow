@@ -1,6 +1,7 @@
-package min.taskflow.user.service.queryService;
+package min.taskflow.user.service.query;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.user.dto.response.AssigneeSummaryResponse;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
 import min.taskflow.user.entity.User;
@@ -26,7 +27,7 @@ public class InternalQueryUserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public User findByUserId(Long userId) {
+    public User getUserByUserId(Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
@@ -44,16 +45,23 @@ public class InternalQueryUserService {
                 .build();
     }
 
-
     public UserSearchAndAssigneeResponse getAssigneeByUserId(Long userId) {
 
-        User byUserId = findByUserId(userId);
+        User byUserId = getUserByUserId(userId);
         UserSearchAndAssigneeResponse userSearchAndAssigneeResponse = userMapper.toSearchAndAssigneeResponse(byUserId);
 
         return userSearchAndAssigneeResponse;
     }
-    // 팀이 없는 유저 조회
 
+    public AssigneeSummaryResponse getAssigneeSummaryByUserId(Long userId) {
+
+        User byUserId = getUserByUserId(userId);
+        AssigneeSummaryResponse assigneeSummaryResponse = userMapper.toAssigneeSummaryResponse(byUserId);
+
+        return assigneeSummaryResponse;
+    }
+
+    // 팀이 없는 유저 조회
     public List<UserResponse> findByTeamIsNull() {
 
         List<User> users = userRepository.findByTeamIsNull();
@@ -63,8 +71,7 @@ public class InternalQueryUserService {
     }
 
     // 전체 유저 조회
-
-    public List<UserResponse> findAllUsers() {
+    public List<UserResponse> findAllUsersAsResponse() {
 
         List<User> users = userRepository.findAll();
         return users.stream()
@@ -72,8 +79,14 @@ public class InternalQueryUserService {
                 .toList();
     }
 
-    //유저 이름 다 조회
+    // 전체 유저 조회
+    public List<User> findAllUsers() {
 
+        List<User> users = userRepository.findAll();
+        return users;
+    }
+
+    //유저 이름 다 조회
     public List<String> findAllUserNames() {
 
         return userRepository.findAll()
@@ -82,9 +95,8 @@ public class InternalQueryUserService {
                 .toList();
     }
 
-
     //이름 검색을 했을때 포함된 결과 반환
-    public List<UserSearchAndAssigneeResponse> findUsersByName(String query) {
+    public List<UserSearchAndAssigneeResponse> searchUsersByQuery(String query) {
 
         //검색어 포함결과 반환
         List<User> users = userRepository.findByNameContaining(query);
@@ -96,6 +108,5 @@ public class InternalQueryUserService {
         }
 
         return responses;
-
     }
 }

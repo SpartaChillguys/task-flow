@@ -1,11 +1,11 @@
 package min.taskflow.task.mapper;
 
 import min.taskflow.task.dto.request.TaskCreateRequest;
+import min.taskflow.task.dto.response.dashboard.TaskDashboardStatsResponse;
 import min.taskflow.task.dto.response.dashboard.TaskSummaryResponse;
 import min.taskflow.task.dto.response.task.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
-import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,17 +25,17 @@ public class TaskMapper {
                 .build();
     }
 
-    public TaskResponse toTaskResponse(Task task, UserSearchAndAssigneeResponse assigneeResponse) {
+    public <T> TaskResponse<T> toTaskResponse(Task task, T assigneeInfoResponse) {
 
-        return TaskResponse.builder()
+        return TaskResponse.<T>builder()
                 .id(task.getTaskId())
                 .title(task.getTitle())
                 .description(task.getDescription())
                 .dueDate(task.getDueDate())
                 .priority(task.getPriority())
                 .status(task.getStatus())
-                .assigneeId(assigneeResponse.userid())
-                .assigneeResponse(assigneeResponse)
+                .assigneeId(task.getAssigneeId())
+                .assigneeInfoResponse(assigneeInfoResponse)
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())
                 .build();
@@ -53,6 +53,7 @@ public class TaskMapper {
     }
 
     private List<TaskSummaryResponse.TaskSummaryDto> toTaskSummaryDtos(List<Task> tasks) {
+
         return tasks.stream()
                 .map(task -> new TaskSummaryResponse.TaskSummaryDto(
                         task.getTaskId(),
@@ -61,5 +62,26 @@ public class TaskMapper {
                         task.getDueDate()
                 ))
                 .toList();
+    }
+
+    public TaskDashboardStatsResponse toTaskDashboardStatsResponse(Long totalTasks,
+                                                                   Long completedTasks,
+                                                                   Long inProgressTasks,
+                                                                   Long todoTasks,
+                                                                   Long overdueTasks,
+                                                                   Long teamProgress,
+                                                                   Long myTasksToday,
+                                                                   Long completionRate) {
+
+        return TaskDashboardStatsResponse.builder()
+                .totalTasks(totalTasks)
+                .completedTasks(completedTasks)
+                .inProgressTasks(inProgressTasks)
+                .todoTasks(todoTasks)
+                .overdueTasks(overdueTasks)
+                .teamProgress(teamProgress)
+                .myTasksToday(myTasksToday)
+                .completionRate(completionRate)
+                .build();
     }
 }

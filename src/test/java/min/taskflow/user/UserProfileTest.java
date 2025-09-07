@@ -7,7 +7,7 @@ import min.taskflow.user.exception.UserErrorCode;
 import min.taskflow.user.exception.UserException;
 import min.taskflow.user.mapper.UserMapper;
 import min.taskflow.user.repository.UserRepository;
-import min.taskflow.user.service.queryService.ExternalQueryUserService;
+import min.taskflow.user.service.query.ExternalQueryUserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

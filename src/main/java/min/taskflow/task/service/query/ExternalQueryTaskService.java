@@ -1,4 +1,4 @@
-package min.taskflow.task.service.queryService;
+package min.taskflow.task.service.query;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.search.mapper.SearchMapper;
@@ -11,15 +11,11 @@ import min.taskflow.task.exception.TaskException;
 import min.taskflow.task.mapper.TaskMapper;
 import min.taskflow.task.repository.TaskRepository;
 import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
-import min.taskflow.user.service.queryService.InternalQueryUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -97,17 +93,5 @@ public class ExternalQueryTaskService {
 
         // 그 외 경우 빈 객체 반환
         return Page.empty(pageable);
-    }
-
-    public List<TaskResponse> searchTasksByQuery(String query) {
-        List<Task> tasks = taskRepository.findByTitleContainingIgnoreCase(query);
-
-        Map<Long, min.taskflow.user.entity.User> assigneeMap = tasks.stream()
-                .map(Task::getAssigneeId)
-                .distinct()
-                .map(internalQueryUserService::findByUserId)
-                .collect(Collectors.toMap(user -> user.getUserId(), user -> user));
-
-        return searchMapper.toTaskResponseList(tasks, assigneeMap);
     }
 }

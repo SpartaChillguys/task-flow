@@ -4,7 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record TeamSearchResponse(
-        Long id,
+        Long teamId,
         String name,
         String description
-) {}
+) {
+}

@@ -9,7 +9,6 @@ import min.taskflow.user.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class SearchMapper {
@@ -24,7 +23,7 @@ public class SearchMapper {
                 .priority(task.getPriority())
                 .status(task.getStatus())
                 .assigneeId(task.getAssigneeId())
-                .assigneeResponse(assignee == null ? null : toUserResponse(assignee))
+                .assigneeInfoResponse(assignee == null ? null : toUserResponse(assignee))
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())
                 .build();
@@ -43,17 +42,10 @@ public class SearchMapper {
     public TeamSearchResponse toTeamResponse(Team team) {
 
         return TeamSearchResponse.builder()
-                .id(team.getTeamId())
+                .teamId(team.getTeamId())
                 .name(team.getName())
                 .description(team.getDescription())
                 .build();
-    }
-
-    public List<TaskResponse> toTaskResponseList(List<Task> tasks, Map<Long, User> assigneeMap) {
-
-        return tasks.stream()
-                .map(task -> toTaskResponse(task, assigneeMap.get(task.getAssigneeId())))
-                .toList();
     }
 
     public List<UserSearchAndAssigneeResponse> toUserResponseList(List<User> users) {

@@ -6,8 +6,8 @@ import min.taskflow.common.response.ApiResponse;
 import min.taskflow.user.dto.response.UserProfileResponse;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.service.queryService.ExternalQueryUserService;
-import min.taskflow.user.service.queryService.InternalQueryUserService;
+import min.taskflow.user.service.query.ExternalQueryUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +43,7 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        User user = internalQueryUserService.findByUserId(id);
+        User user = internalQueryUserService.getUserByUserId(id);
         return ResponseEntity.ok(internalQueryUserService.toUserResponse(user));
     }
 
@@ -53,7 +53,7 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(internalQueryUserService.findAllUsers());
+        return ResponseEntity.ok(internalQueryUserService.findAllUsersAsResponse());
     }
 
     /**

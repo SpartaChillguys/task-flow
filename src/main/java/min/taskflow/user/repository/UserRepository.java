@@ -11,8 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email); //중복 검증을 위함
 
-    //Optional<User> findByEmail(String mail);
-
     Optional<User> findByUserName(String userName);
 
     Optional<User> findByUserId(Long userId);
@@ -21,6 +19,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByNameContaining(String Name);
 
-    // 수영 : 이름 또는 username에 검색어가 포함된 User 조회 (대소문자 무시)
-    List<User> findByNameContainingIgnoreCaseOrUserNameContainingIgnoreCase(String name, String userName);
+    List<User> findByName(String query);
 }

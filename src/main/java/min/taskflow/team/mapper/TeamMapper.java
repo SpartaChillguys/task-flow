@@ -5,7 +5,6 @@ import min.taskflow.team.entity.Team;
 import min.taskflow.user.entity.User;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -37,11 +36,13 @@ public class TeamMapper {
         );
     }
 
-    public List<TeamResponse> toTeamResponseList(List<Team> teams) {
+    public TeamSearchResponse toTeamSearchResponse(Team team) {
 
-        return teams.stream()
-                .map(this::toTeamResponse)
-                .toList();
+        return TeamSearchResponse.builder()
+                .teamId(team.getTeamId())
+                .name(team.getName())
+                .description(team.getDescription())
+                .build();
     }
 
     public MemberResponse toMemberResponse(User user) {
