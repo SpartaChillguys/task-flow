@@ -51,11 +51,9 @@ public class TeamService {
     public List<TeamResponse> getAllTeams() {
 
         List<Team> teams = teamRepository.findAllWithMembers();
-
-        return teams.stream()
-                .map(teamMapper::toTeamResponse)
-                .toList();
+        return teamMapper.toTeamResponseList(teams);
     }
+
 
     // 팀 수정
     @Transactional
@@ -139,5 +137,29 @@ public class TeamService {
                 .toList();
 
         return teamMapper.toMemberResponseList(availableUsers);
+    }
+
+    // 검색 시 팀 정보 가져오기
+    @Transactional(readOnly = true)
+    public List<TeamResponse> searchTeamByQuery(String query) {
+
+        List<Team> teams = teamRepository.findByNameContainingIgnoreCase(query);
+
+        return teamMapper.toTeamResponseList(teams);
+    }
+
+    // 멤버 id
+    @Transactional(readOnly = true)
+    public List<Long> getMembersIdByUserId(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new TeamException(TeamErrorCode.MEMBER_NOT_FOUND));
+
+        Team team = user.getTeam();
+        if (team == null) {
+            throw new TeamException(TeamErrorCode.TEAM_NOT_FOUND);
+        }
+
+        return teamMapper.toMemberIdList(team.getMembers());
     }
 }

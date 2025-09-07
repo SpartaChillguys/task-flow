@@ -11,7 +11,7 @@ import min.taskflow.comment.exception.CommentException;
 import min.taskflow.comment.mapper.CommentMapper;
 import min.taskflow.comment.repository.CommentRepository;
 import min.taskflow.task.entity.Task;
-import min.taskflow.task.service.InternalTaskService;
+import min.taskflow.task.service.queryService.InternalQueryTaskService;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.service.queryService.InternalQueryUserService;
 import org.springframework.data.domain.*;
@@ -26,7 +26,7 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final InternalTaskService taskService;
+    private final InternalQueryTaskService taskService;
     private final InternalQueryUserService userService;
     private final CommentMapper commentMapper;
 
@@ -35,7 +35,7 @@ public class CommentService {
                                          @Valid CommentRequest request,
                                          Long userId) {
 
-        Task task = taskService.findByTaskId(taskId);
+        Task task = taskService.getTaskByTaskId(taskId);
 
         if (request.parentId() != null) {
             Comment parentComment = commentRepository.findById(request.parentId())
@@ -56,7 +56,7 @@ public class CommentService {
     @Transactional
     public Page<CommentResponse> getComments(Long taskId, Pageable pageable, String sort) {
 
-        taskService.findByTaskId(taskId);
+        taskService.getTaskByTaskId(taskId);
 
         Sort.Direction orderBy = sort.equals("oldest") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sortByCreatedAt = Sort.by(orderBy, "createdAt");
@@ -120,7 +120,7 @@ public class CommentService {
     // 댓글이 해당 작업에 속하고 작성자가 요청한 사용자와 일치하는지 확인합니다.
     private Comment validateCommentAccess(Long taskId, Long commentId, Long userId) {
 
-        taskService.findByTaskId(taskId);
+        taskService.getTaskByTaskId(taskId);
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));

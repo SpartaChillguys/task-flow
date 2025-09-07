@@ -31,11 +31,17 @@ public class TeamMapper {
                 team.getName(),
                 team.getDescription(),
                 team.getCreatedAt(),
-                team.getMembers() == null ? Collections.emptyList() :
-                        team.getMembers().stream()
-                                .map(this::toMemberResponse)
-                                .toList()
+                team.getMembers().stream()
+                        .map(this::toMemberResponse)
+                        .toList()
         );
+    }
+
+    public List<TeamResponse> toTeamResponseList(List<Team> teams) {
+
+        return teams.stream()
+                .map(this::toTeamResponse)
+                .toList();
     }
 
     public MemberResponse toMemberResponse(User user) {
@@ -55,6 +61,13 @@ public class TeamMapper {
 
         return users.stream()
                 .map(this::toMemberResponse)
+                .toList();
+    }
+
+    public List<Long> toMemberIdList(List<User> members) {
+
+        return members.stream()
+                .map(User::getUserId)
                 .toList();
     }
 }

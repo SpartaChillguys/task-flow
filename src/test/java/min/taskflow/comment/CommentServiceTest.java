@@ -13,7 +13,7 @@ import min.taskflow.fixture.TaskFixture;
 import min.taskflow.fixture.TeamFixture;
 import min.taskflow.fixture.UserFixture;
 import min.taskflow.task.entity.Task;
-import min.taskflow.task.service.InternalTaskService;
+import min.taskflow.task.service.queryService.InternalQueryTaskService;
 import min.taskflow.team.entity.Team;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
@@ -48,7 +48,7 @@ public class CommentServiceTest {
     private CommentMapper commentMapper;
 
     @Mock
-    private InternalTaskService taskService;
+    private InternalQueryTaskService taskService;
 
     @Mock
     private InternalQueryUserService userService;
@@ -70,7 +70,7 @@ public class CommentServiceTest {
         CommentResponse commentResponse = CommentFixture
                 .createCommentResponse(100L, "댓글 내용", taskId, userId, userResponse);
 
-        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
         when(userService.findByUserId(userId)).thenReturn(user);
         when(commentMapper.toEntity(request, task, user)).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
@@ -116,7 +116,7 @@ public class CommentServiceTest {
         Task otherTask = TaskFixture.createTaskWithId(user, 20L);
         Comment parentComment = CommentFixture.createComment(request.content(), otherTask, user);
 
-        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
         when(commentRepository.findById(parentId)).thenReturn(Optional.of(parentComment));
 
         // when & then
@@ -142,7 +142,7 @@ public class CommentServiceTest {
         CommentResponse commentResponse = CommentFixture
                 .createCommentResponse(200L, "대댓글 내용", taskId, userId, userResponse);
 
-        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
         when(userService.findByUserId(userId)).thenReturn(user);
         when(commentRepository.findById(parentId)).thenReturn(Optional.of(parentComment));
         when(commentMapper.toEntity(request, task, user)).thenReturn(childComment);
@@ -183,7 +183,7 @@ public class CommentServiceTest {
 
         Page<Comment> parentComments = new PageImpl<>(List.of(parentComment), pageable, 1);
 
-        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
         when(commentRepository.findByTask_TaskIdAndParentIdIsNull(taskId, pageable)).thenReturn(parentComments);
         when(userService.toUserResponse(user)).thenReturn(userResponse);
         when(commentMapper.toCommentResponse(parentComment, userResponse)).thenReturn(parentResponse);
@@ -219,7 +219,7 @@ public class CommentServiceTest {
         CommentResponse expectedResponse = CommentFixture.createCommentResponse(commentId, "수정된 내용", taskId, userId, userResponse);
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
-        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
         when(userService.toUserResponse(user)).thenReturn(userResponse);
         when(commentMapper.toCommentResponse(comment, userResponse)).thenReturn(expectedResponse);
 
@@ -262,7 +262,7 @@ public class CommentServiceTest {
         comment.delete(); // 삭제 처리
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
-        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
 
         // when & then
         assertThrows(CommentException.class, () -> commentService.updateComment(taskId, request, commentId, userId));
@@ -283,7 +283,7 @@ public class CommentServiceTest {
         Comment comment = CommentFixture.createComment("원래 내용", task, user);
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
-        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
 
         // when & then
         assertThrows(CommentException.class, () -> commentService.updateComment(taskId, request, commentId, userId));
@@ -303,7 +303,7 @@ public class CommentServiceTest {
         Comment comment = CommentFixture.createCommentWithId("댓글 내용", task, user, commentId);
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
-        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
         when(commentRepository.findByParentId(commentId, Sort.unsorted())).thenReturn(List.of());
 
         // when
@@ -332,7 +332,7 @@ public class CommentServiceTest {
         ReflectionTestUtils.setField(childComment2, "parentId", commentId);
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(parentComment));
-        when(taskService.findByTaskId(taskId)).thenReturn(task);
+        when(taskService.getTaskByTaskId(taskId)).thenReturn(task);
         when(commentRepository.findByParentId(commentId, Sort.unsorted()))
                 .thenReturn(List.of(childComment1, childComment2));
 
