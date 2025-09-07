@@ -32,7 +32,7 @@ public class InternalQueryTaskService {
     // TASK Id를 통해 TASK를 조회
     public Task getTaskByTaskId(Long taskId) {
 
-        Task task = taskRepository.findById(taskId)
+        Task task = taskRepository.findByTaskId(taskId)
                 .orElseThrow(() -> new TaskException(TaskErrorCode.TASK_NOT_FOUND));
 
         return task;

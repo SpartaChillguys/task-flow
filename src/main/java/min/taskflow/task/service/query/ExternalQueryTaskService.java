@@ -34,13 +34,22 @@ public class ExternalQueryTaskService {
         isOnlyOne(condition);
 
         // 요청으로 들어온 1개의 조건으로 검색 수행 후 반환
-        return searchLogic(pageable, condition);
+        Page<Task> tasks = searchLogic(pageable, condition);
+
+        Page<TaskResponse> responses = tasks.map(task -> {
+            
+            UserSearchAndAssigneeResponse userSearchAndAssigneeResponse = internalQueryUserService.getAssigneeByUserId(task.getAssigneeId());
+
+            return taskMapper.toTaskResponse(task, userSearchAndAssigneeResponse);
+        });
+
+        return responses;
     }
 
     public TaskResponse getTaskByTaskId(Long taskId) {
 
         // taskId에 해당하는 task가 존재하는지 검증
-        Task task = taskRepository.findById(taskId)
+        Task task = taskRepository.findByTaskId(taskId)
                 .orElseThrow(() -> new TaskException(TaskErrorCode.TASK_NOT_FOUND));
 
         // User Data 불러오기
@@ -61,9 +70,9 @@ public class ExternalQueryTaskService {
             count++;
             Status status = condition.status();
         }
-        if (condition.query() != null && !condition.query().isBlank()) {
+        if (condition.search() != null && !condition.search().isBlank()) {
             count++;
-            String query = condition.query();
+            String search = condition.search();
         }
         if (condition.assigneeId() != null) {
             count++;
@@ -76,22 +85,18 @@ public class ExternalQueryTaskService {
     }
 
     // TODO: 리팩토링 단계에서 로직 간략화하기
-    public Page<TaskResponse> searchLogic(Pageable pageable, TaskSearchCondition condition) {
+    public Page<Task> searchLogic(Pageable pageable, TaskSearchCondition condition) {
         if (condition.status() != null) {
             return taskRepository.findByStatus(condition.status(), pageable);
         }
-        if (condition.query() != null) {
-            return taskRepository.findByTitleContaining(condition.query(), pageable);
+        if (condition.search() != null) {
+            return taskRepository.findByTitleContaining(condition.search(), pageable);
         }
         if (condition.assigneeId() != null) {
             return taskRepository.findByAssigneeId(condition.assigneeId(), pageable);
         }
 
         // condition이 없으면 전체 조회
-        return taskRepository.findAll(pageable)
-                .map(task -> {
-                    var userResponse = internalQueryUserService.getAssigneeByUserId(task.getAssigneeId());
-                    return taskMapper.toTaskResponse(task, userResponse);
-                });
+        return taskRepository.findAll(pageable);
     }
 }

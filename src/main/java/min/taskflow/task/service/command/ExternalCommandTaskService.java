@@ -45,7 +45,7 @@ public class ExternalCommandTaskService {
     public TaskResponse updateTaskDetailByTaskId(Long taskId, TaskUpdateRequest taskUpdateRequest) {
 
         // taskId에 해당하는 task가 존재하는지 검증
-        Task task = taskRepository.findById(taskId)
+        Task task = taskRepository.findByTaskId(taskId)
                 .orElseThrow(() -> new TaskException(TaskErrorCode.TASK_NOT_FOUND));
 
         // Task 상세 업데이트
@@ -64,7 +64,7 @@ public class ExternalCommandTaskService {
     public TaskResponse updateStatusByTaskId(Long taskId, StatusUpdateRequest statusUpdateRequest) {
 
         // taskId에 해당하는 task가 존재하는지 검증
-        Task task = taskRepository.findById(taskId)
+        Task task = taskRepository.findByTaskId(taskId)
                 .orElseThrow(() -> new TaskException(TaskErrorCode.TASK_NOT_FOUND));
 
         // TODO: 순차적 변경이 아닌 경우에 대한 에러 추가
