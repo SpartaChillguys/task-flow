@@ -1,4 +1,4 @@
-package min.taskflow.task.service.commandService;
+package min.taskflow.task.service.command;
 
 import lombok.RequiredArgsConstructor;
 import min.taskflow.common.annotation.ActivityLogger;
@@ -13,7 +13,7 @@ import min.taskflow.task.exception.TaskException;
 import min.taskflow.task.mapper.TaskMapper;
 import min.taskflow.task.repository.TaskRepository;
 import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;
-import min.taskflow.user.service.queryService.InternalQueryUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

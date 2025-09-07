@@ -7,10 +7,13 @@ import min.taskflow.team.entity.Team;
 import min.taskflow.team.exception.TeamException;
 import min.taskflow.team.mapper.TeamMapper;
 import min.taskflow.team.repository.TeamRepository;
-import min.taskflow.team.service.TeamService;
+import min.taskflow.team.service.command.ExternalCommandTeamService;
+import min.taskflow.team.service.query.ExternalQueryTeamService;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.repository.UserRepository;
 import min.taskflow.user.enums.UserRole;
+import min.taskflow.user.repository.UserRepository;
+import min.taskflow.user.service.command.InternalCommandUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -25,17 +28,25 @@ import static org.mockito.Mockito.*;
 class TeamServiceTest {
 
     private TeamRepository teamRepository;
-    private TeamMapper teamMapper;
-    private TeamService teamService;
     private UserRepository userRepository;
+
+    private TeamMapper teamMapper;
+
+    private InternalCommandUserService internalCommandUserService;
+    private InternalQueryUserService internalQueryUserService;
+    private ExternalCommandTeamService externalCommandTeamService;
+    private ExternalQueryTeamService externalQueryTeamService;
 
     @BeforeEach
     void setUp() {
 
         teamRepository = mock(TeamRepository.class); // 레포지토리 모킹
         userRepository = mock(UserRepository.class);
+        internalQueryUserService = mock(InternalQueryUserService.class);
+        internalCommandUserService = mock(InternalCommandUserService.class);
         teamMapper = new TeamMapper();
-        teamService = new TeamService(teamRepository, teamMapper, userRepository);
+        externalCommandTeamService = new ExternalCommandTeamService(teamRepository, teamMapper, internalQueryUserService, internalCommandUserService);
+        externalQueryTeamService = new ExternalQueryTeamService(teamRepository, teamMapper, internalQueryUserService);
     }
 
     @Test
@@ -53,7 +64,7 @@ class TeamServiceTest {
         when(teamRepository.existsByName(request.name())).thenReturn(false);
         when(teamRepository.save(any(Team.class))).thenReturn(savedTeam);
 
-        TeamResponse response = teamService.createTeam(request);
+        TeamResponse response = externalCommandTeamService.createTeam(request);
 
         assertEquals("개발팀", response.name());
         assertEquals("백엔드/프론트", response.description());
@@ -65,7 +76,7 @@ class TeamServiceTest {
         when(teamRepository.findById(1L)).thenReturn(Optional.empty());
 
         TeamException exception = assertThrows(TeamException.class,
-                () -> teamService.getTeamById(1L));
+                () -> externalQueryTeamService.getTeamById(1L));
 
         assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }
@@ -81,7 +92,7 @@ class TeamServiceTest {
 
         when(teamRepository.findByIdWithMembers(1L)).thenReturn(Optional.of(team));
 
-        TeamResponse response = teamService.getTeamById(1L);
+        TeamResponse response = externalQueryTeamService.getTeamById(1L);
 
         assertEquals("개발팀", response.name());
         assertEquals("백엔드/프론트", response.description());
@@ -100,7 +111,7 @@ class TeamServiceTest {
         when(teamRepository.existsByName("디자인팀")).thenReturn(false);
 
         TeamUpdateRequest request = new TeamUpdateRequest("디자인팀", "UI/UX 담당");
-        TeamResponse response = teamService.updateTeam(1L, request);
+        TeamResponse response = externalCommandTeamService.updateTeam(1L, request);
 
         assertEquals("디자인팀", response.name());
         assertEquals("UI/UX 담당", response.description());
@@ -114,7 +125,7 @@ class TeamServiceTest {
         TeamUpdateRequest request = new TeamUpdateRequest("디자인팀", "UI/UX 담당");
 
         TeamException exception = assertThrows(TeamException.class,
-                () -> teamService.updateTeam(999L, request));
+                () -> externalCommandTeamService.updateTeam(999L, request));
 
         assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }
@@ -130,7 +141,7 @@ class TeamServiceTest {
 
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 
-        teamService.deleteTeam(1L);
+        externalCommandTeamService.deleteTeam(1L);
 
         assertTrue(team.isDeleted());
         assertNotNull(team.getDeletedAt());
@@ -143,7 +154,7 @@ class TeamServiceTest {
         when(teamRepository.findById(999L)).thenReturn(Optional.empty());
 
         TeamException exception = assertThrows(TeamException.class,
-                () -> teamService.deleteTeam(999L));
+                () -> externalCommandTeamService.deleteTeam(999L));
 
         assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }
@@ -166,9 +177,9 @@ class TeamServiceTest {
         ReflectionTestUtils.setField(user, "userId", 1L);
 
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(internalQueryUserService.getUserByUserId(1L)).thenReturn(user);
 
-        teamService.addMemberById(1L, 1L);
+        externalCommandTeamService.addMemberById(1L, 1L);
 
         assertEquals(team, user.getTeam());  // 유저가 팀에 속했는지 확인
         assertTrue(team.getMembers().contains(user)); // 팀 멤버 목록에 포함됐는지 확인
@@ -179,7 +190,7 @@ class TeamServiceTest {
         when(teamRepository.findById(999L)).thenReturn(Optional.empty());
 
         TeamException exception = assertThrows(TeamException.class,
-                () -> teamService.addMemberById(999L, 1L));
+                () -> externalCommandTeamService.addMemberById(999L, 1L));
 
         assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }
@@ -206,9 +217,9 @@ class TeamServiceTest {
         team.addMember(user);
 
         when(teamRepository.findByIdWithMembers(1L)).thenReturn(Optional.of(team));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(user));
+        when(internalQueryUserService.getUserByUserId(2L)).thenReturn(user);
 
-        teamService.removeMemberId(1L, 2L);
+        externalCommandTeamService.removeMemberId(1L, 2L);
 
         assertNull(user.getTeam()); // 유저의 팀이 해제됐는지 확인
         assertFalse(team.getMembers().contains(user)); // 팀 멤버 목록에서 제거됐는지 확인
@@ -219,7 +230,7 @@ class TeamServiceTest {
         when(teamRepository.findById(999L)).thenReturn(Optional.empty());
 
         TeamException exception = assertThrows(TeamException.class,
-                () -> teamService.removeMemberId(999L, 1L));
+                () -> externalCommandTeamService.removeMemberId(999L, 1L));
 
         assertEquals(TEAM_NOT_FOUND, exception.getErrorCode());
     }

@@ -1,4 +1,4 @@
-package min.taskflow.task.service.commandService;
+package min.taskflow.task.service.command;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -5,7 +5,7 @@ import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
 import min.taskflow.user.repository.UserRepository;
-import min.taskflow.user.service.queryService.InternalQueryUserService;
+import min.taskflow.user.service.query.InternalQueryUserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -55,7 +55,7 @@ public class InternalQueryUserServiceTest {
         when(userRepository.findAll()).thenReturn(List.of(user1, user2));
 
         // when
-        List<UserResponse> result = internalQueryUserService.findAllUsers();
+        List<UserResponse> result = internalQueryUserService.findAllUsersAsResponse();
 
         // then
         assertThat(result).hasSize(2);

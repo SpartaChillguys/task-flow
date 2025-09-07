@@ -1,4 +1,4 @@
-package min.taskflow.comment;
+package min.taskflow.comment.unit;
 
 import min.taskflow.comment.entity.Comment;
 import min.taskflow.comment.repository.CommentRepository;
@@ -33,7 +33,7 @@ public class CommentRepositoryTest {
     private TestEntityManager em;
 
     @Test
-    void findByTask_TaskIdAndParentIdIsNull_부모_댓글_페이징_조회와_최신순_정렬() {
+    void findParentComments_부모_댓글_페이징_조회와_최신순_정렬() {
 
         // given
         Team team = TeamFixture.createTeam();
@@ -53,7 +53,7 @@ public class CommentRepositoryTest {
 
         // when
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Comment> comments = commentRepository.findByTask_TaskIdAndParentIdIsNull(task.getTaskId(), pageable);
+        Page<Comment> comments = commentRepository.findParentComments(task.getTaskId(), pageable);
 
         // then
         assertThat(comments.getContent()).hasSize(10);
@@ -63,7 +63,7 @@ public class CommentRepositoryTest {
     }
 
     @Test
-    void findByParentId_자식_댓글_조회_오래된순_정렬() {
+    void findChildComments_자식_댓글_조회_오래된순_정렬() {
 
         // given
         Team team = TeamFixture.createTeam();
@@ -84,7 +84,7 @@ public class CommentRepositoryTest {
 
         // when
         Sort sort = Sort.by(Sort.Direction.ASC, "createdAt");
-        List<Comment> childComments = commentRepository.findByParentId(parentComment.getCommentId(), sort);
+        List<Comment> childComments = commentRepository.findChildComments(parentComment.getCommentId(), sort);
 
         // then
         assertThat(childComments).hasSize(5);
