@@ -6,7 +6,7 @@ import min.taskflow.common.response.ApiResponse;
 import min.taskflow.user.dto.response.UserProfileResponse;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.entity.User;
-import min.taskflow.user.service.queryService.ExternalQuueryUserService;
+import min.taskflow.user.service.queryService.ExternalQueryUserService;
 import min.taskflow.user.service.queryService.InternalQueryUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,14 +25,14 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final ExternalQuueryUserService externalQuueryUserService;
+    private final ExternalQueryUserService externalQueryUserService;
     private final InternalQueryUserService internalQueryUserService;
 
     //현재 로그인중인 사용자의 id를 받아 프로필조회
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserProfileResponse>> getMe(@AuthenticationPrincipal Long userId) {
 
-        UserProfileResponse myprofile = externalQuueryUserService.getMe(userId);
+        UserProfileResponse myprofile = externalQueryUserService.getMe(userId);
 
         return ApiResponse.success(myprofile, "사용자 정보를 조회했습니다.");
     }

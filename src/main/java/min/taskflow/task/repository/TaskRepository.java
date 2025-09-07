@@ -35,4 +35,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByAssigneeIdAndDueDateAfter(Long assigneeId, LocalDateTime dueDateAfter);
 
     List<Task> findByAssigneeIdAndDueDateBefore(Long assigneeId, LocalDateTime dueDateBefore);
+
+    // 수영 : 제목에 검색어가 포함된 Task 조회 (대소문자 무시)
+    List<Task> findByTitleContainingIgnoreCase(String title);
 }

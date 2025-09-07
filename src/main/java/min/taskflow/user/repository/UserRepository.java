@@ -20,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByTeamIsNull();
 
     List<User> findByNameContaining(String Name);
+
+    // 수영 : 이름 또는 username에 검색어가 포함된 User 조회 (대소문자 무시)
+    List<User> findByNameContainingIgnoreCaseOrUserNameContainingIgnoreCase(String name, String userName);
 }

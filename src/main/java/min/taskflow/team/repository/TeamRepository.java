@@ -14,6 +14,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     boolean existsByName(String name);
 
+    // 팀 이름에 검색어가 포함된 Team 조회 (대소문자 무시)
     List<Team> findByNameContainingIgnoreCase(String query);
 
     // 팀 단건 조회 + 멤버 포함

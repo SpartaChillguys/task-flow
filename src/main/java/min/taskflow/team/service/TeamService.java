@@ -1,6 +1,7 @@
 package min.taskflow.team.service;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.search.mapper.SearchMapper;
 import min.taskflow.team.dto.*;
 import min.taskflow.team.entity.Team;
 import min.taskflow.team.exception.TeamErrorCode;
@@ -21,6 +22,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
     private final UserRepository userRepository;
+    private final SearchMapper searchMapper;
 
     // 팀 생성
     @Transactional
@@ -161,5 +163,11 @@ public class TeamService {
         }
 
         return teamMapper.toMemberIdList(team.getMembers());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TeamSearchResponse> searchTeamsByQuery(String query) {
+        List<Team> teams = teamRepository.findByNameContainingIgnoreCase(query);
+        return searchMapper.toTeamResponseList(teams);
     }
 }
