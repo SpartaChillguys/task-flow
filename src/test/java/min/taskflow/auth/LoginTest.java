@@ -6,7 +6,7 @@ import min.taskflow.auth.dto.request.LoginRequest;
 import min.taskflow.auth.exception.AuthErrorCode;
 import min.taskflow.auth.exception.AuthException;
 import min.taskflow.auth.jwt.JwtUtil;
-import min.taskflow.auth.service.commandService.ExternalCommandAuthService;
+import min.taskflow.auth.service.command.ExternalCommandAuthService;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
 import min.taskflow.user.repository.UserRepository;

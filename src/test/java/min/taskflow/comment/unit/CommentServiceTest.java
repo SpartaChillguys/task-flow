@@ -7,7 +7,7 @@ import min.taskflow.comment.entity.Comment;
 import min.taskflow.comment.exception.CommentException;
 import min.taskflow.comment.mapper.CommentMapper;
 import min.taskflow.comment.repository.CommentRepository;
-import min.taskflow.comment.service.CommentService;
+import min.taskflow.comment.service.command.ExternalCommandCommentService;
 import min.taskflow.fixture.CommentFixture;
 import min.taskflow.fixture.TaskFixture;
 import min.taskflow.fixture.TeamFixture;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 public class CommentServiceTest {
 
     @InjectMocks
-    private CommentService commentService;
+    private ExternalCommandCommentService commentService;
 
     @Mock
     private CommentRepository commentRepository;
