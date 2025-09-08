@@ -26,6 +26,10 @@ public class InternalQueryTeamService {
     // 검색 시 팀 정보 가져오기
     public List<TeamSearchResponse> searchTeamByQuery(String query) {
 
+        if (query == null || query.isBlank()) {
+            throw new TeamException(TeamErrorCode.INVALID_QUERY);
+        }
+
         List<Team> found = teamRepository.findByNameContainingIgnoreCase(query);
 
         List<TeamSearchResponse> teams = found.stream()
@@ -39,6 +43,10 @@ public class InternalQueryTeamService {
 
     // 멤버 id
     public List<Long> getMembersIdByUserId(Long userId) {
+
+        if (userId == null || userId <= 0) {
+            throw new TeamException(TeamErrorCode.INVALID_USER_ID);
+        }
 
         User user = internalQueryUserService.getUserByUserId(userId);
 
