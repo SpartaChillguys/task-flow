@@ -16,12 +16,8 @@ import min.taskflow.task.entity.Task;
 import min.taskflow.task.service.query.InternalQueryTaskService;
 import min.taskflow.user.dto.response.UserResponse;
 import min.taskflow.user.service.query.InternalQueryUserService;
-import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,41 +50,6 @@ public class ExternalCommandCommentService {
         UserResponse userResponse = userService.toUserResponse(savedComment.getUser());
 
         return commentMapper.toCommentResponse(savedComment, userResponse);
-    }
-
-    @Transactional
-    public Page<CommentResponse> getComments(Long taskId, Pageable pageable, String sort) {
-
-        taskService.validateTaskExists(taskId);
-
-        Sort.Direction orderBy = sort.equals("oldest") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sortByCreatedAt = Sort.by(orderBy, "createdAt");
-        Pageable parentPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortByCreatedAt);
-
-        // 1. 부모 댓글 페이징 조회
-        Page<Comment> parentComments = commentRepository.findParentComments(taskId, parentPageable);
-        List<CommentResponse> allComments = new ArrayList<>();
-
-        for (Comment parentComment : parentComments.getContent()) {
-            UserResponse parentUserResponse = userService.toUserResponse(parentComment.getUser());
-            CommentResponse parentResponse = commentMapper.toCommentResponse(parentComment, parentUserResponse);
-
-            // 2. 대댓글 조회
-            List<Comment> childComments = commentRepository.findChildComments(parentComment.getCommentId(), sortByCreatedAt);
-            List<CommentResponse> replies = childComments.stream()
-                    .map(childComment -> {
-                        UserResponse childUserResponse = userService.toUserResponse(childComment.getUser());
-                        return commentMapper.toCommentResponse(childComment, childUserResponse);
-                    })
-                    .toList();
-
-            allComments.add(parentResponse);
-            allComments.addAll(replies);
-        }
-
-        PageImpl<CommentResponse> comments = new PageImpl<>(allComments, pageable, parentComments.getTotalElements());
-
-        return comments;
     }
 
     @ActivityLogger(type = ActivityType.COMMENT_UPDATED)
