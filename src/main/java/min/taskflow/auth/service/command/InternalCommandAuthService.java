@@ -1,4 +1,4 @@
-package min.taskflow.auth.service.commandService;
+package min.taskflow.auth.service.command;
 
 import org.springframework.stereotype.Service;
 

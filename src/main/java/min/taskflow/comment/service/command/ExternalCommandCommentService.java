@@ -1,4 +1,4 @@
-package min.taskflow.comment.service;
+package min.taskflow.comment.service.command;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService {
+public class ExternalCommandCommentService {
 
     private final CommentRepository commentRepository;
     private final InternalQueryTaskService taskService;
