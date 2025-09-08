@@ -18,8 +18,8 @@ public class UserMapper {
     public UserResponse userResponse(User user) {
 
         return UserResponse.builder()
-                .userId(user.getUserId())
-                .userName(user.getUserName())
+                .id(user.getUserId())
+                .username(user.getUserName())
                 .name(user.getName())
                 .email(user.getEmail())
                 .role(user.getRole())
@@ -68,8 +68,8 @@ public class UserMapper {
     public UserSearchAndAssigneeResponse toSearchAndAssigneeResponse(User user) {
 
         return UserSearchAndAssigneeResponse.builder()
-                .userid(user.getUserId())
-                .userName(user.getUserName())
+                .id(user.getUserId())
+                .username(user.getUserName())
                 .name(user.getName())
                 .email((user.getEmail()))
                 .build();
@@ -78,7 +78,7 @@ public class UserMapper {
     public AssigneeSummaryResponse toAssigneeSummaryResponse(User user) {
 
         return AssigneeSummaryResponse.builder()
-                .userId(user.getUserId())
+                .id(user.getUserId())
                 .name(user.getName())
                 .build();
     }

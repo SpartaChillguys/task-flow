@@ -1,4 +1,4 @@
-package min.taskflow.task.dto.response.dashboard;
+package min.taskflow.dashboard.dto;
 
 import lombok.Builder;
 

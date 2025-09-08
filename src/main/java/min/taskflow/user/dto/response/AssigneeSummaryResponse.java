@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record AssigneeSummaryResponse(
-        Long userId,
+        Long id,
         String name
 ) {
 }

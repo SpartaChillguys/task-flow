@@ -7,8 +7,8 @@ import min.taskflow.user.enums.UserRole;
 import java.time.LocalDateTime;
 
 @Builder
-public record UserResponse(Long userId,
-                           String userName,
+public record UserResponse(Long id,
+                           String username,
                            String email,
                            String name,
                            UserRole role,

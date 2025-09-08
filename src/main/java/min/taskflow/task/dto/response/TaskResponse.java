@@ -1,4 +1,4 @@
-package min.taskflow.task.dto.response.task;
+package min.taskflow.task.dto.response;
 
 import lombok.Builder;
 import min.taskflow.task.entity.Priority;
@@ -14,7 +14,7 @@ public record TaskResponse<T>(Long id,
                               Priority priority,
                               Status status,
                               Long assigneeId,
-                              T assigneeInfoResponse,
+                              T assignee,
                               LocalDateTime createdAt,
                               LocalDateTime updatedAt) {
 }

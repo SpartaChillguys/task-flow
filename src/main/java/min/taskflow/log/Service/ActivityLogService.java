@@ -1,11 +1,14 @@
 package min.taskflow.log.Service;
 
 import lombok.RequiredArgsConstructor;
+import min.taskflow.dashboard.dto.RecentActivityResponse;
+import min.taskflow.dashboard.mapper.DashboardMapper;
 import min.taskflow.log.ActivityType;
 import min.taskflow.log.Repository.ActivityLogRepository;
 import min.taskflow.log.entity.Log;
 import min.taskflow.log.mapper.LogMapper;
 import min.taskflow.log.response.ActivityLogResponse;
+import min.taskflow.user.dto.response.AssigneeSummaryResponse;
 import min.taskflow.user.dto.response.UserProfileResponse;
 import min.taskflow.user.service.query.InternalQueryUserService;
 import org.springframework.data.domain.Page;
@@ -25,6 +28,7 @@ public class ActivityLogService {
     private final ActivityLogRepository logRepository;
     private final InternalQueryUserService internalQueryUserService;
     private final LogMapper logMapper;
+    private final DashboardMapper dashboardMapper;
 
     public void saveLog(Long taskId, String userName, ActivityType type, String description) {
         Log log = Log.builder()
@@ -46,7 +50,7 @@ public class ActivityLogService {
             LocalDate startDate,
             LocalDate endDate
     ) {
-        
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "timeStamp"));
 
         Specification<Log> spec = (root, query, cb) -> cb.conjunction();
@@ -74,5 +78,19 @@ public class ActivityLogService {
             UserProfileResponse userProfile = internalQueryUserService.findByName(log.getUserName());
             return logMapper.toActivityLogResponse(log, userProfile);
         });
+    }
+
+    public Page<RecentActivityResponse> getRecentActivities(Long loginUserId, Pageable pageable) {
+
+        String loginUserName = internalQueryUserService.getUserNameByUserId(loginUserId);
+        AssigneeSummaryResponse loginUser = internalQueryUserService.getAssigneeSummaryByUserId(loginUserId);
+
+        Page<Log> logs = logRepository.findAllByUserName(loginUserName, pageable);
+
+        Page<RecentActivityResponse> response = logs.map(log ->
+                dashboardMapper.toRecentActivityResponse(log, loginUserId, loginUser)
+        );
+
+        return response;
     }
 }

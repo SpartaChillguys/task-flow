@@ -7,7 +7,7 @@ import min.taskflow.task.dto.condition.TaskSearchCondition;
 import min.taskflow.task.dto.request.StatusUpdateRequest;
 import min.taskflow.task.dto.request.TaskCreateRequest;
 import min.taskflow.task.dto.request.TaskUpdateRequest;
-import min.taskflow.task.dto.response.task.TaskResponse;
+import min.taskflow.task.dto.response.TaskResponse;
 import min.taskflow.task.service.command.ExternalCommandTaskService;
 import min.taskflow.task.service.query.ExternalQueryTaskService;
 import org.springframework.data.domain.Page;
