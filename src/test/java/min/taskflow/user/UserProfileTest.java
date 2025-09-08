@@ -37,7 +37,14 @@ public class UserProfileTest {
     void getMe_요청시_성공적() {
         // given
 
-        User user = new User("test", "123456q!@", "test@test", "test", UserRole.USER, null);
+        User user = User.builder()
+                .userName("user1")
+                .password("password1")
+                .email("user1@email.com")
+                .name("홍길동")
+                .role(UserRole.USER)
+                .build();
+
         ReflectionTestUtils.setField(user, "userId", 1L);
         UserProfileResponse response = userMapper.toProfileResponse(user);
 
