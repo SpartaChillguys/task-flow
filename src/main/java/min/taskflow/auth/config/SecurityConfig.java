@@ -1,5 +1,6 @@
 package min.taskflow.auth.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.auth.jwt.JwtFilter;
 import min.taskflow.auth.jwt.JwtUtil;
@@ -23,6 +24,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -40,14 +42,15 @@ public class SecurityConfig {
                 // 요청별 인증 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
+                        // ADMIN 전용 API
+                        .requestMatchers("/api/activities").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
 
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
 
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtil, objectMapper), UsernamePasswordAuthenticationFilter.class)
 
                 .build();
     }
