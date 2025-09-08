@@ -57,4 +57,11 @@ public class InternalQueryTeamService {
 
         return teamMapper.toMemberIdList(team.getMembers());
     }
+
+    public List<Long> getMemberIdsByTeamId(Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamException(TeamErrorCode.TEAM_NOT_FOUND));
+
+        return teamMapper.toMemberIdList(team.getMembers());
+    }
 }
