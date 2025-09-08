@@ -1,6 +1,5 @@
 package min.taskflow.team;
 
-import min.taskflow.search.mapper.SearchMapper;
 import min.taskflow.team.dto.TeamCreateRequest;
 import min.taskflow.team.dto.TeamResponse;
 import min.taskflow.team.dto.TeamUpdateRequest;
@@ -12,12 +11,14 @@ import min.taskflow.team.service.command.ExternalCommandTeamService;
 import min.taskflow.team.service.query.ExternalQueryTeamService;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
-import min.taskflow.user.repository.UserRepository;
 import min.taskflow.user.service.command.InternalCommandUserService;
 import min.taskflow.user.service.query.InternalQueryUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
@@ -29,29 +30,29 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class TeamServiceTest {
 
-    private TeamRepository teamRepository;
-    private UserRepository userRepository;
-
     @Mock
-    private UserRepository userRepository;
+    private TeamRepository teamRepository;
 
     @Mock
     private TeamMapper teamMapper;
 
     @Mock
-    private SearchMapper searchMapper;
+    private InternalCommandUserService internalCommandUserService;
+
+    @Mock
+    private InternalQueryUserService internalQueryUserService;
+
+    @InjectMocks
+    private ExternalCommandTeamService externalCommandTeamService;
+
+    @InjectMocks
+    private ExternalQueryTeamService externalQueryTeamService;
 
     private Team team;
     private User user;
-
-    private TeamMapper teamMapper;
-
-    private InternalCommandUserService internalCommandUserService;
-    private InternalQueryUserService internalQueryUserService;
-    private ExternalCommandTeamService externalCommandTeamService;
-    private ExternalQueryTeamService externalQueryTeamService;
 
     @BeforeEach
     void setUp() {
@@ -61,13 +62,6 @@ class TeamServiceTest {
                 .build();
         ReflectionTestUtils.setField(team, "teamId", 1L);
 
-        teamRepository = mock(TeamRepository.class); // 레포지토리 모킹
-        userRepository = mock(UserRepository.class);
-        internalQueryUserService = mock(InternalQueryUserService.class);
-        internalCommandUserService = mock(InternalCommandUserService.class);
-        teamMapper = new TeamMapper();
-        externalCommandTeamService = new ExternalCommandTeamService(teamRepository, teamMapper, internalQueryUserService, internalCommandUserService);
-        externalQueryTeamService = new ExternalQueryTeamService(teamRepository, teamMapper, internalQueryUserService);
         user = User.builder()
                 .userName("chulsoo")
                 .email("chulsoo@example.com")
@@ -80,20 +74,20 @@ class TeamServiceTest {
 
     @Test
     void 팀을_성공적으로_생성했습니다() {
+
         TeamCreateRequest request = new TeamCreateRequest("개발팀", "백엔드/프론트");
+        TeamResponse mockResponse = new TeamResponse(
+                1L,
+                "개발팀",
+                "백엔드/프론트",
+                LocalDateTime.now(),
+                Collections.emptyList()
+        );
 
         when(teamRepository.existsByName(request.name())).thenReturn(false);
         when(teamMapper.toEntity(request)).thenReturn(team);
-        when(teamRepository.save(team)).thenReturn(team);
-        when(teamMapper.toTeamResponse(team)).thenReturn(
-                new TeamResponse(
-                        1L,
-                        "개발팀",
-                        "백엔드/프론트",
-                        LocalDateTime.now(),
-                        Collections.emptyList()
-                )
-        );
+        when(teamRepository.save(any(Team.class))).thenReturn(team);
+        when(teamMapper.toTeamResponse(team)).thenReturn(mockResponse);
 
         TeamResponse response = externalCommandTeamService.createTeam(request);
 

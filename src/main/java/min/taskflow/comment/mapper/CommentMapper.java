@@ -25,7 +25,7 @@ public class CommentMapper {
     public CommentResponse toCommentResponse(Comment comment, UserResponse user) {
 
         return CommentResponse.builder()
-                .id(comment.getCommentId())
+                .commentId(comment.getCommentId())
                 .content(comment.getContent())
                 .taskId(comment.getTask().getTaskId())
                 .userId(comment.getUser().getUserId())

@@ -32,7 +32,6 @@ public class CommentService {
     private final InternalQueryUserService userService;
     private final CommentMapper commentMapper;
 
-
     @ActivityLogger(type = ActivityType.COMMENT_CREATED)
     @Transactional
     public CommentResponse createComment(Long taskId,
@@ -106,7 +105,7 @@ public class CommentService {
 
     @ActivityLogger(type = ActivityType.COMMENT_DELETED)
     @Transactional
-    public int deleteComment(Long taskId, Long userId, Long commentId) {
+    public int deleteComment(Long taskId, Long commentId, Long userId) {
 
         Comment comment = validateCommentAccess(taskId, commentId, userId);
 
