@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@SQLRestriction("is_deleted = false")
 public abstract class BaseEntity {
 
     @CreatedDate

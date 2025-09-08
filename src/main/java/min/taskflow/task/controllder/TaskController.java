@@ -26,7 +26,7 @@ public class TaskController {
     private final ExternalQueryTaskService externalQueryTaskService;
 
     // 태스크 생성
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ApiResponse<TaskResponse>> createTask(@RequestBody TaskCreateRequest request) {
 
         TaskResponse taskResponse = externalCommandTaskService.createTask(request);
@@ -77,7 +77,7 @@ public class TaskController {
     }
 
     // 태스크 삭제(soft delete)
-    @DeleteMapping("/{taskId}")
+    @DeleteMapping("/delete/{taskId}")
     public ResponseEntity<ApiResponse<Object>> deleteTaskByTaskId(@PathVariable Long taskId, @AuthenticationPrincipal long userId) {
 
         externalCommandTaskService.deleteTaskByTaskId(taskId, userId);

@@ -82,9 +82,12 @@ public class ExternalCommandTaskService {
     @ActivityLogger(type = ActivityType.TASK_DELETED)
     public void deleteTaskByTaskId(Long taskId, Long userId) {
 
-        // Task soft delete
-        taskRepository.deleteById(taskId);
-    }
+        Task task = taskRepository.findByTaskId(taskId)
+                .orElseThrow(() -> new TaskException(TaskErrorCode.TASK_NOT_FOUND));
 
+        task.delete();
+
+
+    }
 
 }
