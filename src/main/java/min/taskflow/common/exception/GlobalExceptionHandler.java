@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
         log.error("알 수 없는 서버 오류 발생 ", ex);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR));
+                .body(ApiResponse.error("예상하지 못한 서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
     @ExceptionHandler(GlobalException.class)
