@@ -8,10 +8,12 @@ import lombok.NoArgsConstructor;
 import min.taskflow.common.entity.BaseEntity;
 import min.taskflow.task.entity.Task;
 import min.taskflow.user.entity.User;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction("is_deleted = false")
 public class Comment extends BaseEntity {
 
     @Id
