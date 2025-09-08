@@ -11,7 +11,7 @@ import min.taskflow.auth.dto.request.LoginRequest;
 import min.taskflow.auth.dto.request.RegisterRequest;
 import min.taskflow.auth.dto.response.RegisterResponse;
 import min.taskflow.auth.jwt.CookieUtil;
-import min.taskflow.auth.service.commandService.ExternalCommandAuthService;
+import min.taskflow.auth.service.command.ExternalCommandAuthService;
 import min.taskflow.common.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

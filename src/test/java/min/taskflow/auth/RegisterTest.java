@@ -3,7 +3,7 @@ package min.taskflow.auth;
 import min.taskflow.auth.config.PasswordEncoder;
 import min.taskflow.auth.dto.request.RegisterRequest;
 import min.taskflow.auth.dto.response.RegisterResponse;
-import min.taskflow.auth.service.commandService.ExternalCommandAuthService;
+import min.taskflow.auth.service.command.ExternalCommandAuthService;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.enums.UserRole;
 import min.taskflow.user.exception.UserErrorCode;
