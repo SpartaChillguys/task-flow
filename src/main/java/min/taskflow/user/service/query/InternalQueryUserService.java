@@ -46,8 +46,8 @@ public class InternalQueryUserService {
     public UserResponse toUserResponse(User user) {
 
         return UserResponse.builder()
-                .userId(user.getUserId())
-                .userName(user.getUserName())
+                .id(user.getUserId())
+                .username(user.getUserName())
                 .name(user.getName())
                 .email(user.getEmail())
                 .role(user.getRole())

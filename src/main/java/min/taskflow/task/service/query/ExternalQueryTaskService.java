@@ -85,7 +85,7 @@ public class ExternalQueryTaskService {
     }
 
     // TODO: 리팩토링 단계에서 로직 간략화하기
-    public Page<Task> searchLogic(Pageable pageable, TaskSearchCondition condition) {
+    private Page<Task> searchLogic(Pageable pageable, TaskSearchCondition condition) {
         if (condition.status() != null) {
             return taskRepository.findByStatus(condition.status(), pageable);
         }

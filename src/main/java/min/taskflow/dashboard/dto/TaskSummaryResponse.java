@@ -12,7 +12,7 @@ public record TaskSummaryResponse(List<TaskSummaryDto> todayTasks,
                                   List<TaskSummaryDto> overdueTasks
 ) {
 
-    public record TaskSummaryDto(Long taskId,
+    public record TaskSummaryDto(Long id,
                                  String title,
                                  Status status,
                                  LocalDateTime dueDate) {

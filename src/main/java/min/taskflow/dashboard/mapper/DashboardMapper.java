@@ -3,11 +3,13 @@ package min.taskflow.dashboard.mapper;
 import min.taskflow.dashboard.dto.RecentActivityResponse;
 import min.taskflow.dashboard.dto.TargetDomainType;
 import min.taskflow.dashboard.dto.TeamProgressResponse;
+import min.taskflow.dashboard.dto.WeeklyTrendResponse;
 import min.taskflow.log.ActivityType;
 import min.taskflow.log.entity.Log;
 import min.taskflow.user.dto.response.AssigneeSummaryResponse;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @Component
@@ -39,6 +41,16 @@ public class DashboardMapper {
                 .targetId(log.getTaskId())
                 .description(log.getDescription())
                 .createdAt(log.getTimeStamp())
+                .build();
+    }
+
+    public WeeklyTrendResponse toWeeklyTrendResponse(String name, Long tasks, Long completed, LocalDate date) {
+
+        return WeeklyTrendResponse.builder()
+                .name(name)
+                .tasks(tasks)
+                .completed(completed)
+                .date(date)
                 .build();
     }
 }

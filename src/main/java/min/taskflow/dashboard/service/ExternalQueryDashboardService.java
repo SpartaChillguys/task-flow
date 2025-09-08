@@ -1,10 +1,7 @@
 package min.taskflow.dashboard.service;
 
 import lombok.RequiredArgsConstructor;
-import min.taskflow.dashboard.dto.RecentActivityResponse;
-import min.taskflow.dashboard.dto.TaskDashboardStatsResponse;
-import min.taskflow.dashboard.dto.TaskSummaryResponse;
-import min.taskflow.dashboard.dto.TeamProgressResponse;
+import min.taskflow.dashboard.dto.*;
 import min.taskflow.dashboard.mapper.DashboardMapper;
 import min.taskflow.log.Service.ActivityLogService;
 import min.taskflow.task.service.query.InternalQueryTaskService;
@@ -61,6 +58,13 @@ public class ExternalQueryDashboardService {
     public Page<RecentActivityResponse> getRecentActivities(Long loginUserId, Pageable pageable) {
 
         Page<RecentActivityResponse> response = activityLogService.getRecentActivities(loginUserId, pageable);
+
+        return response;
+    }
+
+    public List<WeeklyTrendResponse> getWeeklyTend(Long loginUserId) {
+
+        List<WeeklyTrendResponse> response = internalQueryTaskService.getWeeklyTend(loginUserId);
 
         return response;
     }

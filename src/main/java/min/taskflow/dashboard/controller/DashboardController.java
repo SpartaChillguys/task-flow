@@ -3,10 +3,7 @@ package min.taskflow.dashboard.controller;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.common.response.ApiPageResponse;
 import min.taskflow.common.response.ApiResponse;
-import min.taskflow.dashboard.dto.RecentActivityResponse;
-import min.taskflow.dashboard.dto.TaskDashboardStatsResponse;
-import min.taskflow.dashboard.dto.TaskSummaryResponse;
-import min.taskflow.dashboard.dto.TeamProgressResponse;
+import min.taskflow.dashboard.dto.*;
 import min.taskflow.dashboard.service.ExternalQueryDashboardService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,14 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/dashboard")
+@RequestMapping("/api")
 public class DashboardController {
 
     private final ExternalQueryDashboardService externalQueryDashboardService;
 
-    @GetMapping("/stats")
+    @GetMapping("/dashboard/stats")
     public ResponseEntity<ApiResponse<TaskDashboardStatsResponse>> getDashboardStats(@AuthenticationPrincipal Long LoginUserId) {
 
         TaskDashboardStatsResponse response = externalQueryDashboardService.getDashboardStats(LoginUserId);
@@ -33,7 +32,7 @@ public class DashboardController {
         return ApiResponse.success(response, "대시보드 통계 조회 완료");
     }
 
-    @GetMapping("/my-tasks")
+    @GetMapping("/dashboard/my-tasks")
     public ResponseEntity<ApiResponse<TaskSummaryResponse>> getTaskSummary(@AuthenticationPrincipal Long loginUserId) {
 
         TaskSummaryResponse response = externalQueryDashboardService.getTaskSummary(loginUserId);
@@ -41,7 +40,7 @@ public class DashboardController {
         return ApiResponse.success(response, "내 작업 요약 조회 완료");
     }
 
-    @GetMapping("/team-progress")
+    @GetMapping("/dashboard/team-progress")
     public ResponseEntity<ApiResponse<TeamProgressResponse>> getTeamsProgress() {
 
         TeamProgressResponse response = externalQueryDashboardService.getTeamProgress();
@@ -49,7 +48,7 @@ public class DashboardController {
         return ApiResponse.success(response, "팀 진행률 조회 완료");
     }
 
-    @GetMapping("/activities")
+    @GetMapping("/activities/my")
     public ResponseEntity<ApiPageResponse<RecentActivityResponse>> getRecentActivities(@AuthenticationPrincipal Long loginUserId,
                                                                                        @RequestParam(defaultValue = "0") int page,
                                                                                        @RequestParam(defaultValue = "10") int size) {
@@ -59,5 +58,13 @@ public class DashboardController {
         Page<RecentActivityResponse> response = externalQueryDashboardService.getRecentActivities(loginUserId, pageable);
 
         return ApiPageResponse.success(response, "활동 내역 조회 완료");
+    }
+
+    @GetMapping("/dashboard/weekly-trend")
+    public ResponseEntity<ApiResponse<List<WeeklyTrendResponse>>> getWeeklyTrend(@AuthenticationPrincipal Long loginUserId) {
+
+        List<WeeklyTrendResponse> response = externalQueryDashboardService.getWeeklyTend(loginUserId);
+
+        return ApiResponse.success(response, "주간 작업 추세 조회 완료");
     }
 }

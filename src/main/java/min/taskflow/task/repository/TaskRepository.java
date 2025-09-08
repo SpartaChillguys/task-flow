@@ -38,4 +38,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByTitleContainingIgnoreCase(String title);
 
     List<Task> findByAssigneeIdIn(List<Long> memberIdsByTeamId);
+
+    Long countTasksByAssigneeIdAndDueDateBetween(Long assigneeId, LocalDateTime dueDateAfter, LocalDateTime dueDateBefore);
+
+    Long countTasksByAssigneeIdAndDueDateBetweenAndStatus(Long loginUserId, LocalDateTime startOfDay, LocalDateTime endOfDay, Status status);
 }
