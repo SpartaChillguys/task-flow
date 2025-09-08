@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import min.taskflow.comment.dto.request.CommentRequest;
 import min.taskflow.comment.dto.request.CommentUpdateRequest;
 import min.taskflow.comment.dto.response.CommentResponse;
-import min.taskflow.comment.service.CommentService;
+import min.taskflow.comment.service.command.ExternalCommandCommentService;
 import min.taskflow.common.response.ApiPageResponse;
 import min.taskflow.common.response.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/tasks/{taskId}/comments")
 public class CommentController {
 
-    private final CommentService commentService;
+    private final ExternalCommandCommentService commentService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<CommentResponse>> createComment(@PathVariable Long taskId,
