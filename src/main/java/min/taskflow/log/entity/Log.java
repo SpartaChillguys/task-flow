@@ -2,6 +2,7 @@ package min.taskflow.log.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import min.taskflow.log.ActivityType;
@@ -29,7 +30,12 @@ public class Log {
 
     private LocalDateTime timeStamp;
 
-    public Log(Long taskId, String userName, ActivityType type, String description, LocalDateTime timeStamp) {
+    @Builder
+    private Log(Long taskId,
+                String userName,
+                ActivityType type,
+                String description,
+                LocalDateTime timeStamp) {
         this.taskId = taskId;
         this.userName = userName;
         this.type = type;
