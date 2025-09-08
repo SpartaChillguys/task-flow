@@ -30,10 +30,21 @@ public class InternalQueryUserServiceTest {
     @Test
     void findByTeamIsNull_조회시_팀이null인유저들조회() {
         // given
-        User user1 = new User("user1", "password1", "user1@email.com",
-                "홍길동", UserRole.USER, null);
-        User user2 = new User("user2", "password2", "user2@email.com",
-                "김철수", UserRole.USER, null);
+        User user1 = User.builder()
+                .userName("user1")
+                .password("password1")
+                .email("user1@email.com")
+                .name("홍길동")
+                .role(UserRole.USER)
+                .build();
+
+        User user2 = User.builder()
+                .userName("user2")
+                .password("password2")
+                .email("user2@email.com")
+                .name("김철수")
+                .role(UserRole.USER)
+                .build();
 
         when(userRepository.findByTeamIsNull()).thenReturn(List.of(user1, user2));
 
@@ -47,10 +58,21 @@ public class InternalQueryUserServiceTest {
     @Test
     void findAllUsers_전체유저조회시_UserResponse리스트반환() {
         // given
-        User user1 = new User("user1", "password1", "user1@email.com",
-                "홍길동", UserRole.USER, null);
-        User user2 = new User("user2", "password2", "user2@email.com",
-                "김철수", UserRole.USER, null);
+        User user1 = User.builder()
+                .userName("user1")
+                .password("password1")
+                .email("user1@email.com")
+                .name("홍길동")
+                .role(UserRole.USER)
+                .build();
+
+        User user2 = User.builder()
+                .userName("user2")
+                .password("password2")
+                .email("user2@email.com")
+                .name("김철수")
+                .role(UserRole.USER)
+                .build();
 
         when(userRepository.findAll()).thenReturn(List.of(user1, user2));
 
@@ -64,10 +86,21 @@ public class InternalQueryUserServiceTest {
     @Test
     void findAllUserNames_전체유저이름조회시_이름리스트반환() {
         // given
-        User user1 = new User("user1", "password1", "user1@email.com",
-                "홍길동", UserRole.USER, null);
-        User user2 = new User("user2", "password2", "user2@email.com",
-                "김철수", UserRole.USER, null);
+        User user1 = User.builder()
+                .userName("user1")
+                .password("password1")
+                .email("user1@email.com")
+                .name("홍길동")
+                .role(UserRole.USER)
+                .build();
+
+        User user2 = User.builder()
+                .userName("user2")
+                .password("password2")
+                .email("user2@email.com")
+                .name("김철수")
+                .role(UserRole.USER)
+                .build();
 
         when(userRepository.findAll()).thenReturn(List.of(user1, user2));
 

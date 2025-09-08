@@ -36,12 +36,12 @@ public class User extends BaseEntity {
     private Team team;
 
     @Builder
-    public User(String userName,
-                String password,
-                String email,
-                String name,
-                UserRole role,
-                Team team) {
+    private User(String userName,
+                 String password,
+                 String email,
+                 String name,
+                 UserRole role,
+                 Team team) {
         this.userName = userName;
         this.password = password;
         this.email = email;

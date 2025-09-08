@@ -27,13 +27,13 @@ public class ActivityLogService {
     private final LogMapper logMapper;
 
     public void saveLog(Long taskId, String userName, ActivityType type, String description) {
-        Log log = new Log(
-                taskId,
-                userName,
-                type,
-                description,
-                LocalDateTime.now()
-        );
+        Log log = Log.builder()
+                .taskId(taskId)
+                .userName(userName)
+                .type(type)
+                .description(description)
+                .timeStamp(LocalDateTime.now())
+                .build();
         logRepository.save(log);
     }
 
@@ -46,6 +46,7 @@ public class ActivityLogService {
             LocalDate startDate,
             LocalDate endDate
     ) {
+        
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "timeStamp"));
 
         Specification<Log> spec = (root, query, cb) -> cb.conjunction();
@@ -74,16 +75,4 @@ public class ActivityLogService {
             return logMapper.toActivityLogResponse(log, userProfile);
         });
     }
-
-
-//    public Page<ActivityLogResponse> getLogs(int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "timeStamp"));
-//
-//        return logRepository.findAll(pageable)
-//                .map(log -> {
-//                    // 지금은 userId 따로 없으니 userName 기준으로 조회
-//                    UserProfileResponse userProfile = internalQueryUserService.findByName(log.getUserName());
-//                    return logMapper.toActivityLogResponse(log, userProfile);
-//                });
-//    }
 }
