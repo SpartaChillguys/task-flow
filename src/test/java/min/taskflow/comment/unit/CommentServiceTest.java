@@ -8,6 +8,7 @@ import min.taskflow.comment.exception.CommentException;
 import min.taskflow.comment.mapper.CommentMapper;
 import min.taskflow.comment.repository.CommentRepository;
 import min.taskflow.comment.service.command.ExternalCommandCommentService;
+import min.taskflow.comment.service.query.ExternalQueryCommentService;
 import min.taskflow.fixture.CommentFixture;
 import min.taskflow.fixture.TaskFixture;
 import min.taskflow.fixture.TeamFixture;
@@ -37,7 +38,10 @@ import static org.mockito.Mockito.when;
 public class CommentServiceTest {
 
     @InjectMocks
-    private ExternalCommandCommentService commentService;
+    private ExternalCommandCommentService commandCommentService;
+
+    @InjectMocks
+    private ExternalQueryCommentService queryCommentService;
 
     @Mock
     private CommentRepository commentRepository;
@@ -76,7 +80,7 @@ public class CommentServiceTest {
         when(commentMapper.toCommentResponse(any(Comment.class), eq(userResponse))).thenReturn(commentResponse);
 
         // when
-        CommentResponse response = commentService.createComment(taskId, request, userId);
+        CommentResponse response = commandCommentService.createComment(taskId, request, userId);
 
         // then
         assertNotNull(response);
@@ -94,7 +98,7 @@ public class CommentServiceTest {
         when(commentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(CommentException.class, () -> commentService.createComment(1L, request, 2L));
+        assertThrows(CommentException.class, () -> commandCommentService.createComment(1L, request, 2L));
     }
 
     @Test
@@ -116,7 +120,7 @@ public class CommentServiceTest {
         when(commentRepository.findById(anyLong())).thenReturn(Optional.of(parentComment));
 
         // when & then
-        assertThrows(CommentException.class, () -> commentService.createComment(taskId, request, userId));
+        assertThrows(CommentException.class, () -> commandCommentService.createComment(taskId, request, userId));
     }
 
     @Test
@@ -147,7 +151,7 @@ public class CommentServiceTest {
         when(commentMapper.toCommentResponse(any(Comment.class), eq(userResponse))).thenReturn(commentResponse);
 
         // when
-        CommentResponse response = commentService.createComment(taskId, request, userId);
+        CommentResponse response = commandCommentService.createComment(taskId, request, userId);
 
         // then
         assertNotNull(response);
@@ -187,7 +191,7 @@ public class CommentServiceTest {
         when(commentMapper.toCommentResponse(childComment, userResponse)).thenReturn(childResponse);
 
         // when
-        Page<CommentResponse> comments = commentService.getComments(taskId, pageable, "newest");
+        Page<CommentResponse> comments = queryCommentService.getComments(taskId, pageable, "newest");
 
         // then
         assertThat(comments).isNotNull();
@@ -219,7 +223,7 @@ public class CommentServiceTest {
         when(commentMapper.toCommentResponse(comment, userResponse)).thenReturn(expectedResponse);
 
         // when
-        CommentResponse response = commentService.updateComment(taskId, request, commentId, userId);
+        CommentResponse response = commandCommentService.updateComment(taskId, request, commentId, userId);
 
         // then
         assertNotNull(response);
@@ -236,7 +240,7 @@ public class CommentServiceTest {
 
         // when & then
         assertThrows(CommentException.class,
-                () -> commentService.updateComment(1L, request, 2L, 3L));
+                () -> commandCommentService.updateComment(1L, request, 2L, 3L));
     }
 
     @Test
@@ -251,7 +255,7 @@ public class CommentServiceTest {
 
         // when & then
         assertThrows(CommentException.class,
-                () -> commentService.updateComment(1L, request, 2L, 3L));
+                () -> commandCommentService.updateComment(1L, request, 2L, 3L));
     }
 
     @Test
@@ -271,7 +275,7 @@ public class CommentServiceTest {
 
         // when & then
         assertThrows(CommentException.class,
-                () -> commentService.updateComment(taskId, request, 3L, userId));
+                () -> commandCommentService.updateComment(taskId, request, 3L, userId));
     }
 
     @Test
@@ -291,7 +295,7 @@ public class CommentServiceTest {
         when(commentRepository.softDeleteCommentAndReplies(commentId)).thenReturn(1);
 
         // when
-        int deletedCount = commentService.deleteComment(taskId, commentId, userId);
+        int deletedCount = commandCommentService.deleteComment(taskId, commentId, userId);
 
         // then
         assertEquals(1, deletedCount);
@@ -314,7 +318,7 @@ public class CommentServiceTest {
         when(commentRepository.softDeleteCommentAndReplies(commentId)).thenReturn(3);
 
         // when
-        int deletedCount = commentService.deleteComment(taskId, commentId, userId);
+        int deletedCount = commandCommentService.deleteComment(taskId, commentId, userId);
 
         // then
         assertEquals(3, deletedCount);

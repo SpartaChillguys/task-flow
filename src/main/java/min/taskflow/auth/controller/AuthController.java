@@ -33,7 +33,7 @@ public class AuthController {
     private final ExternalCommandAuthService externalCommandAuthService;
     private final CookieUtil cookieUtil;
 
-    //회원가입 API
+    // 회원가입 API
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<RegisterResponse>> register(@Valid @RequestBody RegisterRequest request) {
 
@@ -42,7 +42,7 @@ public class AuthController {
         return ApiResponse.success(response, "회원가입에 성공하셨습니다");
     }
 
-    //로그인 API
+    // 로그인 API
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Map<String, String>>> login(@Valid @RequestBody LoginRequest request,
                                                                   HttpServletResponse httpServletResponse) {
@@ -62,7 +62,7 @@ public class AuthController {
         return ApiResponse.success(null, "로그아웃 되었습니다.");
     }
 
-    //계정 삭제(회원 탈퇴)
+    // 계정 삭제(회원 탈퇴)
     @PostMapping("/withdraw")
     public ResponseEntity<ApiResponse<Void>> delete(@AuthenticationPrincipal Long userId, @Valid @RequestBody DeleteRequest request) {
 
@@ -71,6 +71,7 @@ public class AuthController {
         return ApiResponse.noContent("회원탈퇴가 완료되었습니다.");
     }
 
+    // 토큰 재발급
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<String>> refresh(HttpServletRequest request) {
 
