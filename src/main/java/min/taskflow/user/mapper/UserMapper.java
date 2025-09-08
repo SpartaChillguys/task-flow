@@ -78,7 +78,7 @@ public class UserMapper {
     public AssigneeSummaryResponse toAssigneeSummaryResponse(User user) {
 
         return AssigneeSummaryResponse.builder()
-                .userId(user.getUserId())
+                .id(user.getUserId())
                 .name(user.getName())
                 .build();
     }

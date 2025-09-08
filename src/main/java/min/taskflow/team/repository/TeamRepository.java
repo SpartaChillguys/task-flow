@@ -24,4 +24,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     // 팀 전체 조회 + 멤버 포함
     @Query("SELECT DISTINCT t FROM Team t LEFT JOIN FETCH t.members WHERE t.deleted = false")
     List<Team> findAllWithMembers();
+
+    List<Long> findMemberIdsByTeamId(Long teamId);
 }

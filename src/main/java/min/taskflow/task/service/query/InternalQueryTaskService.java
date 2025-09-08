@@ -1,9 +1,9 @@
 package min.taskflow.task.service.query;
 
 import lombok.RequiredArgsConstructor;
-import min.taskflow.task.dto.response.dashboard.TaskDashboardStatsResponse;
-import min.taskflow.task.dto.response.dashboard.TaskSummaryResponse;
-import min.taskflow.task.dto.response.task.TaskResponse;
+import min.taskflow.dashboard.dto.TaskDashboardStatsResponse;
+import min.taskflow.dashboard.dto.TaskSummaryResponse;
+import min.taskflow.task.dto.response.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
 import min.taskflow.task.exception.TaskErrorCode;
@@ -75,9 +75,9 @@ public class InternalQueryTaskService {
         Long todoTasks = taskRepository.countByAssigneeIdInAndStatus(userIds, Status.TODO);
         Long totalTasks = completedTasks + inProgressTasks + todoTasks;
         Long overdueTasks = taskRepository.countByAssigneeIdAndDueDateBefore(LoginUserId, startOfDay);
-        Long teamProgress = ((completedTasks + inProgressTasks) / totalTasks) * 100;
         Long myTasksToday = taskRepository.countByAssigneeIdAndDueDateBetween(LoginUserId, startOfDay, endOfDay);
-        Long completionRate = (completedTasks / totalTasks * 100);
+        Long teamProgress = totalTasks == 0 ? 0 : ((completedTasks + inProgressTasks) / totalTasks) * 100;
+        Long completionRate = totalTasks == 0 ? 0 : (completedTasks / totalTasks * 100);
 
         TaskDashboardStatsResponse taskDashboardStatsResponse = taskMapper.toTaskDashboardStatsResponse(totalTasks,
                 completedTasks,
@@ -91,6 +91,7 @@ public class InternalQueryTaskService {
         return taskDashboardStatsResponse;
     }
 
+    // 검색어로 Task 조회 후 반환
     public List<TaskResponse<AssigneeSummaryResponse>> searchTasksByQuery(String query) {
         List<Task> found = taskRepository.findByTitleContainingIgnoreCase(query);
 
@@ -104,5 +105,27 @@ public class InternalQueryTaskService {
                 .toList();
 
         return tasks;
+    }
+
+    public Long getTeamsProgress(List<Long> memberIdsByTeamId) {
+
+        List<Task> tasks = taskRepository.findByAssigneeIdIn(memberIdsByTeamId);
+
+        Long todoAndInProgressCount = 0L;
+        Long doneCount = 0L;
+
+        for (Task task : tasks) {
+            if (task.getStatus().equals(Status.DONE)) {
+                doneCount++;
+            } else {
+                todoAndInProgressCount++;
+            }
+        }
+
+        Long teamProgress = (todoAndInProgressCount + doneCount) == 0
+                ? 0
+                : (long) ((double) doneCount / (todoAndInProgressCount + doneCount) * 100);
+
+        return teamProgress;
     }
 }

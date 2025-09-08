@@ -3,7 +3,7 @@ package min.taskflow.task.service.query;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.search.mapper.SearchMapper;
 import min.taskflow.task.dto.condition.TaskSearchCondition;
-import min.taskflow.task.dto.response.task.TaskResponse;
+import min.taskflow.task.dto.response.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
 import min.taskflow.task.exception.TaskErrorCode;
@@ -37,7 +37,7 @@ public class ExternalQueryTaskService {
         Page<Task> tasks = searchLogic(pageable, condition);
 
         Page<TaskResponse> responses = tasks.map(task -> {
-            
+
             UserSearchAndAssigneeResponse userSearchAndAssigneeResponse = internalQueryUserService.getAssigneeByUserId(task.getAssigneeId());
 
             return taskMapper.toTaskResponse(task, userSearchAndAssigneeResponse);

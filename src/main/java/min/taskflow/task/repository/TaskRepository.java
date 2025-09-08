@@ -36,4 +36,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     // 수영 : 제목에 검색어가 포함된 Task 조회 (대소문자 무시)
     List<Task> findByTitleContainingIgnoreCase(String title);
+
+    List<Task> findByAssigneeIdIn(List<Long> memberIdsByTeamId);
 }

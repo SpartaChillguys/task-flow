@@ -1,4 +1,4 @@
-package min.taskflow.task.dto.response.dashboard;
+package min.taskflow.dashboard.dto;
 
 import lombok.Builder;
 import min.taskflow.task.entity.Status;
@@ -11,7 +11,6 @@ public record TaskSummaryResponse(List<TaskSummaryDto> todayTasks,
                                   List<TaskSummaryDto> upcomingTasks,
                                   List<TaskSummaryDto> overdueTasks
 ) {
-
 
     public record TaskSummaryDto(Long taskId,
                                  String title,

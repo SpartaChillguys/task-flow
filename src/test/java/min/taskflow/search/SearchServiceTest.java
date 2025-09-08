@@ -2,7 +2,7 @@ package min.taskflow.search;
 
 import min.taskflow.search.dto.SearchResponse;
 import min.taskflow.search.service.ExternalQuerySearchService;
-import min.taskflow.task.dto.response.task.TaskResponse;
+import min.taskflow.task.dto.response.TaskResponse;
 import min.taskflow.task.entity.Priority;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.service.query.InternalQueryTaskService;

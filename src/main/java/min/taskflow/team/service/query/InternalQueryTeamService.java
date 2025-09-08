@@ -12,7 +12,9 @@ import min.taskflow.user.service.query.InternalQueryUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +58,21 @@ public class InternalQueryTeamService {
         }
 
         return teamMapper.toMemberIdList(team.getMembers());
+    }
+
+    public Map<String, List<Long>> getTeamsProgress() {
+
+        List<Team> teams = teamRepository.findAll();
+
+        Map<String, List<Long>> response = new HashMap<>();
+        for (Team team : teams) {
+
+            List<Long> teamMemberIds = teamRepository.findMemberIdsByTeamId(team.getTeamId());
+
+            response.put(team.getName(), teamMemberIds);
+        }
+
+        return response;
     }
 
     public List<Long> getMemberIdsByTeamId(Long teamId) {

@@ -1,7 +1,7 @@
 package min.taskflow.search.dto;
 
 import lombok.Builder;
-import min.taskflow.task.dto.response.task.TaskResponse;
+import min.taskflow.task.dto.response.TaskResponse;
 import min.taskflow.team.dto.TeamSearchResponse;
 import min.taskflow.user.dto.response.AssigneeSummaryResponse;
 import min.taskflow.user.dto.response.UserSearchAndAssigneeResponse;

@@ -1,9 +1,9 @@
 package min.taskflow.task.mapper;
 
+import min.taskflow.dashboard.dto.TaskDashboardStatsResponse;
+import min.taskflow.dashboard.dto.TaskSummaryResponse;
 import min.taskflow.task.dto.request.TaskCreateRequest;
-import min.taskflow.task.dto.response.dashboard.TaskDashboardStatsResponse;
-import min.taskflow.task.dto.response.dashboard.TaskSummaryResponse;
-import min.taskflow.task.dto.response.task.TaskResponse;
+import min.taskflow.task.dto.response.TaskResponse;
 import min.taskflow.task.entity.Status;
 import min.taskflow.task.entity.Task;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class TaskMapper {
                 .priority(task.getPriority())
                 .status(task.getStatus())
                 .assigneeId(task.getAssigneeId())
-                .assigneeInfoResponse(assigneeInfoResponse)
+                .assignee(assigneeInfoResponse)
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())
                 .build();

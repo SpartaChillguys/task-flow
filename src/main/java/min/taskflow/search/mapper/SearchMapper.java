@@ -1,6 +1,6 @@
 package min.taskflow.search.mapper;
 
-import min.taskflow.task.dto.response.task.TaskResponse;
+import min.taskflow.task.dto.response.TaskResponse;
 import min.taskflow.task.entity.Task;
 import min.taskflow.team.dto.TeamSearchResponse;
 import min.taskflow.team.entity.Team;
@@ -23,7 +23,7 @@ public class SearchMapper {
                 .priority(task.getPriority())
                 .status(task.getStatus())
                 .assigneeId(task.getAssigneeId())
-                .assigneeInfoResponse(assignee == null ? null : toUserResponse(assignee))
+                .assignee(assignee == null ? null : toUserResponse(assignee))
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())
                 .build();
@@ -32,8 +32,8 @@ public class SearchMapper {
     public UserSearchAndAssigneeResponse toUserResponse(User user) {
 
         return UserSearchAndAssigneeResponse.builder()
-                .userid(user.getUserId())
-                .userName(user.getUserName())
+                .id(user.getUserId())
+                .username(user.getUserName())
                 .name(user.getName())
                 .email(user.getEmail())
                 .build();
