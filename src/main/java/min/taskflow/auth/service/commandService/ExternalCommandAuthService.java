@@ -2,13 +2,16 @@ package min.taskflow.auth.service.commandService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import min.taskflow.auth.config.JwtUtil;
+import min.taskflow.auth.config.PasswordEncoder;
+import min.taskflow.auth.dto.info.TokenInfo;
+import min.taskflow.auth.dto.info.UserInfo;
 import min.taskflow.auth.dto.request.DeleteRequest;
 import min.taskflow.auth.dto.request.LoginRequest;
 import min.taskflow.auth.dto.request.RegisterRequest;
-import min.taskflow.auth.dto.response.LoginResponse;
 import min.taskflow.auth.dto.response.RegisterResponse;
-import min.taskflow.user.PasswordEncoder;
+import min.taskflow.auth.exception.AuthErrorCode;
+import min.taskflow.auth.exception.AuthException;
+import min.taskflow.auth.jwt.JwtUtil;
 import min.taskflow.user.entity.User;
 import min.taskflow.user.exception.UserErrorCode;
 import min.taskflow.user.exception.UserException;
@@ -29,48 +32,52 @@ public class ExternalCommandAuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    //회원가입 로직
+    // 회원가입 로직
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
 
-        //이메일 중복 검증
+        // 이메일 중복 검증
         if (userRepository.existsByEmail((request.email()))) {
             throw new UserException(UserErrorCode.ALREADY_EXIST_EMAIL);
         }
-        //유저이름 중복 검증
+        // 유저이름 중복 검증
         if (userRepository.existsByUserName((request.username()))) {
             throw new UserException(UserErrorCode.ALREADY_EXIST_USERNAME);
         }
-        //비밀번호 암호화
+        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(request.password());
 
         // 엔티티 변환
         User user = userMapper.toEntity(request, encodedPassword);
         User saveUser = userRepository.save(user);
 
-        //디티오 변환
+        // 디티오 변환
         RegisterResponse userSaveResponse = userMapper.toRegistResponse(saveUser);
-        return userSaveResponse;
 
+        return userSaveResponse;
     }
 
-    //로그인 로직
+    // 로그인 로직
     @Transactional
-    public LoginResponse login(@Valid LoginRequest request) {
+    public TokenInfo login(@Valid LoginRequest request) {
 
-        //유저네임 존재 검증
-        User user = userRepository.findByUserName(request.username()).orElseThrow(() -> new UserException(UserErrorCode.WRONG_USERNAME));
+        // 유저네임 존재 검증
+        User user = userRepository.findByUserName(request.username())
+                .orElseThrow(() -> new AuthException(AuthErrorCode.WRONG_USERNAME));
 
-        //비번 일치 검증
+        // 비번 일치 검증
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new UserException(UserErrorCode.WRONG_PASSWORD);
+            throw new AuthException(AuthErrorCode.WRONG_PASSWORD);
         }
 
-        String token = jwtUtil.createToken(user.getUserId(), user.getRole());
+        // 액세스 토큰과 리프레시 토큰 발급
+        String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.getRole());
+        String refreshToken = jwtUtil.createRefreshToken(user.getUserId(), user.getRole());
 
-        return new LoginResponse(token);
+        return new TokenInfo(accessToken, refreshToken);
     }
 
+    // 회원탈퇴 로직
     @Transactional
     public void delete(Long userId, DeleteRequest request) {
 
@@ -78,10 +85,22 @@ public class ExternalCommandAuthService {
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new UserException(UserErrorCode.WRONG_PASSWORD);
+            throw new AuthException(AuthErrorCode.WRONG_PASSWORD);
 
         }
-        user.delete();
 
+        user.delete();
+    }
+
+    // 액세스 토큰 재발급 로직
+    public String refreshAccessToken(String refreshToken) {
+
+        if (refreshToken == null) {
+            throw new AuthException(AuthErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        UserInfo userInfo = jwtUtil.parseUserInfo(refreshToken);
+
+        return jwtUtil.createAccessToken(userInfo.userId(), userInfo.userRole());
     }
 }

@@ -39,7 +39,7 @@ public class CommentFixture {
                                                         UserResponse userResponse) {
 
         return CommentResponse.builder()
-                .commentId(commentId)
+                .id(commentId)
                 .content(content)
                 .taskId(taskId)
                 .userId(userId)

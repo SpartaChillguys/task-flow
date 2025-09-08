@@ -60,7 +60,7 @@ class CommentMapperTest {
         CommentResponse response = commentMapper.toCommentResponse(comment, userResponse);
 
         // then
-        assertEquals(comment.getCommentId(), response.commentId());
+        assertEquals(comment.getCommentId(), response.id());
         assertEquals("댓글 내용", response.content());
         assertEquals(user.getUserId(), response.userId());
         assertEquals(userResponse, response.user());
