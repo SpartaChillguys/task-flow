@@ -12,6 +12,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
+        log.error("알 수 없는 서버 오류 발생 ", ex);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
     @ExceptionHandler(GlobalException.class)
     public ResponseEntity<ApiResponse> handleGlobalException(GlobalException ex) {
         log.error("비즈니스 오류 발생 ", ex);
@@ -34,4 +42,5 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(errorMessage, HttpStatus.BAD_REQUEST));
     }
+
 }
