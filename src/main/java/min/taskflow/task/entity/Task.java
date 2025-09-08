@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 import min.taskflow.common.entity.BaseEntity;
 import min.taskflow.task.dto.request.StatusUpdateRequest;
 import min.taskflow.task.dto.request.TaskUpdateRequest;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction("is_deleted = false")
 public class Task extends BaseEntity {
 
     @Id

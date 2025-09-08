@@ -1,19 +1,26 @@
 package min.taskflow.team.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import min.taskflow.common.entity.BaseEntity;
 import min.taskflow.user.entity.User;
-import java.util.List;
+import org.hibernate.annotations.SQLRestriction;
+
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "team")
+@SQLRestriction("is_deleted = false")
 public class Team extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teamId;
 
     @Column(nullable = false, unique = true, length = 255)
