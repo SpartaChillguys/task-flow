@@ -14,12 +14,14 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Table(name = "task")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("is_deleted = false")
 public class Task extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long taskId;
 
     private String title;
@@ -70,4 +72,5 @@ public class Task extends BaseEntity {
         this.status = status.next(target);
 
     }
+
 }
