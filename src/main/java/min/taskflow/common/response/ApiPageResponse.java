@@ -1,42 +1,53 @@
 package min.taskflow.common.response;
 
+import lombok.Builder;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record ApiPageResponse<T>(int page,
-                                 int size,
-                                 int totalPages,
-                                 long totalElements,
-                                 List<T> data) {
-
-    public static <T> ApiPageResponse<T> from(Page<T> pagedData) {
-        return new ApiPageResponse<>(
-                pagedData.getNumber(),
-                pagedData.getSize(),
-                pagedData.getTotalPages(),
-                pagedData.getTotalElements(),
-                pagedData.getContent()
-        );
-    }
+@Builder
+public record ApiPageResponse<T>(HttpStatus httpStatus,
+                                 int statusValue,
+                                 boolean success,
+                                 String message,
+                                 PageData<T> data,
+                                 LocalDateTime timestamp) {
 
     /**
      * 성공적인 요청에 대한 페이징 응답을 반환하는 메서드
      * 주어진 데이터를 포함하여 HTTP 200 OK 상태 코드와 함께 응답을 반환
      *
      * @param pagedData 요청 성공 시 반환할 페이징 데이터
-     * @return HTTP 200 OK 응답과 함께 ApiResponse<ApiPageResponse<T>>
+     * @return HTTP 200 OK 응답과 함께 ApiPageResponse<T>
      */
-    public static <T> ResponseEntity<ApiResponse<ApiPageResponse<T>>> success(Page<T> pagedData, String message) {
+    public static <T> ResponseEntity<ApiPageResponse<T>> success(Page<T> pagedData, String message) {
         return ResponseEntity.ok(
-                ApiResponse.<ApiPageResponse<T>>builder()
+                ApiPageResponse.<T>builder()
+                        .httpStatus(HttpStatus.OK)
+                        .statusValue(HttpStatus.OK.value())
                         .success(true)
                         .message(message)
-                        .data(ApiPageResponse.from(pagedData))
+                        .data(PageData.<T>builder()
+                                .content(pagedData.getContent())
+                                .totalElements(pagedData.getTotalElements())
+                                .totalPages(pagedData.getTotalPages())
+                                .size(pagedData.getSize())
+                                .number(pagedData.getNumber())
+                                .build())
                         .timestamp(LocalDateTime.now())
-                        .build()
-        );
+                        .build());
+    }
+
+    @Builder
+    private record PageData<T>(
+            List<T> content,
+            long totalElements,
+            int totalPages,
+            int size,
+            int number
+    ) {
     }
 }

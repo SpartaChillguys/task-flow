@@ -4,8 +4,8 @@ import min.taskflow.common.exception.ErrorCode;
 import min.taskflow.common.exception.GlobalException;
 
 
-public class InvalidException extends GlobalException {
-    public InvalidException(ErrorCode errorCode){
+public class TaskException extends GlobalException {
+    public TaskException(ErrorCode errorCode) {
         super(errorCode);
     }
 }
