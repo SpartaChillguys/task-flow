@@ -1,7 +1,6 @@
 package min.taskflow.task.service.query;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import min.taskflow.dashboard.dto.TaskDashboardStatsResponse;
 import min.taskflow.dashboard.dto.TaskSummaryResponse;
 import min.taskflow.dashboard.dto.WeeklyTrendResponse;
@@ -28,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InternalQueryTaskService {
@@ -84,21 +82,15 @@ public class InternalQueryTaskService {
         Long inProgressTasks = taskRepository.countByAssigneeIdInAndStatus(userIds, Status.IN_PROGRESS);
         Long todoTasks = taskRepository.countByAssigneeIdInAndStatus(userIds, Status.TODO);
 
-        log.info("completedTasks : " + completedTasks +
-                " inProgressTasks : " + inProgressTasks +
-                " todoTasks : " + todoTasks);
-
         Long totalTasks = completedTasks + inProgressTasks + todoTasks;
         Long overdueTasks = taskRepository.countByAssigneeIdAndDueDateBefore(LoginUserId, startOfDay);
         Long myTasksToday = taskRepository.countByAssigneeIdAndDueDateBetween(LoginUserId, startOfDay, endOfDay);
         Long teamProgress = totalTasks == 0
                 ? 0
-                : (long) (((double) completedTasks + inProgressTasks / totalTasks) * 100);
+                : (long) (((double) (completedTasks + inProgressTasks) / totalTasks) * 100);
         Long completionRate = totalTasks == 0
                 ? 0
                 : (long) (((double) completedTasks / totalTasks) * 100);
-
-        log.info("completionRate" + completionRate);
 
         TaskDashboardStatsResponse taskDashboardStatsResponse = taskMapper.toTaskDashboardStatsResponse(totalTasks,
                 completedTasks,
