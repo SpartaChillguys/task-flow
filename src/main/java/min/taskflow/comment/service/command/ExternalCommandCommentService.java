@@ -1,5 +1,6 @@
 package min.taskflow.comment.service.command;
 
+import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import min.taskflow.comment.dto.request.CommentRequest;
@@ -56,12 +57,17 @@ public class ExternalCommandCommentService {
     @Transactional
     public CommentResponse updateComment(Long taskId, CommentUpdateRequest request, Long commentId, Long userId) {
 
-        Comment comment = validateCommentAccess(taskId, commentId, userId);
+        try {
+            Comment comment = validateCommentAccess(taskId, commentId, userId);
 
-        comment.updateContent(request.content());
-        UserResponse userResponse = userService.toUserResponse(comment.getUser());
+            comment.updateContent(request.content());
+            UserResponse userResponse = userService.toUserResponse(comment.getUser());
 
-        return commentMapper.toCommentResponse(comment, userResponse);
+            return commentMapper.toCommentResponse(comment, userResponse);
+        } catch (OptimisticLockException e) {
+
+            throw new CommentException(CommentErrorCode.COMMENT_CONFLICT);
+        }
     }
 
     @ActivityLogger(type = ActivityType.COMMENT_DELETED)
