@@ -6,7 +6,7 @@ Taskflow는 기업 내 협업과 업무 관리를 위한 백엔드 중심의 태
 | [**ERD**](https://www.erdcloud.com/d/xfrdtjSasQapxBzfi)
 | [**DEMO**]유튜브링크
 
-## 주요 기능
+## Features
 
 - 태스크 생성, 수정, 삭제 및 상태 관리
 - 사용자 및 팀 기반 권한 설정
@@ -15,7 +15,7 @@ Taskflow는 기업 내 협업과 업무 관리를 위한 백엔드 중심의 태
 - CQRS 기반 서비스 분리: Command / Query 구조
 - DDD 기반 도메인 설계: Task, Comment, User, Log 등 명확한 경계
 
-## 기술 스택
+## Tech Stack
 
 | 계층       | 기술             |
 |------------|------------------|
@@ -27,7 +27,6 @@ Taskflow는 기업 내 협업과 업무 관리를 위한 백엔드 중심의 태
 | Deployment | Docker           |
 | Testing    | JUnit 5, Mockito |
 
-## 시스템 구조
-
+## Project Structure
 
 
