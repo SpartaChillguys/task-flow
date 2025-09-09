@@ -18,7 +18,8 @@ public enum CommentErrorCode implements ErrorCode {
 
     // 상태/무결성 오류 3xx
     COMMENT_TASK_MISMATCH("CMT-301", HttpStatus.BAD_REQUEST, "댓글이 해당 작업에 속하지 않습니다."),
-    COMMENT_ALREADY_DELETED("CMT-302", HttpStatus.BAD_REQUEST, "이미 삭제된 댓글입니다.");
+    COMMENT_ALREADY_DELETED("CMT-302", HttpStatus.BAD_REQUEST, "이미 삭제된 댓글입니다."),
+    COMMENT_CONFLICT("CMT-303", HttpStatus.CONFLICT, "다른 사용자가 먼저 댓글을 수정했습니다.");
 
 
     private final String code;

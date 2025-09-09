@@ -1,12 +1,16 @@
+![Chill가이들 로고](src/images/chillguy.png)
+
 # Taskflow
+
 Taskflow는 기업 내 협업과 업무 관리를 위한 백엔드 중심의 태스크 관리 시스템입니다.  
 도메인 주도 설계(DDD)와 명령-조회 책임 분리(CQRS) 아키텍처를 기반으로, 복잡한 업무 흐름을 명확하게 분리하고 유지보수성과 확장성을 극대화합니다.  
-안정적인 트랜잭션 처리와 역할 기반 권한 제어를 통해 실시간 협업 환경에서도 신뢰성 있는 운영을 보장합니다.   
+안정적인 트랜잭션 처리와 역할 기반 권한 제어를 통해 실시간 협업 환경에서도 신뢰성 있는 운영을 보장합니다.
 
 | [**API**](https://teamsparta.notion.site/S-A-Starting-Assignments-25a2dc3ef51481889299e106dea470d3?pvs=73)
 | [**ERD**](https://www.erdcloud.com/d/xfrdtjSasQapxBzfi)
 | [**시연영상**](https://drive.google.com/file/d/1SwTjb0-7n_dBfTF-YIopMv3E9jUQZm88/view?usp=drive_link)
 |
+
 ## Features
 
 - 태스크 생성, 수정, 삭제 및 상태 관리
@@ -18,15 +22,15 @@ Taskflow는 기업 내 협업과 업무 관리를 위한 백엔드 중심의 태
 
 ## Tech Stack
 
-| 계층       | 기술             |
-|------------|------------------|
-| Language   | Java 17          |
-| Framework  | Spring Boot      |
-| ORM        | JPA (Hibernate)  |
-| Database   | MySQL            |
-| Architecture | DDD, CQRS      |
-| Deployment | Docker           |
-| Testing    | JUnit 5, Mockito |
+| 계층           | 기술               |
+|--------------|------------------|
+| Language     | Java 17          |
+| Framework    | Spring Boot      |
+| ORM          | JPA (Hibernate)  |
+| Database     | MySQL            |
+| Architecture | DDD, CQRS        |
+| Deployment   | Docker           |
+| Testing      | JUnit 5, Mockito |
 
 # Project Directory Structure
 

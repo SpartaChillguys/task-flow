@@ -37,8 +37,8 @@ public class UserFixture {
     public static UserResponse createUserResponse(User user, Long userId) {
 
         return UserResponse.builder()
-                .userId(userId)
-                .userName(user.getUserName())
+                .id(userId)
+                .username(user.getUserName())
                 .email(user.getEmail())
                 .name(user.getName())
                 .role(user.getRole())
